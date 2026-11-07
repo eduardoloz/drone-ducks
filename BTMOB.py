@@ -7,7 +7,7 @@ import time
 model = YOLO("yolov8n.pt")
 
 # 2. Connect to the phone camera
-url = "http://10.26.59.21:8080/video"
+url = "http://10.18.237.58:8080/video"
 cap = cv2.VideoCapture(url)
 
 if not cap.isOpened():
