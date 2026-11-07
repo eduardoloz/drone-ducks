@@ -9,7 +9,7 @@ import time #Delays
 model = YOLO("yolov8n.pt")
 
 #Create a Video Capture Object
-url = "http://10.26.59.21:8080/video" #Change to Provided Camera Phone App URL
+url = "http://10.18.237.58:8080/video" #Change to Provided Camera Phone App URL
 cap = cv2.VideoCapture(url)
 
 #If Starting Stream is Unsuccessful
@@ -62,11 +62,22 @@ try:
             time.sleep(0.005)
             continue
 
+        #Limits Camera Image Size for Speed
+        height, width = frame.shape[:2]
+        target_width = 640
+
+        if width > target_width:
+            target_height = int(height * target_width / width)
+            frame = cv2.resize(
+                frame, (target_width, target_height)
+            )
+
         #Performs YOLO Object Detection
         results = model.track(
             source = frame, #Uses frame as the image.
             tracker = "bytetrack.yaml", #Uses ByteTrack
             persist = True, #Preserves object identites while tracking.
+            imgsz = 640,
             verbose = False,
             conf = 0.25 #Confidence Threshold
         )
