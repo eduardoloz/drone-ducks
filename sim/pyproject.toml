@@ -1,0 +1,34 @@
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "quackdrone"
+version = "0.1.0"
+description = "ProjectQuack drone-control core: PX4 Offboard control through MAVSDK, same code in SITL and on a real drone."
+readme = "README.md"
+requires-python = ">=3.10"
+license = "Apache-2.0"
+dependencies = [
+    # Native MAVSDK binding (import mavsdk). 4.1.0 needs glibc >= 2.28 on Linux aarch64
+    # (JetPack 5+); on JetPack 4 pin mavsdk==4.0.6. macOS wheels need macOS 15+.
+    "mavsdk>=4.0.6,<5",
+    "numpy>=1.24,<2",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8"]
+# OpenCV camera sources (webcam, phone IP cam, MJPEG, RTSP, files) and the examples.
+vision = ["opencv-python>=4.8,<5"]
+
+[tool.setuptools.packages.find]
+include = ["quackdrone*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = [
+    "sitl: needs PX4 SITL running (scripts/start_sim.sh); skipped automatically when it is not reachable",
+    "typefly: needs the patched TypeFly checkout (scripts/setup_typefly.sh)",
+    "slow: takes more than ~30 s",
+]
+addopts = "-ra"
