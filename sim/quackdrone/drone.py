@@ -370,6 +370,15 @@ class Drone:
         n, e, _, yaw = self._base()
         return self.goto_ned(n, e, self._ground_d - float(altitude_m), yaw, wait=wait)
 
+    def wait_reached(self, timeout_s: Optional[float] = None,
+                     poll: Optional[Callable[[], None]] = None) -> bool:
+        """Wait for the current position target (after a call with wait=False). poll() runs every
+        50 ms and may raise to abandon the wait (the drone keeps flying to the target)."""
+        tgt = self._target
+        if tgt is None:
+            return False
+        return self._wait_reached(tgt, self.config.move_timeout_s if timeout_s is None else timeout_s, poll)
+
     def hold(self) -> None:
         """Hold position where the drone is now (stays in Offboard)."""
         self._require_control()
@@ -485,12 +494,15 @@ class Drone:
         t = self.telemetry
         return [t.north_m, t.east_m, t.down_m, t.yaw_deg]
 
-    def _wait_reached(self, tgt: list[float], timeout_s: float) -> bool:
+    def _wait_reached(self, tgt: list[float], timeout_s: float,
+                      poll: Optional[Callable[[], None]] = None) -> bool:
         c = self.config
         deadline = time.monotonic() + timeout_s
         settled_since = None
         pos_err = yaw_err = math.nan
         while time.monotonic() < deadline:
+            if poll is not None:
+                poll()  # caller's cancellation hook (may raise, e.g. TypeFly's PlanCancelled)
             if not self._in_control:
                 raise ControlLost(f"control lost while moving: {self._lost_reason}")
             if self._target is not tgt:

@@ -28,6 +28,8 @@ class Limits:
     min_alt_m: float = 0.5         # metres above the takeoff point, while flying
     max_alt_m: float = 10.0
     fence_radius_m: float = 30.0   # horizontal soft fence around the takeoff point; 0 = off
+    approach_gain: float = 1.0     # 1/s: near the fence / ceiling, speed towards it is capped at
+                                   # gain x remaining distance, so the drone has room to brake
 
 
 @dataclass(frozen=True)
@@ -72,22 +74,25 @@ def clamp_velocity_body(cmd: VelocityCommand, limits: Limits, *, yaw_deg: float,
 
     if ground_d is not None:
         alt = ground_d - pos_ned[2]
-        if alt >= limits.max_alt_m and d < 0:
-            d = 0.0
+        climb_cap = max(0.0, limits.approach_gain * (limits.max_alt_m - alt))   # m/s up allowed
+        sink_cap = max(0.0, limits.approach_gain * (alt - limits.min_alt_m))    # m/s down allowed
+        if -d > climb_cap:
+            d = -climb_cap
             notes.append("max_alt")
-        elif alt <= limits.min_alt_m and d > 0:
-            d = 0.0
+        elif d > sink_cap:
+            d = sink_cap
             notes.append("min_alt")
 
     if limits.fence_radius_m > 0 and home_ne is not None:
         dn, de = pos_ned[0] - home_ne[0], pos_ned[1] - home_ne[1]
         dist = math.hypot(dn, de)
-        if dist >= limits.fence_radius_m:
+        out_cap = max(0.0, limits.approach_gain * (limits.fence_radius_m - dist))  # m/s outward allowed
+        if dist > 1e-6:
             vn, ve = body_to_ned(f, r, yaw_deg)
             un, ue = dn / dist, de / dist
             outward = vn * un + ve * ue
-            if outward > 0:
-                vn, ve = vn - outward * un, ve - outward * ue
+            if outward > out_cap:
+                vn, ve = vn - (outward - out_cap) * un, ve - (outward - out_cap) * ue
                 f, r = ned_to_body(vn, ve, yaw_deg)
                 notes.append("fence")
 

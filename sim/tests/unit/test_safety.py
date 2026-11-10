@@ -41,6 +41,17 @@ def test_altitude_band():
     assert out.down_m_s == 0.5
     out, notes = clampv(VelocityCommand(0, 0, 0.5, 0), pos=(0, 0, -0.4))    # below min alt, descending
     assert out.down_m_s == 0 and notes == ["min_alt"]
+    out, notes = clampv(VelocityCommand(0, 0, -1.0, 0), pos=(0, 0, -9.7))   # 0.3 m below the ceiling
+    assert out.down_m_s == pytest.approx(-0.3) and notes == ["max_alt"]     # slows down approaching it
+
+
+def test_fence_slows_the_approach():
+    # 29.5 m out heading straight for the fence: outward speed capped at gain x 0.5 m = 0.5 m/s
+    out, notes = clampv(VelocityCommand(2.0, 0, 0, 0), pos=(29.5, 0.0, -2.0))
+    assert out.forward_m_s == pytest.approx(0.5) and notes == ["fence"]
+    # far from the fence nothing changes
+    out, notes = clampv(VelocityCommand(2.0, 0, 0, 0), pos=(10.0, 0.0, -2.0))
+    assert out.forward_m_s == 2.0 and notes == []
 
 
 def test_fence_removes_only_outward_component():
