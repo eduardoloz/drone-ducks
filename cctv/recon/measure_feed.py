@@ -111,6 +111,7 @@ def measure_hls(cam: dict, seconds: float, keep_clip: bool) -> dict:
     res["bitrate_kbps"] = round(clip.stat().st_size * 8 / 1000 / max(res["clip_seconds"], 1e-6), 1)
 
     gray = decode_gray_small(clip, 320, 240)
+    res["mean_luma"] = round(float(gray.mean()), 1)   # < 35: too dark to judge (night)
     diffs = np.abs(np.diff(gray.astype(np.int16), axis=0)).mean(axis=(1, 2))
     dup = diffs < 0.3
     res["dup_frame_ratio"] = round(float(dup.mean()), 3) if len(dup) else None

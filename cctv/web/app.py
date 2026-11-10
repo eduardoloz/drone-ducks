@@ -63,8 +63,11 @@ def create_app(db_path: Path | str = store.DEFAULT_DB, manifest_path: Path | str
     manifest = load_manifest(manifest_path)
     cams = {c["id"]: c for c in manifest["cameras"]}
 
-    def latest_runs() -> dict[str, sqlite3.Row]:
-        rows = con.execute("SELECT r.* FROM runs r JOIN (SELECT camera_id, MAX(id) AS id FROM runs "
+    def latest_runs(valid_only: bool = False) -> dict[str, sqlite3.Row]:
+        """Newest run per camera; with valid_only, the newest one that produced speeds."""
+        where = ("WHERE COALESCE(camera_moved, 0) = 0 AND EXISTS (SELECT 1 FROM vehicles v "
+                 "WHERE v.run_id = runs.id AND v.accepted = 1)") if valid_only else ""
+        rows = con.execute(f"SELECT r.* FROM runs r JOIN (SELECT camera_id, MAX(id) AS id FROM runs {where} "
                            "GROUP BY camera_id) m ON m.id = r.id").fetchall()
         return {r["camera_id"]: r for r in rows}
 
@@ -99,7 +102,7 @@ def create_app(db_path: Path | str = store.DEFAULT_DB, manifest_path: Path | str
 
     @app.get("/api/cameras")
     def cameras() -> dict[str, Any]:
-        runs = latest_runs()
+        runs, valid = latest_runs(), latest_runs(valid_only=True)
         out = []
         for c in manifest["cameras"]:
             meas = c.get("measured") or {}
@@ -110,6 +113,8 @@ def create_app(db_path: Path | str = store.DEFAULT_DB, manifest_path: Path | str
                         unique_fps=meas.get("unique_fps"))
             if c["id"] in runs:
                 item["latest"] = run_summary(runs[c["id"]])
+            if c["id"] in valid:
+                item["latest_valid"] = run_summary(valid[c["id"]])
             out.append(item)
         return {"generated_at": manifest["generated_at"], "corridor": manifest["corridor"],
                 "summary": manifest["summary"], "cameras": out}
@@ -124,9 +129,11 @@ def create_app(db_path: Path | str = store.DEFAULT_DB, manifest_path: Path | str
             d = json.loads((CALIBRATION_DIR / f"{camera_id}.json").read_text())
             cal = {k: d.get(k) for k in ("created_utc", "rmse_m", "max_err_m", "scale_uncertainty",
                                          "image_size", "roi_polygon", "method")}
+        summaries = [run_summary(r) for r in runs]
+        valid = next((s for s in summaries if not s["camera_moved"] and s["with_speed"]), None)
         return {"camera": cams[camera_id], "calibration": cal,
                 "has_reference_frame": (CALIBRATION_DIR / f"{camera_id}.ref.jpg").exists(),
-                "runs": [run_summary(r) for r in runs]}
+                "runs": summaries, "latest_valid": valid}
 
     @app.get("/api/cameras/{camera_id}/reference.jpg", include_in_schema=False)
     def reference(camera_id: str) -> FileResponse:

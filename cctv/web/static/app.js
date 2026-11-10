@@ -51,7 +51,7 @@ function initMap() {
 }
 
 function markerStyle(cam) {
-  const latest = cam.latest;
+  const latest = cam.latest_valid;
   if (latest && latest.median_mph !== undefined) {
     return { radius: 10, fillColor: speedColour(latest.median_mph), fillOpacity: 0.95,
              color: cam.calibrated ? "#ffffff" : "#33363b", weight: cam.calibrated ? 3 : 1 };
@@ -64,12 +64,14 @@ function markerStyle(cam) {
 function drawMarkers() {
   for (const cam of cameras) {
     const m = L.circleMarker([cam.lat, cam.lon], markerStyle(cam)).addTo(map);
-    const label = cam.latest && cam.latest.median_mph !== undefined ? `median ${cam.latest.median_mph} mph` : (SUITABILITY[cam.speed_suitability] || "");
+    const v = cam.latest_valid;
+    let label = v && v.median_mph !== undefined ? `median ${v.median_mph} mph` : (SUITABILITY[cam.speed_suitability] || "");
+    if (cam.latest && cam.latest.camera_moved) label += " (newest clip: camera had moved)";
     m.bindTooltip(`<strong>${esc(cam.name)}</strong><br>${esc(label)}`);
     m.on("click", () => selectCamera(cam.id));
     markers[cam.id] = m;
   }
-  const withData = cameras.filter(c => c.latest);
+  const withData = cameras.filter(c => c.latest_valid);
   if (withData.length) withData.forEach(c => markers[c.id].bringToFront());
   map.fitBounds(L.latLngBounds(cameras.map(c => [c.lat, c.lon])), { padding: [20, 20] });
 }
@@ -79,9 +81,9 @@ function renderOverview(data) {
   const counts = data.summary.by_speed_suitability;
   const rows = Object.entries(counts).sort((a, b) => b[1] - a[1])
     .map(([k, n]) => `<tr><td>${esc(SUITABILITY[k] || k)}</td><td class="num">${n}</td></tr>`).join("");
-  const live = cameras.filter(c => c.latest);
+  const live = cameras.filter(c => c.latest_valid);
   const list = live.map(c => `<li><button data-cam="${esc(c.id)}"><strong>${esc(c.name)}</strong><br>
-      <span class="muted small">median ${fmt(c.latest.median_mph)} mph from ${c.latest.with_speed} vehicles, limit ${c.posted_limit_mph}</span></button></li>`).join("");
+      <span class="muted small">median ${fmt(c.latest_valid.median_mph)} mph from ${c.latest_valid.with_speed} vehicles, limit ${c.posted_limit_mph}</span></button></li>`).join("");
   document.getElementById("panel").innerHTML = `
     <h2>${data.summary.total} cameras on the LIE</h2>
     <p class="muted">Queens-Midtown Tunnel to Riverhead. Pick a camera on the map. Filled circles have processed footage
@@ -100,7 +102,7 @@ async function selectCamera(id) {
   selectedId = id;
   if (replayTimer) { clearInterval(replayTimer); replayTimer = null; }
   const d = await api(`/api/cameras/${encodeURIComponent(id)}`);
-  const cam = d.camera, cal = d.calibration, latest = d.runs[0];
+  const cam = d.camera, cal = d.calibration, newest = d.runs[0], latest = d.latest_valid;
   const meas = cam.measured || {};
   map.panTo([cam.lat, cam.lon]);
   const feed = cam.feed.type === "hls"
@@ -121,11 +123,16 @@ async function selectCamera(id) {
       <dt>Calibration</dt><dd>${calText}</dd>
       <dt>Position</dt><dd>${fmt(cam.chainage_km, 1)} km from the Queens-Midtown Tunnel</dd>
     </dl>`;
+  if (newest && newest.camera_moved) {
+    html += `<div class="callout"><strong>The camera has been re-aimed.</strong> The newest clip
+      (${localTime(newest.clip_start_utc)}) does not match the calibrated view, so its ${newest.vehicles} tracks got no
+      speeds. ${latest ? "Below: the newest clip that matched the calibration." : "Recalibrate this view to get speeds."}</div>`;
+  }
   if (latest) {
     const pct = latest.with_speed ? fmt(latest.pct_over_limit) : "–";
     html += `
-      <h3>Latest processed clip</h3>
-      <p class="muted small">${localTime(latest.clip_start_utc)}, ${fmt(latest.duration_s)} s of video${latest.camera_moved ? ". <strong>Camera had moved: speeds rejected.</strong>" : ""}</p>
+      <h3>Latest clip with speeds</h3>
+      <p class="muted small">${localTime(latest.clip_start_utc)}, ${fmt(latest.duration_s)} s of video</p>
       <div class="stats">
         <div class="stat"><strong>${fmt(latest.median_mph)}</strong><span>median mph</span></div>
         <div class="stat"><strong>${fmt(latest.p85_mph)}</strong><span>85th percentile</span></div>
@@ -137,8 +144,8 @@ async function selectCamera(id) {
       <p class="muted small">Replay of the latest clip's tracks drawn on the reference frame. Labels are estimates in mph.</p>
       <div id="overlay"></div>
       <h3>Speed estimates from this camera</h3><div id="cam-events"></div>`;
-  } else {
-    html += `<div class="callout">No processed footage for this camera yet.${cam.feed.type === "hls" ? " Record a clip and run the pipeline (README, step 3)." : ""}</div>`;
+  } else if (!newest) {
+    html += `<div class="callout">No processed footage for this camera yet.${cam.feed.type === "hls" ? " Record a clip and run the pipeline (see the README)." : ""}</div>`;
   }
   if (cam.feed.type === "hls") {
     html += `<h3>Live video</h3>

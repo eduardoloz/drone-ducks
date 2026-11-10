@@ -189,3 +189,30 @@ def decode_gray_small(path: Path | str, width: int = 160, height: int = 120) -> 
          "-f", "rawvideo", "-"], capture_output=True, check=True).stdout
     n = len(raw) // (width * height)
     return np.frombuffer(raw, np.uint8)[: n * width * height].reshape(n, height, width)
+
+
+def main(argv: list[str] | None = None) -> None:
+    """Record one clip from a manifest camera into data/clips/ (with a .json sidecar)."""
+    import argparse
+
+    from cctv.registry import DATA_DIR, get_camera
+
+    ap = argparse.ArgumentParser(description="Record a short HLS clip from an LIE camera.")
+    ap.add_argument("--camera", required=True, help="camera id, e.g. R10_041")
+    ap.add_argument("--seconds", type=float, default=60.0, help="keep clips short (<= 60 s)")
+    args = ap.parse_args(argv)
+    if args.seconds > 120:
+        ap.error("please keep research clips short (<= 120 s)")
+    cam = get_camera(args.camera)
+    if cam["feed"]["type"] != "hls":
+        ap.error(f"{args.camera} is a still-image camera; only HLS video cameras can be recorded")
+    stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+    out = DATA_DIR / "clips" / f"{cam['id']}_{stamp}.ts"
+    rec = record_hls(cam["feed"]["url"], out, args.seconds, camera_id=cam["id"])
+    side = rec.save_sidecar()
+    print(f"rc={rec.returncode} clip={out} ({out.stat().st_size / 1e6:.1f} MB) sidecar={side}"
+          if out.exists() else f"recording failed rc={rec.returncode}\n{rec.stderr_tail}")
+
+
+if __name__ == "__main__":
+    main()

@@ -1,6 +1,6 @@
 {
  "schema_version": 1,
- "generated_at": "2026-11-10T22:36:53+00:00",
+ "generated_at": "2026-11-10T22:38:26+00:00",
  "corridor": "I-495 Long Island Expressway, Queens-Midtown Tunnel (Queens) to Riverhead (Suffolk)",
  "sources": {
   "camera_list": "https://api-511x-nysdot.carsprogram.org/cameras/map-features (loaded by https://511ny.org map)",
@@ -44,7 +44,7 @@
    "candidate_video": 68,
    "candidate_video_secondary": 23,
    "measured_good": 8,
-   "measured_unusable": 1
+   "inconclusive_dark": 1
   },
   "excluded_indoor_welcome_center": 24,
   "matched_opencctv": 82,
@@ -4163,6 +4163,8 @@
    },
    "broken_flag_511ny": false,
    "posted_limit_mph": 55,
+   "suitability_override": "inconclusive_dark",
+   "notes": "Measured 2026-11-10 21:50 UTC, after sunset: near-black picture, so the duplicate-frame and view checks are meaningless. Re-measure in daylight.",
    "measured": {
     "camera_id": "R10_355",
     "feed_type": "hls",
@@ -4219,7 +4221,7 @@
    },
    "chainage_km": 86.04,
    "co_located": [],
-   "speed_suitability": "measured_unusable"
+   "speed_suitability": "inconclusive_dark"
   },
   {
    "id": "R10_314",

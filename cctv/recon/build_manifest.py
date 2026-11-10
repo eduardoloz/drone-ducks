@@ -55,6 +55,9 @@ def posted_limit(county: str, lon: float) -> int:
 OVERRIDES: dict[str, dict[str, Any]] = {
     "R10_314": {"ptz": "fixed"},  # name says "(Fixed)"
     "R10_357": {"notes": "Seen zoomed onto an incident on 2026-11-10 (PTZ moves)."},
+    "R10_355": {"suitability_override": "inconclusive_dark",
+                "notes": "Measured 2026-11-10 21:50 UTC, after sunset: near-black picture, so the "
+                         "duplicate-frame and view checks are meaningless. Re-measure in daylight."},
     "R10_362": {"exit": "72"},  # name "Exit 72 - 1" means camera 1 at Exit 72
     "R10_363": {"exit": "72"},
 }
@@ -145,6 +148,10 @@ def suitability(cam: dict[str, Any]) -> str:
     if cam["feed"]["type"] == "jpeg":
         return "snapshot_only"
     meas = cam.get("measured")
+    if cam.get("suitability_override"):
+        return cam["suitability_override"]
+    if meas and meas.get("ok") and (meas.get("mean_luma") or 255) < 35:
+        return "inconclusive_dark"
     if meas and meas.get("ok"):
         fps = meas.get("effective_fps") or 0
         unique = meas.get("unique_fps") or 0

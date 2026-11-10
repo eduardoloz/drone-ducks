@@ -86,7 +86,13 @@ def check_camera_motion(camera_id: str, clip: Path, cal: Calibration | None) -> 
         return None, {"reason": "could not read frames"}
     boxes = [tuple(b) for b in cal.osd_boxes] if cal.osd_boxes else DEFAULT_OSD_BOXES
     res = CameraMotionDetector(ref, osd_boxes=boxes).check(cur)
-    return res.moved, res.to_dict()
+    out = res.to_dict()
+    luma_ref, luma_cur = float(ref.mean()), float(cur.mean())
+    out.update(luma_ref=round(luma_ref, 1), luma_clip=round(luma_cur, 1))
+    if res.moved and luma_cur < 0.6 * luma_ref:
+        # Still treated as moved (conservative), but say why it might be a false alarm.
+        out["reason"] += " (clip much darker than the daytime reference: verify by eye, or calibrate a night view)"
+    return res.moved, out
 
 
 def process(camera_id: str, clip: Path, db_path: Path, tracks_path: Path | None = None,

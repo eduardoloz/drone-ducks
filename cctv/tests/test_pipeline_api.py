@@ -66,3 +66,23 @@ def test_calibration_fit_endpoint_matches_committed_points(tmp_path):
     out = r.json()
     assert out["rmse_m"] < 0.15 and len(out["errors_m"]) == len(spec["points"])
     assert client.post("/api/calibrate/fit", json={"points": []}).status_code == 422
+
+
+def test_moved_camera_run_does_not_hide_last_valid_run(tmp_path):
+    from cctv import store
+    cal = Calibration.load(calibration_path("R10_041"))
+    tracks = tmp_path / "tracks.jsonl"
+    save_jsonl(synthetic_tracks(cal, [60.0]), tracks, meta={"frames": 60})
+    db = tmp_path / "m.sqlite"
+    first = process("R10_041", tmp_path / "R10_041_20261110T213935Z.ts", db, tracks_path=tracks)
+    con = store.connect(db)
+    moved = store.insert_run(con, camera_id="R10_041", source="night.ts", camera_moved=1, duration_s=30.0)
+    store.insert_vehicle(con, run_id=moved, camera_id="R10_041", track_id=1, cls="car", accepted=0,
+                         reject_reason="camera moved since calibration", over_limit=0)
+    con.commit()
+    client = TestClient(create_app(db_path=db))
+    cam = {c["id"]: c for c in client.get("/api/cameras").json()["cameras"]}["R10_041"]
+    assert cam["latest"]["camera_moved"] == 1
+    assert cam["latest_valid"]["run_id"] == first["run_id"]
+    detail = client.get("/api/cameras/R10_041").json()
+    assert detail["runs"][0]["camera_moved"] == 1 and detail["latest_valid"]["run_id"] == first["run_id"]
