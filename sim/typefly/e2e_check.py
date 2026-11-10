@@ -71,6 +71,13 @@ def main() -> int:
     robot = ctl.robot
 
     print(f"== instruction: {args.instruction!r}  ({'canned plan' if args.no_llm else 'LLM plan'})")
+    robot.drone.connect(timeout_s=40)
+    t = robot.drone.telemetry
+    if math.hypot(t.north_m, t.east_m) > 1.5:
+        print(f"FAIL: the drone is at N{t.north_m:.1f} E{t.east_m:.1f}, not at the spawn point, so the object "
+              "positions above do not apply. Restart the sim first: NO_WEBUI=1 sim/scripts/start_all.sh")
+        robot.drone.close(land=False)
+        return 2
     robot.start()
     time.sleep(3)  # let a few detections arrive
     t0 = time.time()
