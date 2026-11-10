@@ -1,0 +1,10 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+.pytest_cache/
+# YOLO weights auto-downloaded by ultralytics into the working dir
+*.pt
+# macOS
+.DS_Store
