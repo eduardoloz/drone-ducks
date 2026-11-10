@@ -7,6 +7,45 @@ ethics and legal ground rules that apply throughout.
 
 Status legend: **[built]** exists in this branch and was run; **[planned]** designed here, not built.
 
+## 0. Feasibility verdict (details and citations in [SOURCES.md](SOURCES.md))
+
+**Source and terms.**
+- opencctv.org is an aggregator: the LIE cameras it lists are NYSDOT/511NY streams. Its
+  robots.txt allows `/cameras/` pages and disallows `/api/`, and it has no terms page. We
+  used it only for discovery (7 robots-allowed requests).
+- The official source is 511NY/NYSDOT. Video is HLS from `s*.nysdot.skyvdn.com`, with no
+  robots.txt. The 511NY Developer Access Agreement (updated 2026-09-18) allows
+  redistribution with attribution, data timestamps and a passed-on disclaimer, but feed
+  access needs a free request. **TODO (Eddie): file that request before any continuous
+  ingest.**
+- The 21 Queens NYC DOT cameras are 0.5 fps stills, and NYC DOT requires a data-sharing
+  agreement, so they are not used.
+
+**Measured.**
+- 19 cameras measured: all NYSDOT feeds run at 14.99–15.00 fps with 5.005 s segments
+  published in real time.
+- Region 10 (Nassau/Suffolk) encoders: 640×480, frame-timestamp jitter 0.4 ms, no gaps,
+  no repeated frames.
+- Queens (Region 11): 352×240.
+- The east-end 768×432 cameras drop frames (gaps up to 200 ms) and repeat up to 55%.
+
+**Which LIE cameras can support per-vehicle speeds?**
+- Candidates: the 85 mainline video cameras out of the 129 on the corridor.
+- **Likely good: about 40–45 Region 10 cameras in Nassau/Suffolk**; 8 of 9 measured passed.
+- Marginal: about 30 low-resolution Queens cameras and 9 east-end cameras.
+- Snapshot only (counts or density at most): 21 NYC DOT cameras.
+- Each good camera still needs a calibratable view, and PTZ moves invalidate it (seen for
+  real on R10_041).
+- **Proven end to end on 1 camera (R10_041):** 54 of 62 vehicles got speeds, median
+  57 mph, σ about 1.7 mph.
+- **TODO:**
+  - ground-truth validation;
+  - calibrate 4+ more cameras;
+  - daylight re-measurement (R10_355 was dark);
+  - live ingest and the GPU worker (sections 3.2, 3.3);
+  - Postgres;
+  - WebSocket overlays.
+
 ## 1. The product in one paragraph
 
 A map of the LIE's 129 public cameras. Cameras with real video and a calibration show the
