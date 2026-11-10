@@ -1,0 +1,10 @@
+# PX4 parameters applied at every SITL start (scripts/run_sim.sh exports them as PX4_PARAM_<NAME>,
+# which PX4's rcS sets after the airframe defaults). Format: NAME VALUE  # comment
+#
+# Keep this file SMALL and SIM-ONLY. Anything that should also be on the real drone belongs in a
+# hardware params file loaded through QGroundControl (see docs/ARCHITECTURE.md, "Path to hardware").
+
+# The simulated battery drains while armed (SIM_BAT_DRAIN, 60 s by default) down to this floor.
+# 60 % keeps normal runs far from the low-battery thresholds; tests/sitl/test_failsafes.py lowers it
+# at runtime to trigger the low-battery behaviour on purpose.
+SIM_BAT_MIN_PCT 60

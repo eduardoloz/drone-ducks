@@ -171,10 +171,16 @@ class Drone:
                        f"last PX4 message: {t.status_text!r}")
 
     def close(self, land: Optional[bool] = None) -> None:
-        """Land if we are flying (unless land=False), then release the link."""
+        """Land if we are flying (unless land=False), then release the link.
+
+        "Flying" means armed + in the air + PX4 still in OFFBOARD, even if we had already given up
+        control (e.g. after a link hiccup): closing the link would otherwise trigger PX4's
+        offboard-loss failsafe (Return mode, which climbs to RTL_RETURN_ALT). If PX4 is in any
+        other mode, a failsafe or the pilot owns the drone and we leave it alone."""
         land = self.config.land_on_exit if land is None else land
         try:
-            if land and self._connected and self._in_control and self.telemetry.in_air:
+            t = self.telemetry
+            if land and self._connected and t.armed and t.in_air and (self._in_control or t.flight_mode == "OFFBOARD"):
                 self.land(wait=True)
         finally:
             self._stop_evt.set()
@@ -458,7 +464,16 @@ class Drone:
         self.override_mode = None
         self._watchdog.release()
 
-    def _release_control(self, reason: str) -> None:
+    def _release_control(self, reason: str, make_safe: bool = False) -> None:
+        """Stop commanding. make_safe=True first replaces the setpoint MAVSDK keeps re-sending with
+        zero velocity: if the link comes back while PX4 is still in OFFBOARD, it hovers instead of
+        flying our last velocity command with no watchdog watching."""
+        if make_safe and self._in_control:
+            try:
+                with self._send_lock:
+                    self.backend.set_velocity_body(0.0, 0.0, 0.0, 0.0)
+            except Exception:
+                pass  # link may be down: best effort
         self._in_control = False
         self._lost_reason = reason
         self._watchdog.release()
@@ -516,7 +531,7 @@ class Drone:
         if stale and not self._link_lost:
             self._link_lost = True
             if self._in_control:
-                self._release_control("link lost")
+                self._release_control("link lost", make_safe=True)
             self._event("link_lost", f"no telemetry for {c.link_timeout_s:.0f} s; PX4's own "
                                      "offboard/datalink-loss failsafes take over")
         elif not stale and self._link_lost:
@@ -529,7 +544,9 @@ class Drone:
                 self._seen_offboard = True
             elif self._seen_offboard or now - self._control_since > c.offboard_engage_timeout_s:
                 mode = t.flight_mode
-                self._release_control(f"PX4 switched to {mode}")
+                # PX4 ignores offboard setpoints outside OFFBOARD; zeroing them only matters if the
+                # pilot later flips back to Offboard: then the drone hovers instead of resuming.
+                self._release_control(f"PX4 switched to {mode}", make_safe=True)
                 self.override_mode = mode
                 self._event("px4_override", f"PX4 switched to {mode} on its own (failsafe or pilot); "
                                             "stopped sending commands", mode=mode, px4=t.status_text)

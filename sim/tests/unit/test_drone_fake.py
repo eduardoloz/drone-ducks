@@ -195,3 +195,33 @@ def test_from_dict_and_fake_url():
     assert d.limits.max_speed_xy == 0.7 and d.config.takeoff_alt_m == 1.2
     assert isinstance(d.backend, FakeBackend)
     d.backend.shutdown()
+
+
+def test_link_loss_replaces_resent_velocity_with_zero(drone, fake):
+    # MAVSDK re-sends the last setpoint by itself; after a link drop it must not be a velocity
+    drone.takeoff(2.0)
+    drone.set_velocity_body(forward_m_s=1.0)
+    fake.set_link_alive(False)
+    assert wait_for(lambda: drone.events("link_lost"), timeout=2.0)
+    assert fake._sp == ("vel", 0.0, 0.0, 0.0, 0.0)
+
+
+def test_exit_lands_when_px4_still_offboard_after_control_lost(fake):
+    # e.g. the laptop slept: link_lost -> ControlLost raised -> leaving the block must still land
+    with pytest.raises(ControlLost):
+        with Drone("fake://", backend=fake, config=FAST, log=None) as d:
+            d.takeoff(2.0)
+            fake.set_link_alive(False)
+            assert wait_for(lambda: d.events("link_lost"), timeout=2.0)
+            fake.set_link_alive(True)
+            assert wait_for(lambda: d.events("link_ok"), timeout=2.0)
+            d.move(forward=1.0)                      # raises ControlLost
+    assert not fake.state.in_air and not fake.state.armed
+
+
+def test_exit_leaves_a_px4_failsafe_alone(fake):
+    with Drone("fake://", backend=fake, config=FAST, log=None) as d:
+        d.takeoff(2.0)
+        fake.inject_mode("HOLD", "Failsafe activated")    # PX4 / the pilot took over
+        assert wait_for(lambda: not d.in_control, timeout=1.0)
+    assert fake.state.mode == "HOLD" and fake.state.in_air   # we did not land over PX4's decision
