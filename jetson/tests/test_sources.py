@@ -111,6 +111,7 @@ def http_server():
     ("http://10.18.237.58:8080/shot.jpg", S.HttpSnapshotSource),
     ("http://127.0.0.1:5601/frame", S.HttpSnapshotSource),
     ("rtsp://cam/stream", S.OpenCVSource),
+    ("tcp://127.0.0.1:5000", S.MjpegStreamSource),
     ("opencv:http://cam/video", S.OpenCVSource),
     ("photo.jpg", S.ImageSource),
 ])
@@ -183,6 +184,38 @@ def test_mjpeg_stream_decodes_frames(http_server):
     assert all(ok for ok, _, _ in frames)
     blues = [int(img[0, 0, 0]) for _, img, _ in frames]
     assert blues == sorted(blues)                       # newer frames come later
+
+
+def test_raw_mjpeg_over_tcp():
+    """What a `gst-launch ... nvjpegenc ! multipartmux ! tcpserversink` pipeline would serve."""
+    import socket
+
+    srv = socket.socket()
+    srv.bind(("127.0.0.1", 0))
+    srv.listen(1)
+    port = srv.getsockname()[1]
+
+    def serve():
+        conn, _ = srv.accept()
+        try:
+            for i in range(10):
+                conn.sendall(b"--ThisRandomString\r\nContent-Type: image/jpeg\r\n\r\n" + _jpeg((0, 0, i * 20)))
+                time.sleep(0.01)
+        except OSError:
+            pass
+        finally:
+            conn.close()
+
+    threading.Thread(target=serve, daemon=True).start()
+    src = S.open_source(f"tcp://127.0.0.1:{port}")
+    src.open()
+    try:
+        ok, img, _ = src.read()
+        assert ok and img.shape == (48, 64, 3)
+    finally:
+        src.close()
+        srv.close()
+    assert "nvjpegenc" in S.csi_mjpeg_server_cmd() and "tcpserversink" in S.csi_mjpeg_server_cmd()
 
 
 def test_mjpeg_bad_url_has_helpful_error():

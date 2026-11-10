@@ -16,6 +16,9 @@ turns a command-line string into the right source:
   sim  /  sim://127.0.0.1:5601           Gazebo camera bridge (sim/ track): GET /frame, raw RGB
   http://phone:8080/video                MJPEG stream (Android "IP Webcam" app, like BTMOB.py)
   http://phone:8080/shot.jpg             single-image snapshot URL, polled
+  tcp://127.0.0.1:5000                   raw MJPEG over TCP, e.g. from a system GStreamer pipeline:
+                                         the CSI route on an original Nano whose pip OpenCV has no
+                                         GStreamer (see csi_mjpeg_server_cmd())
   rtsp://...                             RTSP via OpenCV/FFmpeg
   opencv:<anything>                      force plain cv2.VideoCapture(<anything>)
   path/to/video.mp4                      video file (frame by frame; --realtime paces it like a camera)
@@ -32,6 +35,7 @@ from __future__ import annotations
 
 import logging
 import os
+import socket
 import sys
 import threading
 import time
@@ -255,6 +259,18 @@ def csi_pipeline(sensor_id: int = 0, width: int = 1640, height: int = 1232, fps:
     )
 
 
+def csi_mjpeg_server_cmd(sensor_id: int = 0, width: int = 1640, height: int = 1232, fps: int = 30,
+                         port: int = 5000, quality: int = 85) -> str:
+    """Shell command for a system GStreamer pipeline serving CSI frames as MJPEG on localhost.
+
+    Needs no OpenCV at all (nvjpegenc is the Jetson hardware JPEG encoder); read it with
+    --source tcp://127.0.0.1:5000. UNVERIFIED on hardware: written from the JetPack plugin docs.
+    """
+    return (f"gst-launch-1.0 -e nvarguscamerasrc sensor-id={sensor_id} ! "
+            f"'video/x-raw(memory:NVMM),width={width},height={height},framerate={fps}/1' ! "
+            f"nvjpegenc quality={quality} ! multipartmux ! tcpserversink host=127.0.0.1 port={port}")
+
+
 def opencv_has_gstreamer() -> bool:
     if cv2 is None:
         return False
@@ -364,8 +380,21 @@ class HttpSnapshotSource(FrameSource):
             return (img is not None), img, now
 
 
+class _SocketReader:
+    """Minimal file-like wrapper so tcp:// streams look like an HTTP response to the parser."""
+
+    def __init__(self, sock: socket.socket) -> None:
+        self._sock = sock
+
+    def read1(self, n: int) -> bytes:
+        return self._sock.recv(n)
+
+    def close(self) -> None:
+        self._sock.close()
+
+
 class MjpegStreamSource(FrameSource):
-    """Read a multipart MJPEG stream over HTTP (IP Webcam's /video, many IP cameras).
+    """Read an MJPEG stream: multipart over HTTP (IP Webcam's /video) or raw over tcp://host:port.
 
     Frames are cut at JPEG start/end markers (FFD8 ... FFD9). If several complete frames are
     already buffered we decode only the newest, the same latest-frame idea as the reader thread.
@@ -379,10 +408,15 @@ class MjpegStreamSource(FrameSource):
 
     def open(self) -> None:
         try:
-            self._resp = urllib.request.urlopen(self.url, timeout=self.timeout)
+            if self.url.startswith("tcp://"):
+                u = urllib.parse.urlparse(self.url)
+                self._resp = _SocketReader(socket.create_connection((u.hostname, u.port), timeout=self.timeout))
+            else:
+                self._resp = urllib.request.urlopen(self.url, timeout=self.timeout)
         except OSError as e:
             raise SourceError(f"could not open MJPEG stream {self.url}: {e}. Phone and computer on "
-                              "the same Wi-Fi? Is the IP Webcam app's server started?") from e
+                              "the same Wi-Fi? Is the IP Webcam app's server (or the GStreamer "
+                              "pipeline for tcp://) running?") from e
         self._buf = b""
 
     def read(self) -> ReadResult:
@@ -450,6 +484,8 @@ def open_source(spec: str, width: Optional[int] = None, height: Optional[int] = 
         if path.endswith(("/frame", "/frame.bmp")) or path.endswith(IMAGE_EXTS) or "shot" in path \
                 or "snapshot" in path:
             return HttpSnapshotSource(s)
+        return MjpegStreamSource(s)
+    if s.startswith("tcp://"):
         return MjpegStreamSource(s)
     if s.startswith(("rtsp://", "rtmp://", "udp://")):
         return OpenCVSource(s, name=s)

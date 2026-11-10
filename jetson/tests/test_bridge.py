@@ -232,3 +232,15 @@ def test_make_adapter_picks_native_when_available():
     assert isinstance(make_adapter("auto"), NativeMavsdkAdapter)
     with pytest.raises(ValueError):
         make_adapter("pymavlink")
+
+
+def test_linkcheck_is_read_only():
+    import asyncio
+
+    from jetson.linkcheck import watch
+
+    px4 = FakePX4(in_air=True)
+    lines = []
+    assert asyncio.run(watch(px4, "fake://", seconds=0.3, connect_timeout=1.0, emit=lines.append)) == 0
+    assert px4.names() == ["connect"]                     # nothing but the connection
+    assert any("mode=POSCTL" in line for line in lines) and "no commands" in lines[-1]
