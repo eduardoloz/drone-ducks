@@ -1,0 +1,958 @@
+{
+ "generated_utc": "2026-11-10T21:52:01+00:00",
+ "results": [
+  {
+   "camera_id": "NYCDOT_43e3d020",
+   "feed_type": "jpeg",
+   "url": "https://nyctmc.org/api/cameras/43e3d020-e4f2-4599-a19f-72ae778f1dcd/image",
+   "recorded_utc": "2026-11-10T21:51:41+00:00",
+   "refresh_interval_s": {
+    "mean": 1.91,
+    "std": 0.3,
+    "min": 1.0,
+    "p99": 2.01,
+    "max": 2.01
+   },
+   "effective_fps": 0.498,
+   "unique_fps": 0.498,
+   "poll_interval_s": 1.0,
+   "height": 480,
+   "width": 720,
+   "note": "Polled at 1 Hz, so refresh intervals are quantised to ~1 s.",
+   "ok": true
+  },
+  {
+   "camera_id": "NYCDOT_67f77766",
+   "feed_type": "jpeg",
+   "url": "https://nyctmc.org/api/cameras/67f77766-bd19-4082-adeb-88d59866c490/image",
+   "recorded_utc": "2026-11-10T21:51:19+00:00",
+   "refresh_interval_s": {
+    "mean": 1.91,
+    "std": 0.3,
+    "min": 1.0,
+    "p99": 2.01,
+    "max": 2.01
+   },
+   "effective_fps": 0.498,
+   "unique_fps": 0.498,
+   "poll_interval_s": 1.0,
+   "height": 240,
+   "width": 352,
+   "note": "Polled at 1 Hz, so refresh intervals are quantised to ~1 s.",
+   "ok": true
+  },
+  {
+   "camera_id": "R10_011",
+   "feed_type": "hls",
+   "url": "https://s52.nysdot.skyvdn.com/rtplive/R10_011/playlist.m3u8",
+   "variants": [
+    {
+     "bandwidth": 215758,
+     "codecs": "avc1.4d401f",
+     "width": 640,
+     "height": 480
+    }
+   ],
+   "target_duration_s": 6.0,
+   "segment_duration_s": 5.005,
+   "playlist_window_s": 15.015,
+   "playlist_segments": 3,
+   "recorded_utc": "2026-11-10T21:49:50.238+00:00",
+   "width": 640,
+   "height": 480,
+   "codec": "h264 Main",
+   "nominal_fps": 14.985,
+   "frames": 300,
+   "clip_seconds": 19.953000000000003,
+   "effective_fps": 14.985,
+   "frame_dt_ms": {
+    "mean": 66.73,
+    "std": 0.44,
+    "min": 66.0,
+    "p99": 67.0,
+    "max": 67.0
+   },
+   "timestamp_gaps_over_1_5x": 0,
+   "bitrate_kbps": 241.4,
+   "dup_frame_ratio": 0.0,
+   "unique_fps": 14.98,
+   "osd_clock": {
+    "events_per_s": 1.303,
+    "median_interval_frames": 15.0,
+    "n": 26,
+    "near_integer_rate": false
+   },
+   "segment_publish_interval_s": 4.96,
+   "view_static_during_clip": true,
+   "view_check": {
+    "moved": false,
+    "reason": "static",
+    "shift_px": 0.0,
+    "scale": 1.0,
+    "rotation_deg": -0.01,
+    "inlier_ratio": 0.851,
+    "n_matches": 114
+   },
+   "ok": true
+  },
+  {
+   "camera_id": "R10_014",
+   "feed_type": "hls",
+   "url": "https://s52.nysdot.skyvdn.com/rtplive/R10_014/playlist.m3u8",
+   "variants": [
+    {
+     "bandwidth": 216359,
+     "codecs": "avc1.4d401f",
+     "width": 640,
+     "height": 480
+    }
+   ],
+   "target_duration_s": 6.0,
+   "segment_duration_s": 5.005,
+   "playlist_window_s": 15.014,
+   "playlist_segments": 3,
+   "recorded_utc": "2026-11-10T21:47:37.216+00:00",
+   "width": 640,
+   "height": 480,
+   "codec": "h264 Main",
+   "nominal_fps": 14.985,
+   "frames": 300,
+   "clip_seconds": 19.952,
+   "effective_fps": 14.986,
+   "frame_dt_ms": {
+    "mean": 66.73,
+    "std": 0.44,
+    "min": 66.0,
+    "p99": 67.0,
+    "max": 67.0
+   },
+   "timestamp_gaps_over_1_5x": 0,
+   "bitrate_kbps": 235.9,
+   "dup_frame_ratio": 0.0,
+   "unique_fps": 14.99,
+   "osd_clock": {
+    "events_per_s": 1.002,
+    "median_interval_frames": 15.0,
+    "n": 20,
+    "near_integer_rate": true
+   },
+   "segment_publish_interval_s": 4.93,
+   "view_static_during_clip": true,
+   "view_check": {
+    "moved": false,
+    "reason": "static",
+    "shift_px": 0.5,
+    "scale": 1.003,
+    "rotation_deg": -0.109,
+    "inlier_ratio": 0.5,
+    "n_matches": 28
+   },
+   "ok": true
+  },
+  {
+   "camera_id": "R10_017",
+   "feed_type": "hls",
+   "url": "https://s52.nysdot.skyvdn.com/rtplive/R10_017/playlist.m3u8",
+   "variants": [
+    {
+     "bandwidth": 224473,
+     "codecs": "avc1.4d401e",
+     "width": 640,
+     "height": 480
+    }
+   ],
+   "target_duration_s": 6.0,
+   "segment_duration_s": 5.005,
+   "playlist_window_s": 15.015,
+   "playlist_segments": 3,
+   "recorded_utc": "2026-11-10T21:47:23.471+00:00",
+   "width": 640,
+   "height": 480,
+   "codec": "h264 Main",
+   "nominal_fps": 14.985,
+   "frames": 300,
+   "clip_seconds": 19.953000000000003,
+   "effective_fps": 14.985,
+   "frame_dt_ms": {
+    "mean": 66.73,
+    "std": 0.44,
+    "min": 66.0,
+    "p99": 67.0,
+    "max": 67.0
+   },
+   "timestamp_gaps_over_1_5x": 0,
+   "bitrate_kbps": 242.3,
+   "dup_frame_ratio": 0.0,
+   "unique_fps": 14.98,
+   "osd_clock": {
+    "events_per_s": 1.002,
+    "median_interval_frames": 15.0,
+    "n": 20,
+    "near_integer_rate": true
+   },
+   "segment_publish_interval_s": 4.91,
+   "view_static_during_clip": true,
+   "view_check": {
+    "moved": false,
+    "reason": "static",
+    "shift_px": 0.424,
+    "scale": 1.004,
+    "rotation_deg": 0.076,
+    "inlier_ratio": 0.519,
+    "n_matches": 27
+   },
+   "ok": true
+  },
+  {
+   "camera_id": "R10_019",
+   "feed_type": "hls",
+   "url": "https://s52.nysdot.skyvdn.com/rtplive/R10_019/playlist.m3u8",
+   "variants": [
+    {
+     "bandwidth": 216660,
+     "codecs": "avc1.4d401e",
+     "width": 640,
+     "height": 480
+    }
+   ],
+   "target_duration_s": 6.0,
+   "segment_duration_s": 5.005,
+   "playlist_window_s": 15.014,
+   "playlist_segments": 3,
+   "recorded_utc": "2026-11-10T21:50:03.670+00:00",
+   "width": 640,
+   "height": 480,
+   "codec": "h264 Main",
+   "nominal_fps": 14.985,
+   "frames": 300,
+   "clip_seconds": 19.952,
+   "effective_fps": 14.986,
+   "frame_dt_ms": {
+    "mean": 66.73,
+    "std": 0.44,
+    "min": 66.0,
+    "p99": 67.0,
+    "max": 67.0
+   },
+   "timestamp_gaps_over_1_5x": 0,
+   "bitrate_kbps": 239.1,
+   "dup_frame_ratio": 0.0,
+   "unique_fps": 14.99,
+   "osd_clock": {
+    "events_per_s": 2.005,
+    "median_interval_frames": 5.0,
+    "n": 40,
+    "near_integer_rate": true
+   },
+   "segment_publish_interval_s": 4.97,
+   "view_static_during_clip": true,
+   "view_check": {
+    "moved": false,
+    "reason": "static",
+    "shift_px": 0.0,
+    "scale": 1.0,
+    "rotation_deg": -0.007,
+    "inlier_ratio": 0.722,
+    "n_matches": 54
+   },
+   "ok": true
+  },
+  {
+   "camera_id": "R10_027",
+   "feed_type": "hls",
+   "url": "https://s53.nysdot.skyvdn.com/rtplive/R10_027/playlist.m3u8",
+   "variants": [
+    {
+     "bandwidth": 216059,
+     "codecs": "avc1.4d401e",
+     "width": 352,
+     "height": 240
+    }
+   ],
+   "target_duration_s": 6.0,
+   "segment_duration_s": 5.005,
+   "playlist_window_s": 15.014,
+   "playlist_segments": 3,
+   "recorded_utc": "2026-11-10T21:50:17.175+00:00",
+   "width": 352,
+   "height": 240,
+   "codec": "h264 Main",
+   "nominal_fps": 14.985,
+   "frames": 300,
+   "clip_seconds": 19.952,
+   "effective_fps": 14.986,
+   "frame_dt_ms": {
+    "mean": 66.73,
+    "std": 0.44,
+    "min": 66.0,
+    "p99": 67.0,
+    "max": 67.0
+   },
+   "timestamp_gaps_over_1_5x": 0,
+   "bitrate_kbps": 234.4,
+   "dup_frame_ratio": 0.0,
+   "unique_fps": 14.99,
+   "osd_clock": null,
+   "segment_publish_interval_s": 4.92,
+   "view_static_during_clip": true,
+   "view_check": {
+    "moved": false,
+    "reason": "static",
+    "shift_px": 0.0,
+    "scale": 0.995,
+    "rotation_deg": 0.26,
+    "inlier_ratio": 0.725,
+    "n_matches": 91
+   },
+   "ok": true
+  },
+  {
+   "camera_id": "R10_036",
+   "feed_type": "hls",
+   "url": "https://s51.nysdot.skyvdn.com/rtplive/R10_036/playlist.m3u8",
+   "variants": [
+    {
+     "bandwidth": 225374,
+     "codecs": "avc1.4d401e",
+     "width": 640,
+     "height": 480
+    }
+   ],
+   "target_duration_s": 6.0,
+   "segment_duration_s": 5.005,
+   "playlist_window_s": 15.015,
+   "playlist_segments": 3,
+   "recorded_utc": "2026-11-10T21:50:30.460+00:00",
+   "width": 640,
+   "height": 480,
+   "codec": "h264 Main",
+   "nominal_fps": 14.985,
+   "frames": 300,
+   "clip_seconds": 19.953000000000003,
+   "effective_fps": 14.985,
+   "frame_dt_ms": {
+    "mean": 66.73,
+    "std": 0.44,
+    "min": 66.0,
+    "p99": 67.0,
+    "max": 67.0
+   },
+   "timestamp_gaps_over_1_5x": 0,
+   "bitrate_kbps": 241.7,
+   "dup_frame_ratio": 0.0,
+   "unique_fps": 14.98,
+   "osd_clock": {
+    "events_per_s": 2.556,
+    "median_interval_frames": 4.0,
+    "n": 51,
+    "near_integer_rate": false
+   },
+   "segment_publish_interval_s": 5.03,
+   "view_static_during_clip": true,
+   "view_check": {
+    "moved": false,
+    "reason": "static",
+    "shift_px": 0.0,
+    "scale": 1.0,
+    "rotation_deg": 0.01,
+    "inlier_ratio": 0.875,
+    "n_matches": 144
+   },
+   "ok": true
+  },
+  {
+   "camera_id": "R10_041",
+   "feed_type": "hls",
+   "url": "https://s52.nysdot.skyvdn.com/rtplive/R10_041/playlist.m3u8",
+   "variants": [
+    {
+     "bandwidth": 221812,
+     "codecs": "avc1.4d401e",
+     "width": 640,
+     "height": 480
+    }
+   ],
+   "target_duration_s": 6.0,
+   "segment_duration_s": 5.005,
+   "playlist_window_s": 15.014,
+   "playlist_segments": 3,
+   "recorded_utc": "2026-11-10T21:47:50.549+00:00",
+   "width": 640,
+   "height": 480,
+   "codec": "h264 Main",
+   "nominal_fps": 14.985,
+   "frames": 300,
+   "clip_seconds": 19.952,
+   "effective_fps": 14.986,
+   "frame_dt_ms": {
+    "mean": 66.73,
+    "std": 0.44,
+    "min": 66.0,
+    "p99": 67.0,
+    "max": 67.0
+   },
+   "timestamp_gaps_over_1_5x": 0,
+   "bitrate_kbps": 235.5,
+   "dup_frame_ratio": 0.0,
+   "unique_fps": 14.99,
+   "osd_clock": {
+    "events_per_s": 1.303,
+    "median_interval_frames": 15.0,
+    "n": 26,
+    "near_integer_rate": false
+   },
+   "segment_publish_interval_s": 4.95,
+   "view_static_during_clip": true,
+   "view_check": {
+    "moved": false,
+    "reason": "static",
+    "shift_px": 0.0,
+    "scale": 1.0,
+    "rotation_deg": 0.021,
+    "inlier_ratio": 0.753,
+    "n_matches": 97
+   },
+   "ok": true
+  },
+  {
+   "camera_id": "R10_044",
+   "feed_type": "hls",
+   "url": "https://s52.nysdot.skyvdn.com/rtplive/R10_044/playlist.m3u8",
+   "variants": [
+    {
+     "bandwidth": 219665,
+     "codecs": "avc1.4d401f",
+     "width": 640,
+     "height": 480
+    }
+   ],
+   "target_duration_s": 6.0,
+   "segment_duration_s": 5.005,
+   "playlist_window_s": 15.014,
+   "playlist_segments": 3,
+   "recorded_utc": "2026-11-10T21:50:44.156+00:00",
+   "width": 640,
+   "height": 480,
+   "codec": "h264 Main",
+   "nominal_fps": 14.985,
+   "frames": 300,
+   "clip_seconds": 19.952,
+   "effective_fps": 14.986,
+   "frame_dt_ms": {
+    "mean": 66.73,
+    "std": 0.44,
+    "min": 66.0,
+    "p99": 67.0,
+    "max": 67.0
+   },
+   "timestamp_gaps_over_1_5x": 0,
+   "bitrate_kbps": 238.8,
+   "dup_frame_ratio": 0.0,
+   "unique_fps": 14.99,
+   "osd_clock": {
+    "events_per_s": 2.105,
+    "median_interval_frames": 7.0,
+    "n": 42,
+    "near_integer_rate": false
+   },
+   "segment_publish_interval_s": 4.9,
+   "view_static_during_clip": true,
+   "view_check": {
+    "moved": false,
+    "reason": "static",
+    "shift_px": 0.0,
+    "scale": 1.0,
+    "rotation_deg": -0.004,
+    "inlier_ratio": 0.929,
+    "n_matches": 127
+   },
+   "ok": true
+  },
+  {
+   "camera_id": "R10_355",
+   "feed_type": "hls",
+   "url": "https://s9.nysdot.skyvdn.com/rtplive/R10_355/playlist.m3u8",
+   "variants": [
+    {
+     "bandwidth": 152684,
+     "codecs": "avc1.4d401e",
+     "width": 640,
+     "height": 480
+    }
+   ],
+   "target_duration_s": 6.0,
+   "segment_duration_s": 5.005,
+   "playlist_window_s": 15.014,
+   "playlist_segments": 3,
+   "recorded_utc": "2026-11-10T21:50:57.646+00:00",
+   "width": 640,
+   "height": 480,
+   "codec": "h264 Main",
+   "nominal_fps": 14.985,
+   "frames": 300,
+   "clip_seconds": 19.952,
+   "effective_fps": 14.986,
+   "frame_dt_ms": {
+    "mean": 66.73,
+    "std": 0.44,
+    "min": 66.0,
+    "p99": 67.0,
+    "max": 67.0
+   },
+   "timestamp_gaps_over_1_5x": 0,
+   "bitrate_kbps": 167.9,
+   "dup_frame_ratio": 0.97,
+   "unique_fps": 0.45,
+   "osd_clock": {
+    "events_per_s": 2.005,
+    "median_interval_frames": 9.0,
+    "n": 40,
+    "near_integer_rate": true
+   },
+   "segment_publish_interval_s": 4.99,
+   "view_static_during_clip": false,
+   "view_check": {
+    "moved": true,
+    "reason": "only 1 feature matches: view changed",
+    "shift_px": NaN,
+    "scale": NaN,
+    "rotation_deg": NaN,
+    "inlier_ratio": 0.0,
+    "n_matches": 1
+   },
+   "ok": true
+  },
+  {
+   "camera_id": "R10_357",
+   "feed_type": "hls",
+   "url": "https://s52.nysdot.skyvdn.com/rtplive/R10_357/playlist.m3u8",
+   "variants": [
+    {
+     "bandwidth": 230483,
+     "codecs": "avc1.4d401e",
+     "width": 768,
+     "height": 432
+    }
+   ],
+   "target_duration_s": 10.0,
+   "segment_duration_s": 5.005,
+   "playlist_window_s": 15.014,
+   "playlist_segments": 3,
+   "recorded_utc": "2026-11-10T21:48:03.970+00:00",
+   "width": 768,
+   "height": 432,
+   "codec": "h264 Main",
+   "nominal_fps": 14.985,
+   "frames": 298,
+   "clip_seconds": 19.952,
+   "effective_fps": 14.886,
+   "frame_dt_ms": {
+    "mean": 67.18,
+    "std": 7.73,
+    "min": 66.0,
+    "p99": 67.0,
+    "max": 200.0
+   },
+   "timestamp_gaps_over_1_5x": 1,
+   "bitrate_kbps": 258.0,
+   "dup_frame_ratio": 0.007,
+   "unique_fps": 14.78,
+   "osd_clock": {
+    "events_per_s": 1.754,
+    "median_interval_frames": 7.5,
+    "n": 35,
+    "near_integer_rate": false
+   },
+   "segment_publish_interval_s": 4.43,
+   "view_static_during_clip": true,
+   "view_check": {
+    "moved": false,
+    "reason": "static",
+    "shift_px": 1.363,
+    "scale": 0.997,
+    "rotation_deg": -0.123,
+    "inlier_ratio": 0.353,
+    "n_matches": 17
+   },
+   "ok": true
+  },
+  {
+   "camera_id": "R10_363",
+   "feed_type": "hls",
+   "url": "https://s52.nysdot.skyvdn.com/rtplive/R10_363/playlist.m3u8",
+   "variants": [
+    {
+     "bandwidth": 215157,
+     "codecs": "avc1.4d401e",
+     "width": 768,
+     "height": 432
+    }
+   ],
+   "target_duration_s": 8.0,
+   "segment_duration_s": 5.005,
+   "playlist_window_s": 15.014,
+   "playlist_segments": 3,
+   "recorded_utc": "2026-11-10T21:51:11.224+00:00",
+   "width": 768,
+   "height": 432,
+   "codec": "h264 Main",
+   "nominal_fps": 14.985,
+   "frames": 296,
+   "clip_seconds": 19.951,
+   "effective_fps": 14.786,
+   "frame_dt_ms": {
+    "mean": 67.63,
+    "std": 9.48,
+    "min": 66.0,
+    "p99": 70.96,
+    "max": 200.0
+   },
+   "timestamp_gaps_over_1_5x": 3,
+   "bitrate_kbps": 220.3,
+   "dup_frame_ratio": 0.555,
+   "unique_fps": 6.58,
+   "osd_clock": {
+    "events_per_s": 1.704,
+    "median_interval_frames": 8.0,
+    "n": 34,
+    "near_integer_rate": false
+   },
+   "segment_publish_interval_s": 4.79,
+   "view_static_during_clip": true,
+   "view_check": {
+    "moved": false,
+    "reason": "static",
+    "shift_px": 0.0,
+    "scale": 1.0,
+    "rotation_deg": 0.0,
+    "inlier_ratio": 0.955,
+    "n_matches": 661
+   },
+   "ok": true
+  },
+  {
+   "camera_id": "R11_127",
+   "feed_type": "hls",
+   "url": "https://s51.nysdot.skyvdn.com/rtplive/R11_127/playlist.m3u8",
+   "variants": [
+    {
+     "bandwidth": 286662,
+     "codecs": "avc1.420014",
+     "width": 352,
+     "height": 240
+    }
+   ],
+   "target_duration_s": 6.0,
+   "segment_duration_s": 5.0,
+   "playlist_window_s": 14.998000000000001,
+   "playlist_segments": 3,
+   "recorded_utc": "2026-11-10T21:48:43.319+00:00",
+   "width": 352,
+   "height": 240,
+   "codec": "h264 Baseline",
+   "nominal_fps": 15.0,
+   "frames": 301,
+   "clip_seconds": 19.998,
+   "effective_fps": 15.002,
+   "frame_dt_ms": {
+    "mean": 66.66,
+    "std": 0.84,
+    "min": 65.0,
+    "p99": 68.0,
+    "max": 68.0
+   },
+   "timestamp_gaps_over_1_5x": 0,
+   "bitrate_kbps": 318.5,
+   "dup_frame_ratio": 0.003,
+   "unique_fps": 14.96,
+   "osd_clock": {
+    "events_per_s": 3.1,
+    "median_interval_frames": 5.0,
+    "n": 62,
+    "near_integer_rate": false
+   },
+   "segment_publish_interval_s": 4.97,
+   "view_static_during_clip": true,
+   "view_check": {
+    "moved": false,
+    "reason": "static",
+    "shift_px": 0.0,
+    "scale": 1.0,
+    "rotation_deg": -0.014,
+    "inlier_ratio": 0.97,
+    "n_matches": 302
+   },
+   "ok": true
+  },
+  {
+   "camera_id": "R11_137",
+   "feed_type": "hls",
+   "url": "https://s52.nysdot.skyvdn.com/rtplive/R11_137/playlist.m3u8",
+   "variants": [
+    {
+     "bandwidth": 286719,
+     "codecs": "avc1.420014",
+     "width": 352,
+     "height": 240
+    }
+   ],
+   "target_duration_s": 6.0,
+   "segment_duration_s": 5.0,
+   "playlist_window_s": 14.998999999999999,
+   "playlist_segments": 3,
+   "recorded_utc": "2026-11-10T21:48:56.656+00:00",
+   "width": 352,
+   "height": 240,
+   "codec": "h264 Baseline",
+   "nominal_fps": 15.0,
+   "frames": 301,
+   "clip_seconds": 19.999000000000002,
+   "effective_fps": 15.001,
+   "frame_dt_ms": {
+    "mean": 66.66,
+    "std": 0.79,
+    "min": 65.0,
+    "p99": 68.0,
+    "max": 68.0
+   },
+   "timestamp_gaps_over_1_5x": 0,
+   "bitrate_kbps": 318.5,
+   "dup_frame_ratio": 0.0,
+   "unique_fps": 15.0,
+   "osd_clock": {
+    "events_per_s": 2.9,
+    "median_interval_frames": 5.0,
+    "n": 58,
+    "near_integer_rate": false
+   },
+   "segment_publish_interval_s": 4.95,
+   "view_static_during_clip": true,
+   "view_check": {
+    "moved": false,
+    "reason": "static",
+    "shift_px": 0.0,
+    "scale": 1.0,
+    "rotation_deg": 0.008,
+    "inlier_ratio": 0.982,
+    "n_matches": 503
+   },
+   "ok": true
+  },
+  {
+   "camera_id": "R11_143",
+   "feed_type": "hls",
+   "url": "https://s53.nysdot.skyvdn.com/rtplive/R11_143/playlist.m3u8",
+   "variants": [
+    {
+     "bandwidth": 286662,
+     "codecs": "avc1.420014",
+     "width": 352,
+     "height": 240
+    }
+   ],
+   "target_duration_s": 6.0,
+   "segment_duration_s": 5.0,
+   "playlist_window_s": 15.0,
+   "playlist_segments": 3,
+   "recorded_utc": "2026-11-10T21:48:16.607+00:00",
+   "width": 352,
+   "height": 240,
+   "codec": "h264 Baseline",
+   "nominal_fps": 15.0,
+   "frames": 301,
+   "clip_seconds": 19.998,
+   "effective_fps": 15.002,
+   "frame_dt_ms": {
+    "mean": 66.66,
+    "std": 0.81,
+    "min": 65.0,
+    "p99": 68.0,
+    "max": 68.0
+   },
+   "timestamp_gaps_over_1_5x": 0,
+   "bitrate_kbps": 316.8,
+   "dup_frame_ratio": 0.0,
+   "unique_fps": 15.0,
+   "osd_clock": {
+    "events_per_s": 2.35,
+    "median_interval_frames": 5.0,
+    "n": 47,
+    "near_integer_rate": false
+   },
+   "segment_publish_interval_s": 4.94,
+   "view_static_during_clip": true,
+   "view_check": {
+    "moved": false,
+    "reason": "static",
+    "shift_px": 0.0,
+    "scale": 0.999,
+    "rotation_deg": 0.021,
+    "inlier_ratio": 0.979,
+    "n_matches": 434
+   },
+   "ok": true
+  },
+  {
+   "camera_id": "R11_145",
+   "feed_type": "hls",
+   "url": "https://s53.nysdot.skyvdn.com/rtplive/R11_145/playlist.m3u8",
+   "variants": [
+    {
+     "bandwidth": 287264,
+     "codecs": "avc1.420014",
+     "width": 352,
+     "height": 240
+    }
+   ],
+   "target_duration_s": 6.0,
+   "segment_duration_s": 5.001,
+   "playlist_window_s": 15.003,
+   "playlist_segments": 3,
+   "recorded_utc": "2026-11-10T21:49:10.003+00:00",
+   "width": 352,
+   "height": 240,
+   "codec": "h264 Baseline",
+   "nominal_fps": 15.0,
+   "frames": 300,
+   "clip_seconds": 19.937,
+   "effective_fps": 14.997,
+   "frame_dt_ms": {
+    "mean": 66.68,
+    "std": 0.87,
+    "min": 65.0,
+    "p99": 68.0,
+    "max": 68.0
+   },
+   "timestamp_gaps_over_1_5x": 0,
+   "bitrate_kbps": 315.0,
+   "dup_frame_ratio": 0.0,
+   "unique_fps": 15.0,
+   "osd_clock": {
+    "events_per_s": 0.853,
+    "median_interval_frames": 15.5,
+    "n": 17,
+    "near_integer_rate": false
+   },
+   "segment_publish_interval_s": 4.96,
+   "view_static_during_clip": true,
+   "view_check": {
+    "moved": false,
+    "reason": "static",
+    "shift_px": 0.0,
+    "scale": 1.0,
+    "rotation_deg": 0.003,
+    "inlier_ratio": 0.963,
+    "n_matches": 216
+   },
+   "ok": true
+  },
+  {
+   "camera_id": "R11_150",
+   "feed_type": "hls",
+   "url": "https://s53.nysdot.skyvdn.com/rtplive/R11_150/playlist.m3u8",
+   "variants": [
+    {
+     "bandwidth": 286361,
+     "codecs": "avc1.420014",
+     "width": 352,
+     "height": 240
+    }
+   ],
+   "target_duration_s": 6.0,
+   "segment_duration_s": 5.0,
+   "playlist_window_s": 15.0,
+   "playlist_segments": 3,
+   "recorded_utc": "2026-11-10T21:49:23.364+00:00",
+   "width": 352,
+   "height": 240,
+   "codec": "h264 Baseline",
+   "nominal_fps": 15.0,
+   "frames": 300,
+   "clip_seconds": 19.933,
+   "effective_fps": 15.0,
+   "frame_dt_ms": {
+    "mean": 66.67,
+    "std": 0.84,
+    "min": 65.0,
+    "p99": 68.0,
+    "max": 68.0
+   },
+   "timestamp_gaps_over_1_5x": 0,
+   "bitrate_kbps": 315.5,
+   "dup_frame_ratio": 0.0,
+   "unique_fps": 15.0,
+   "osd_clock": {
+    "events_per_s": 2.96,
+    "median_interval_frames": 5.0,
+    "n": 59,
+    "near_integer_rate": true
+   },
+   "segment_publish_interval_s": 4.92,
+   "view_static_during_clip": true,
+   "view_check": {
+    "moved": false,
+    "reason": "static",
+    "shift_px": 0.0,
+    "scale": 0.998,
+    "rotation_deg": 0.054,
+    "inlier_ratio": 0.861,
+    "n_matches": 72
+   },
+   "ok": true
+  },
+  {
+   "camera_id": "R11_255",
+   "feed_type": "hls",
+   "url": "https://s7.nysdot.skyvdn.com/rtplive/R11_255/playlist.m3u8",
+   "variants": [
+    {
+     "bandwidth": 285717,
+     "codecs": "avc1.640016",
+     "width": 640,
+     "height": 352
+    }
+   ],
+   "target_duration_s": 6.0,
+   "segment_duration_s": 5.004,
+   "playlist_window_s": 15.014,
+   "playlist_segments": 3,
+   "recorded_utc": "2026-11-10T21:49:36.718+00:00",
+   "width": 640,
+   "height": 352,
+   "codec": "h264 High",
+   "nominal_fps": 14.985,
+   "frames": 300,
+   "clip_seconds": 19.953000000000003,
+   "effective_fps": 14.985,
+   "frame_dt_ms": {
+    "mean": 66.73,
+    "std": 0.81,
+    "min": 65.0,
+    "p99": 68.0,
+    "max": 68.0
+   },
+   "timestamp_gaps_over_1_5x": 0,
+   "bitrate_kbps": 308.9,
+   "dup_frame_ratio": 0.0,
+   "unique_fps": 14.98,
+   "osd_clock": {
+    "events_per_s": 2.957,
+    "median_interval_frames": 5.0,
+    "n": 59,
+    "near_integer_rate": true
+   },
+   "segment_publish_interval_s": 4.99,
+   "view_static_during_clip": true,
+   "view_check": {
+    "moved": false,
+    "reason": "static",
+    "shift_px": 0.0,
+    "scale": 1.0,
+    "rotation_deg": -0.022,
+    "inlier_ratio": 0.922,
+    "n_matches": 218
+   },
+   "ok": true
+  }
+ ]
+}

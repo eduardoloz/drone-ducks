@@ -37,9 +37,19 @@ LIE_NAME = re.compile(r"(I-?495|\bLIE\b|Long Island Exp|\b495\b)", re.I)
 QUEENS_NASSAU_LON = -73.7015
 NASSAU_SUFFOLK_LON = -73.4265
 
-# Posted limits used for the "over limit" flag. Verify per segment before trusting
-# them; see docs/SOURCES.md for citations and open questions.
+# Posted limits used for the "over limit" flag (see docs/SOURCES.md, accessed 2026-11-10):
+# - Queens: NYC DOT posted-speed dataset (5mad-ntua) codes most of the LIE at 50 mph and
+#   45 mph from the Queens-Midtown Tunnel plaza east to about 48th St.
+# - Nassau/Suffolk to Riverhead: 55 mph (statewide maximum, VTL 1180(b); per-segment
+#   NYSDOT confirmation still missing, only secondary sources).
 POSTED_LIMIT_MPH = {"Queens": 50, "Nassau": 55, "Suffolk": 55}
+LIC_45_MPH_EAST_LIMIT_LON = -73.919  # ~48th St: cameras west of this get 45 mph
+
+
+def posted_limit(county: str, lon: float) -> int:
+    if county == "Queens" and lon <= LIC_45_MPH_EAST_LIMIT_LON:
+        return 45
+    return POSTED_LIMIT_MPH[county]
 
 # Manual fixes for name-based classification: camera id -> fields to override.
 OVERRIDES: dict[str, dict[str, Any]] = {
@@ -180,7 +190,7 @@ def build(raw_path: Path, occ_path: Path | None, meas_path: Path | None) -> dict
             "feed": feed,
             "broken_flag_511ny": bool((r.get("views") or [{}])[0].get("b")),
         }
-        cam["posted_limit_mph"] = POSTED_LIMIT_MPH[cam["county"]]
+        cam["posted_limit_mph"] = posted_limit(cam["county"], cam["lon"])
         url = match_opencctv(cam, occ)
         if url:
             cam["opencctv_url"] = url
@@ -233,6 +243,8 @@ def build(raw_path: Path, occ_path: Path | None, meas_path: Path | None) -> dict
         "county_boundaries_note": "county is approximate: longitude cut-offs at the LIE "
         f"(Queens|Nassau {QUEENS_NASSAU_LON}, Nassau|Suffolk {NASSAU_SUFFOLK_LON})",
         "posted_limit_mph_by_county": POSTED_LIMIT_MPH,
+        "posted_limit_note": "45 mph for Queens cameras west of ~48th St (lon <= "
+        f"{LIC_45_MPH_EAST_LIMIT_LON}); service-road and ramp limits are lower and not modelled",
         "summary": summary,
         "cameras": cams,
     }

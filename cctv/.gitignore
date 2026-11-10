@@ -22,3 +22,6 @@ data/runs/
 # Except small, intentional docs images
 !docs/img/*.png
 !docs/img/*.jpg
+# Calibration reference frames are small, needed to detect PTZ moves, and committed
+# (image: NYSDOT / 511NY public camera feed)
+!data/calibration/*.ref.jpg

@@ -1,0 +1,4604 @@
+{
+ "schema_version": 1,
+ "generated_at": "2026-11-10T21:59:24+00:00",
+ "corridor": "I-495 Long Island Expressway, Queens-Midtown Tunnel (Queens) to Riverhead (Suffolk)",
+ "sources": {
+  "camera_list": "https://api-511x-nysdot.carsprogram.org/cameras/map-features (loaded by https://511ny.org map)",
+  "camera_list_fetched_at": "2026-11-10T21:33:22.364Z",
+  "opencctv_listing": "https://opencctv.org/cameras/united-states/new-york/roadway/i-495 (pages 1-6)",
+  "measurements": "feed_measurements.json",
+  "terms": "511NY Developer Access Agreement https://511ny.org/help/24 ; video hosted by NYSDOT (skyvdn.com); NYC DOT stills at nyctmc.org"
+ },
+ "county_boundaries_note": "county is approximate: longitude cut-offs at the LIE (Queens|Nassau -73.7015, Nassau|Suffolk -73.4265)",
+ "posted_limit_mph_by_county": {
+  "Queens": 50,
+  "Nassau": 55,
+  "Suffolk": 55
+ },
+ "posted_limit_note": "45 mph for Queens cameras west of ~48th St (lon <= -73.919); service-road and ramp limits are lower and not modelled",
+ "summary": {
+  "total": 129,
+  "by_owner": {
+   "NYC DOT": 21,
+   "NYSDOT": 108
+  },
+  "by_feed_type": {
+   "jpeg": 21,
+   "hls": 108
+  },
+  "by_kind": {
+   "mainline": 102,
+   "ramp_or_connector": 7,
+   "cross_route": 10,
+   "service_road": 4,
+   "rest_area": 6
+  },
+  "by_county": {
+   "Queens": 64,
+   "Nassau": 24,
+   "Suffolk": 41
+  },
+  "by_speed_suitability": {
+   "snapshot_only": 21,
+   "measured_marginal": 8,
+   "candidate_video": 68,
+   "candidate_video_secondary": 23,
+   "measured_good": 8,
+   "measured_unusable": 1
+  },
+  "excluded_indoor_welcome_center": 24,
+  "matched_opencctv": 82,
+  "opencctv_listing_size": 85
+ },
+ "cameras": [
+  {
+   "id": "NYCDOT_67f77766",
+   "name": "Long Island Expy @ QMT @ Pulaski Br",
+   "owner": "NYC DOT",
+   "ids": {
+    "511ny": 20956
+   },
+   "lat": 40.74148,
+   "lon": -73.9509,
+   "county": "Queens",
+   "kind": "mainline",
+   "exit": null,
+   "direction_hint": null,
+   "ptz": "unknown",
+   "feed": {
+    "type": "jpeg",
+    "url": "https://nyctmc.org/api/cameras/67f77766-bd19-4082-adeb-88d59866c490/image",
+    "host": "nyctmc.org"
+   },
+   "broken_flag_511ny": false,
+   "posted_limit_mph": 45,
+   "measured": {
+    "camera_id": "NYCDOT_67f77766",
+    "feed_type": "jpeg",
+    "url": "https://nyctmc.org/api/cameras/67f77766-bd19-4082-adeb-88d59866c490/image",
+    "recorded_utc": "2026-11-10T21:51:19+00:00",
+    "refresh_interval_s": {
+     "mean": 1.91,
+     "std": 0.3,
+     "min": 1.0,
+     "p99": 2.01,
+     "max": 2.01
+    },
+    "effective_fps": 0.498,
+    "unique_fps": 0.498,
+    "poll_interval_s": 1.0,
+    "height": 240,
+    "width": 352,
+    "note": "Polled at 1 Hz, so refresh intervals are quantised to ~1 s.",
+    "ok": true
+   },
+   "chainage_km": 0.0,
+   "co_located": [
+    "R11_127"
+   ],
+   "speed_suitability": "snapshot_only"
+  },
+  {
+   "id": "R11_127",
+   "name": "I-495 at Queens Midtown Tunnel",
+   "owner": "NYSDOT",
+   "ids": {
+    "511ny": 35187,
+    "opencctv": 16806
+   },
+   "lat": 40.741565,
+   "lon": -73.950407,
+   "county": "Queens",
+   "kind": "mainline",
+   "exit": null,
+   "direction_hint": null,
+   "ptz": "likely",
+   "feed": {
+    "type": "hls",
+    "url": "https://s51.nysdot.skyvdn.com/rtplive/R11_127/playlist.m3u8",
+    "host": "s51.nysdot.skyvdn.com",
+    "stream_id": "R11_127"
+   },
+   "broken_flag_511ny": false,
+   "posted_limit_mph": 45,
+   "opencctv_url": "https://opencctv.org/cameras/united-states/new-york/manhattan/i-495-at-queens-midtown-tunnel-16806",
+   "measured": {
+    "camera_id": "R11_127",
+    "feed_type": "hls",
+    "url": "https://s51.nysdot.skyvdn.com/rtplive/R11_127/playlist.m3u8",
+    "variants": [
+     {
+      "bandwidth": 286662,
+      "codecs": "avc1.420014",
+      "width": 352,
+      "height": 240
+     }
+    ],
+    "target_duration_s": 6.0,
+    "segment_duration_s": 5.0,
+    "playlist_window_s": 14.998000000000001,
+    "playlist_segments": 3,
+    "recorded_utc": "2026-11-10T21:48:43.319+00:00",
+    "width": 352,
+    "height": 240,
+    "codec": "h264 Baseline",
+    "nominal_fps": 15.0,
+    "frames": 301,
+    "clip_seconds": 19.998,
+    "effective_fps": 15.002,
+    "frame_dt_ms": {
+     "mean": 66.66,
+     "std": 0.84,
+     "min": 65.0,
+     "p99": 68.0,
+     "max": 68.0
+    },
+    "timestamp_gaps_over_1_5x": 0,
+    "bitrate_kbps": 318.5,
+    "dup_frame_ratio": 0.003,
+    "unique_fps": 14.96,
+    "osd_clock": {
+     "events_per_s": 3.1,
+     "median_interval_frames": 5.0,
+     "n": 62,
+     "near_integer_rate": false
+    },
+    "segment_publish_interval_s": 4.97,
+    "view_static_during_clip": true,
+    "view_check": {
+     "moved": false,
+     "reason": "static",
+     "shift_px": 0.0,
+     "scale": 1.0,
+     "rotation_deg": -0.014,
+     "inlier_ratio": 0.97,
+     "n_matches": 302
+    },
+    "ok": true
+   },
+   "chainage_km": 0.04,
+   "co_located": [
+    "NYCDOT_67f77766"
+   ],
+   "speed_suitability": "measured_marginal"
+  },
+  {
+   "id": "R11_128",
+   "name": "I-495 at 27th Street",
+   "owner": "NYSDOT",
+   "ids": {
+    "511ny": 35188,
+    "opencctv": 16807
+   },
+   "lat": 40.739618,
+   "lon": -73.942237,
+   "county": "Queens",
+   "kind": "mainline",
+   "exit": null,
+   "direction_hint": null,
+   "ptz": "likely",
+   "feed": {
+    "type": "hls",
+    "url": "https://s51.nysdot.skyvdn.com/rtplive/R11_128/playlist.m3u8",
+    "host": "s51.nysdot.skyvdn.com",
+    "stream_id": "R11_128"
+   },
+   "broken_flag_511ny": false,
+   "posted_limit_mph": 45,
+   "opencctv_url": "https://opencctv.org/cameras/united-states/new-york/new-york/i-495-at-27th-street-16807",
+   "chainage_km": 0.76,
+   "co_located": [
+    "NYCDOT_43e3d020"
+   ],
+   "speed_suitability": "candidate_video"
+  },
+  {
+   "id": "NYCDOT_43e3d020",
+   "name": "C5-LIE-02-EB_at_27th_St-Ex15",
+   "owner": "NYC DOT",
+   "ids": {
+    "511ny": 21271
+   },
+   "lat": 40.739299,
+   "lon": -73.941697,
+   "county": "Queens",
+   "kind": "mainline",
+   "exit": "15",
+   "direction_hint": null,
+   "ptz": "unknown",
+   "feed": {
+    "type": "jpeg",
+    "url": "https://nyctmc.org/api/cameras/43e3d020-e4f2-4599-a19f-72ae778f1dcd/image",
+    "host": "nyctmc.org"
+   },
+   "broken_flag_511ny": false,
+   "posted_limit_mph": 45,
+   "measured": {
+    "camera_id": "NYCDOT_43e3d020",
+    "feed_type": "jpeg",
+    "url": "https://nyctmc.org/api/cameras/43e3d020-e4f2-4599-a19f-72ae778f1dcd/image",
+    "recorded_utc": "2026-11-10T21:51:41+00:00",
+    "refresh_interval_s": {
+     "mean": 1.91,
+     "std": 0.3,
+     "min": 1.0,
+     "p99": 2.01,
+     "max": 2.01
+    },
+    "effective_fps": 0.498,
+    "unique_fps": 0.498,
+    "poll_interval_s": 1.0,
+    "height": 480,
+    "width": 720,
+    "note": "Polled at 1 Hz, so refresh intervals are quantised to ~1 s.",
+    "ok": true
+   },
+   "chainage_km": 0.82,
+   "co_located": [
+    "R11_128"
+   ],
+   "speed_suitability": "snapshot_only"
+  },
+  {
+   "id": "NYCDOT_5e621a58",
+   "name": "Long Island Expy @ Greenpoint Ave",
+   "owner": "NYC DOT",
+   "ids": {
+    "511ny": 21516
+   },
+   "lat": 40.737146,
+   "lon": -73.930969,
+   "county": "Queens",
+   "kind": "mainline",
+   "exit": null,
+   "direction_hint": null,
+   "ptz": "unknown",
+   "feed": {
+    "type": "jpeg",
+    "url": "https://nyctmc.org/api/cameras/5e621a58-dade-4b9a-aef8-24b3038455a4/image",
+    "host": "nyctmc.org"
+   },
+   "broken_flag_511ny": false,
+   "posted_limit_mph": 45,
+   "chainage_km": 1.76,
+   "co_located": [],
+   "speed_suitability": "snapshot_only"
+  },
+  {
+   "id": "R11_129",
+   "name": "I-495 at Greenpoint Avenue",
+   "owner": "NYSDOT",
+   "ids": {
+    "511ny": 35189,
+    "opencctv": 16808
+   },
+   "lat": 40.736465,
+   "lon": -73.928826,
+   "county": "Queens",
+   "kind": "mainline",
+   "exit": null,
+   "direction_hint": null,
+   "ptz": "likely",
+   "feed": {
+    "type": "hls",
+    "url": "https://s51.nysdot.skyvdn.com/rtplive/R11_129/playlist.m3u8",
+    "host": "s51.nysdot.skyvdn.com",
+    "stream_id": "R11_129"
+   },
+   "broken_flag_511ny": false,
+   "posted_limit_mph": 45,
+   "opencctv_url": "https://opencctv.org/cameras/united-states/new-york/new-york/i-495-at-greenpoint-avenue-16808",
+   "chainage_km": 1.95,
+   "co_located": [],
+   "speed_suitability": "candidate_video"
+  },
+  {
+   "id": "R11_232",
+   "name": "I-495 ramp to W/B I-278",
+   "owner": "NYSDOT",
+   "ids": {
+    "511ny": 34492,
+    "opencctv": 14619
+   },
+   "lat": 40.735153,
+   "lon": -73.923803,
+   "county": "Queens",
+   "kind": "ramp_or_connector",
+   "exit": null,
+   "direction_hint": "WB",
+   "ptz": "likely",
+   "feed": {
+    "type": "hls",
+    "url": "https://s7.nysdot.skyvdn.com/rtplive/R11_232/playlist.m3u8",
+    "host": "s7.nysdot.skyvdn.com",
+    "stream_id": "R11_232"
+   },
+   "broken_flag_511ny": false,
+   "posted_limit_mph": 45,
+   "opencctv_url": "https://opencctv.org/cameras/united-states/new-york/new-york/i-495-ramp-to-wb-i-278-14619",
+   "chainage_km": 1.95,
+   "co_located": [],
+   "speed_suitability": "candidate_video_secondary"
+  },
+  {
+   "id": "R11_097",
+   "name": "I-278 at LIE Interchange/Shelter-2",
+   "owner": "NYSDOT",
+   "ids": {
+    "511ny": 35177
+   },
+   "lat": 40.734577,
+   "lon": -73.921784,
+   "county": "Queens",
+   "kind": "cross_route",
+   "exit": null,
+   "direction_hint": null,
+   "ptz": "likely",
+   "feed": {
+    "type": "hls",
+    "url": "https://s51.nysdot.skyvdn.com/rtplive/R11_097/playlist.m3u8",
+    "host": "s51.nysdot.skyvdn.com",
+    "stream_id": "R11_097"
+   },
+   "broken_flag_511ny": false,
+   "posted_limit_mph": 45,
+   "chainage_km": 2.87,
+   "co_located": [
+    "R11_131"
+   ],
+   "speed_suitability": "candidate_video_secondary"
+  },
+  {
+   "id": "R11_131",
+   "name": "I-495 at ramp to Westbound BQE",
+   "owner": "NYSDOT",
+   "ids": {
+    "511ny": 35541,
+    "opencctv": 15598
+   },
+   "lat": 40.734615,
+   "lon": -73.921659,
+   "county": "Queens",
+   "kind": "ramp_or_connector",
+   "exit": null,
+   "direction_hint": "WB",
+   "ptz": "likely",
+   "feed": {
+    "type": "hls",
+    "url": "https://s52.nysdot.skyvdn.com/rtplive/R11_131/playlist.m3u8",
+    "host": "s52.nysdot.skyvdn.com",
+    "stream_id": "R11_131"
+   },
+   "broken_flag_511ny": false,
+   "posted_limit_mph": 45,
+   "opencctv_url": "https://opencctv.org/cameras/united-states/new-york/new-york/i-495-at-ramp-to-westbound-bqe-15598",
+   "chainage_km": 2.87,
+   "co_located": [
+    "R11_097"
+   ],
+   "speed_suitability": "candidate_video_secondary"
+  },
+  {
+   "id": "R11_132",
+   "name": "I-495 at ramp from Eastbound BQE",
+   "owner": "NYSDOT",
+   "ids": {
+    "511ny": 35542,
+    "opencctv": 15599
+   },
+   "lat": 40.733441,
+   "lon": -73.921286,
+   "county": "Queens",
+   "kind": "ramp_or_connector",
+   "exit": null,
+   "direction_hint": "EB",
+   "ptz": "likely",
+   "feed": {
+    "type": "hls",
+    "url": "https://s52.nysdot.skyvdn.com/rtplive/R11_132/playlist.m3u8",
+    "host": "s52.nysdot.skyvdn.com",
+    "stream_id": "R11_132"
+   },
+   "broken_flag_511ny": false,
+   "posted_limit_mph": 45,
+   "opencctv_url": "https://opencctv.org/cameras/united-states/new-york/new-york/i-495-at-ramp-from-eastbound-bqe-15599",
+   "chainage_km": 2.87,
+   "co_located": [],
+   "speed_suitability": "candidate_video_secondary"
+  },
+  {
+   "id": "R11_225",
+   "name": "I-495 at 48 St (Upper Level)",
+   "owner": "NYSDOT",
+   "ids": {
+    "511ny": 35069,
+    "opencctv": 15286
+   },
+   "lat": 40.732216,
+   "lon": -73.919546,
+   "county": "Queens",
+   "kind": "mainline",
+   "exit": null,
+   "direction_hint": null,
+   "ptz": "likely",
+   "feed": {
+    "type": "hls",
+    "url": "https://s9.nysdot.skyvdn.com/rtplive/R11_225/playlist.m3u8",
+    "host": "s9.nysdot.skyvdn.com",
+    "stream_id": "R11_225"
+   },
+   "broken_flag_511ny": false,
+   "posted_limit_mph": 45,
+   "opencctv_url": "https://opencctv.org/cameras/united-states/new-york/new-york/i-495-at-48-st-upper-level-15286",
+   "chainage_km": 2.87,
+   "co_located": [
+    "NYCDOT_21dd2187",
+    "R11_134"
+   ],
+   "speed_suitability": "candidate_video"
+  },
+  {
+   "id": "NYCDOT_21dd2187",
+   "name": "C5-LIE-08-EB_48th_St_LL-Ex16",
+   "owner": "NYC DOT",
+   "ids": {
+    "511ny": 21323
+   },
+   "lat": 40.731963,
+   "lon": -73.919235,
+   "county": "Queens",
+   "kind": "mainline",
+   "exit": "16",
+   "direction_hint": null,
+   "ptz": "unknown",
+   "feed": {
+    "type": "jpeg",
+    "url": "https://nyctmc.org/api/cameras/21dd2187-79ff-4cf9-bc11-055a04cdfb3f/image",
+    "host": "nyctmc.org"
+   },
+   "broken_flag_511ny": false,
+   "posted_limit_mph": 45,
+   "chainage_km": 2.9,
+   "co_located": [
+    "R11_134",
+    "R11_225"
+   ],
+   "speed_suitability": "snapshot_only"
+  },
+  {
+   "id": "R11_134",
+   "name": "I-495 at 48th Street/Lower Level",
+   "owner": "NYSDOT",
+   "ids": {
+    "511ny": 35543,
+    "opencctv": 15601
+   },
+   "lat": 40.732014,
+   "lon": -73.919174,
+   "county": "Queens",
+   "kind": "mainline",
+   "exit": null,
+   "direction_hint": null,
+   "ptz": "likely",
+   "feed": {
+    "type": "hls",
+    "url": "https://s52.nysdot.skyvdn.com/rtplive/R11_134/playlist.m3u8",
+    "host": "s52.nysdot.skyvdn.com",
+    "stream_id": "R11_134"
+   },
+   "broken_flag_511ny": false,
+   "posted_limit_mph": 45,
+   "opencctv_url": "https://opencctv.org/cameras/united-states/new-york/new-york/i-495-at-48th-streetlower-level-15601",
+   "chainage_km": 2.91,
+   "co_located": [
+    "NYCDOT_21dd2187",
+    "R11_225"
+   ],
+   "speed_suitability": "candidate_video"
+  },
+  {
+   "id": "R11_135",
+   "name": "I-495 at Between 50th and 58th Street",
+   "owner": "NYSDOT",
+   "ids": {
+    "511ny": 35544,
+    "opencctv": 15602
+   },
+   "lat": 40.731288,
+   "lon": -73.917212,
+   "county": "Queens",
+   "kind": "mainline",
+   "exit": null,
+   "direction_hint": null,
+   "ptz": "likely",
+   "feed": {
+    "type": "hls",
+    "url": "https://s52.nysdot.skyvdn.com/rtplive/R11_135/playlist.m3u8",
+    "host": "s52.nysdot.skyvdn.com",
+    "stream_id": "R11_135"
+   },
+   "broken_flag_511ny": false,
+   "posted_limit_mph": 50,
+   "opencctv_url": "https://opencctv.org/cameras/united-states/new-york/new-york/i-495-at-between-50th-and-58th-street-15602",
+   "chainage_km": 3.1,
+   "co_located": [
+    "R11_230"
+   ],
+   "speed_suitability": "candidate_video"
+  },
+  {
+   "id": "R11_230",
+   "name": "I-495 at 50 St (Lower Level)",
+   "owner": "NYSDOT",
+   "ids": {
+    "511ny": 34728,
+    "opencctv": 14856
+   },
+   "lat": 40.731269,
+   "lon": -73.917146,
+   "county": "Queens",
+   "kind": "mainline",
+   "exit": null,
+   "direction_hint": null,
+   "ptz": "likely",
+   "feed": {
+    "type": "hls",
+    "url": "https://s9.nysdot.skyvdn.com/rtplive/R11_230/playlist.m3u8",
+    "host": "s9.nysdot.skyvdn.com",
+    "stream_id": "R11_230"
+   },
+   "broken_flag_511ny": false,
+   "posted_limit_mph": 50,
+   "opencctv_url": "https://opencctv.org/cameras/united-states/new-york/new-york/i-495-at-50-st-lower-level-14856",
+   "chainage_km": 3.1,
+   "co_located": [
+    "R11_135"
+   ],
+   "speed_suitability": "candidate_video"
+  },
+  {
+   "id": "R11_136",
+   "name": "I-495 at 58th Street/Lower Level",
+   "owner": "NYSDOT",
+   "ids": {
+    "511ny": 35545,
+    "opencctv": 15603
+   },
+   "lat": 40.729964,
+   "lon": -73.912219,
+   "county": "Queens",
+   "kind": "mainline",
+   "exit": null,
+   "direction_hint": null,
+   "ptz": "likely",
+   "feed": {
+    "type": "hls",
+    "url": "https://s52.nysdot.skyvdn.com/rtplive/R11_136/playlist.m3u8",
+    "host": "s52.nysdot.skyvdn.com",
+    "stream_id": "R11_136"
+   },
+   "broken_flag_511ny": false,
+   "posted_limit_mph": 50,
+   "opencctv_url": "https://opencctv.org/cameras/united-states/new-york/new-york/i-495-at-58th-streetlower-level-15603",
+   "chainage_km": 3.54,
+   "co_located": [],
+   "speed_suitability": "candidate_video"
+  },
+  {
+   "id": "NYCDOT_77ea2042",
+   "name": "C5-LIE-11-EB_at_60th_St-Ex18",
+   "owner": "NYC DOT",
+   "ids": {
+    "511ny": 21662
+   },
+   "lat": 40.726307,
+   "lon": -73.905287,
+   "county": "Queens",
+   "kind": "mainline",
+   "exit": "18",
+   "direction_hint": null,
+   "ptz": "unknown",
+   "feed": {
+    "type": "jpeg",
+    "url": "https://nyctmc.org/api/cameras/77ea2042-4c1b-4a2c-b861-88dfa9f579f8/image",
+    "host": "nyctmc.org"
+   },
+   "broken_flag_511ny": false,
+   "posted_limit_mph": 50,
+   "chainage_km": 4.25,
+   "co_located": [
+    "R11_137"
+   ],
+   "speed_suitability": "snapshot_only"
+  },
+  {
+   "id": "R11_137",
+   "name": "I-495 at 60th Street",
+   "owner": "NYSDOT",
+   "ids": {
+    "511ny": 35546,
+    "opencctv": 15604
+   },
+   "lat": 40.726513,
+   "lon": -73.905153,
+   "county": "Queens",
+   "kind": "mainline",
+   "exit": null,
+   "direction_hint": null,
+   "ptz": "likely",
+   "feed": {
+    "type": "hls",
+    "url": "https://s52.nysdot.skyvdn.com/rtplive/R11_137/playlist.m3u8",
+    "host": "s52.nysdot.skyvdn.com",
+    "stream_id": "R11_137"
+   },
+   "broken_flag_511ny": false,
+   "posted_limit_mph": 50,
+   "opencctv_url": "https://opencctv.org/cameras/united-states/new-york/new-york/i-495-at-60th-street-15604",
+   "measured": {
+    "camera_id": "R11_137",
+    "feed_type": "hls",
+    "url": "https://s52.nysdot.skyvdn.com/rtplive/R11_137/playlist.m3u8",
+    "variants": [
+     {
+      "bandwidth": 286719,
+      "codecs": "avc1.420014",
+      "width": 352,
+      "height": 240
+     }
+    ],
+    "target_duration_s": 6.0,
+    "segment_duration_s": 5.0,
+    "playlist_window_s": 14.998999999999999,
+    "playlist_segments": 3,
+    "recorded_utc": "2026-11-10T21:48:56.656+00:00",
+    "width": 352,
+    "height": 240,
+    "codec": "h264 Baseline",
+    "nominal_fps": 15.0,
+    "frames": 301,
+    "clip_seconds": 19.999000000000002,
+    "effective_fps": 15.001,
+    "frame_dt_ms": {
+     "mean": 66.66,
+     "std": 0.79,
+     "min": 65.0,
+     "p99": 68.0,
+     "max": 68.0
+    },
+    "timestamp_gaps_over_1_5x": 0,
+    "bitrate_kbps": 318.5,
+    "dup_frame_ratio": 0.0,
+    "unique_fps": 15.0,
+    "osd_clock": {
+     "events_per_s": 2.9,
+     "median_interval_frames": 5.0,
+     "n": 58,
+     "near_integer_rate": false
+    },
+    "segment_publish_interval_s": 4.95,
+    "view_static_during_clip": true,
+    "view_check": {
+     "moved": false,
+     "reason": "static",
+     "shift_px": 0.0,
+     "scale": 1.0,
+     "rotation_deg": 0.008,
+     "inlier_ratio": 0.982,
+     "n_matches": 503
+    },
+    "ok": true
+   },
+   "chainage_km": 4.28,
+   "co_located": [
+    "NYCDOT_77ea2042"
+   ],
+   "speed_suitability": "measured_marginal"
+  },
+  {
+   "id": "R11_138",
+   "name": "I-495 at Grand Avenue",
+   "owner": "NYSDOT",
+   "ids": {
+    "511ny": 35547,
+    "opencctv": 15605
+   },
+   "lat": 40.725421,
+   "lon": -73.896924,
+   "county": "Queens",
+   "kind": "mainline",
+   "exit": null,
+   "direction_hint": null,
+   "ptz": "likely",
+   "feed": {
+    "type": "hls",
+    "url": "https://s52.nysdot.skyvdn.com/rtplive/R11_138/playlist.m3u8",
+    "host": "s52.nysdot.skyvdn.com",
+    "stream_id": "R11_138"
+   },
+   "broken_flag_511ny": false,
+   "posted_limit_mph": 50,
+   "opencctv_url": "https://opencctv.org/cameras/united-states/new-york/queens/i-495-at-grand-avenue-15605",
+   "chainage_km": 4.98,
+   "co_located": [],
+   "speed_suitability": "candidate_video"
+  },
+  {
+   "id": "NYCDOT_7c92c63b",
+   "name": "Grand Ave @ LIE",
+   "owner": "NYC DOT",
+   "ids": {
+    "511ny": 21454
+   },
+   "lat": 40.725764,
+   "lon": -73.895635,
+   "county": "Queens",
+   "kind": "cross_route",
+   "exit": null,
+   "direction_hint": null,
+   "ptz": "unknown",
+   "feed": {
+    "type": "jpeg",
+    "url": "https://nyctmc.org/api/cameras/7c92c63b-2786-4600-9108-62cea2806345/image",
+    "host": "nyctmc.org"
+   },
+   "broken_flag_511ny": false,
+   "posted_limit_mph": 50,
+   "chainage_km": 4.98,
+   "co_located": [],
+   "speed_suitability": "snapshot_only"
+  },
+  {
+   "id": "R11_139",
+   "name": "I-495 at 75th Street",
+   "owner": "NYSDOT",
+   "ids": {
+    "511ny": 35548,
+    "opencctv": 15606
+   },
+   "lat": 40.728096,
+   "lon": -73.886044,
+   "county": "Queens",
+   "kind": "mainline",
+   "exit": null,
+   "direction_hint": null,
+   "ptz": "likely",
+   "feed": {
+    "type": "hls",
+    "url": "https://s52.nysdot.skyvdn.com/rtplive/R11_139/playlist.m3u8",
+    "host": "s52.nysdot.skyvdn.com",
+    "stream_id": "R11_139"
+   },
+   "broken_flag_511ny": false,
+   "posted_limit_mph": 50,
+   "opencctv_url": "https://opencctv.org/cameras/united-states/new-york/queens/i-495-at-75th-street-15606",
+   "chainage_km": 5.95,
+   "co_located": [],
+   "speed_suitability": "candidate_video"
+  },
+  {
+   "id": "R11_140",
+   "name": "I-495 at 84th Street",
+   "owner": "NYSDOT",
+   "ids": {
+    "511ny": 35549,
+    "opencctv": 15607
+   },
+   "lat": 40.729747,
+   "lon": -73.877604,
+   "county": "Queens",
+   "kind": "mainline",
+   "exit": null,
+   "direction_hint": null,
+   "ptz": "likely",
+   "feed": {
+    "type": "hls",
+    "url": "https://s52.nysdot.skyvdn.com/rtplive/R11_140/playlist.m3u8",
+    "host": "s52.nysdot.skyvdn.com",
+    "stream_id": "R11_140"
+   },
+   "broken_flag_511ny": false,
+   "posted_limit_mph": 50,
+   "opencctv_url": "https://opencctv.org/cameras/united-states/new-york/queens/i-495-at-84th-street-15607",
+   "chainage_km": 6.68,
+   "co_located": [],
+   "speed_suitability": "candidate_video"
+  },
+  {
+   "id": "NYCDOT_ae1960ee",
+   "name": "C5-LIE-15-WB_at_Queens_Blvd-Ex19",
+   "owner": "NYC DOT",
+   "ids": {
+    "511ny": 20951
+   },
+   "lat": 40.732725,
+   "lon": -73.8692,
+   "county": "Queens",
+   "kind": "mainline",
+   "exit": "19",
+   "direction_hint": null,
+   "ptz": "unknown",
+   "feed": {
+    "type": "jpeg",
+    "url": "https://nyctmc.org/api/cameras/ae1960ee-1f34-4774-88f5-b195b9c2a505/image",
+    "host": "nyctmc.org"
+   },
+   "broken_flag_511ny": false,
+   "posted_limit_mph": 50,
+   "chainage_km": 7.46,
+   "co_located": [],
+   "speed_suitability": "snapshot_only"
+  },
+  {
+   "id": "R11_141",
+   "name": "I-495 at Queens Blvd",
+   "owner": "NYSDOT",
+   "ids": {
+    "511ny": 35924,
+    "opencctv": 15824
+   },
+   "lat": 40.732745,
+   "lon": -73.8682,
+   "county": "Queens",
+   "kind": "mainline",
+   "exit": null,
+   "direction_hint": null,
+   "ptz": "likely",
+   "feed": {
+    "type": "hls",
+    "url": "https://s53.nysdot.skyvdn.com/rtplive/R11_141/playlist.m3u8",
+    "host": "s53.nysdot.skyvdn.com",
+    "stream_id": "R11_141"
+   },
+   "broken_flag_511ny": false,
+   "posted_limit_mph": 50,
+   "opencctv_url": "https://opencctv.org/cameras/united-states/new-york/queens/i-495-at-queens-blvd-15824",
+   "chainage_km": 7.55,
+   "co_located": [],
+   "speed_suitability": "candidate_video"
+  },
+  {
+   "id": "R11_142",
+   "name": "I-495 at 99th Street",
+   "owner": "NYSDOT",
+   "ids": {
+    "511ny": 35925,
+    "opencctv": 15825
+   },
+   "lat": 40.735665,
+   "lon": -73.858499,
+   "county": "Queens",
+   "kind": "mainline",
+   "exit": null,
+   "direction_hint": null,
+   "ptz": "likely",
+   "feed": {
+    "type": "hls",
+    "url": "https://s53.nysdot.skyvdn.com/rtplive/R11_142/playlist.m3u8",
+    "host": "s53.nysdot.skyvdn.com",
+    "stream_id": "R11_142"
+   },
+   "broken_flag_511ny": false,
+   "posted_limit_mph": 50,
+   "opencctv_url": "https://opencctv.org/cameras/united-states/new-york/queens/i-495-at-99th-street-15825",
+   "chainage_km": 8.43,
+   "co_located": [],
+   "speed_suitability": "candidate_video"
+  },
+  {
+   "id": "R11_143",
+   "name": "I-495 at Grand Central Parkway",
+   "owner": "NYSDOT",
+   "ids": {
+    "511ny": 35927,
+    "opencctv": 15826
+   },
+   "lat": 40.739443,
+   "lon": -73.846468,
+   "county": "Queens",
+   "kind": "mainline",
+   "exit": null,
+   "direction_hint": null,
+   "ptz": "likely",
+   "feed": {
+    "type": "hls",
+    "url": "https://s53.nysdot.skyvdn.com/rtplive/R11_143/playlist.m3u8",
+    "host": "s53.nysdot.skyvdn.com",
+    "stream_id": "R11_143"
+   },
+   "broken_flag_511ny": false,
+   "posted_limit_mph": 50,
+   "opencctv_url": "https://opencctv.org/cameras/united-states/new-york/queens/i-495-at-grand-central-parkway-15826",
+   "measured": {
+    "camera_id": "R11_143",
+    "feed_type": "hls",
+    "url": "https://s53.nysdot.skyvdn.com/rtplive/R11_143/playlist.m3u8",
+    "variants": [
+     {
+      "bandwidth": 286662,
+      "codecs": "avc1.420014",
+      "width": 352,
+      "height": 240
+     }
+    ],
+    "target_duration_s": 6.0,
+    "segment_duration_s": 5.0,
+    "playlist_window_s": 15.0,
+    "playlist_segments": 3,
+    "recorded_utc": "2026-11-10T21:48:16.607+00:00",
+    "width": 352,
+    "height": 240,
+    "codec": "h264 Baseline",
+    "nominal_fps": 15.0,
+    "frames": 301,
+    "clip_seconds": 19.998,
+    "effective_fps": 15.002,
+    "frame_dt_ms": {
+     "mean": 66.66,
+     "std": 0.81,
+     "min": 65.0,
+     "p99": 68.0,
+     "max": 68.0
+    },
+    "timestamp_gaps_over_1_5x": 0,
+    "bitrate_kbps": 316.8,
+    "dup_frame_ratio": 0.0,
+    "unique_fps": 15.0,
+    "osd_clock": {
+     "events_per_s": 2.35,
+     "median_interval_frames": 5.0,
+     "n": 47,
+     "near_integer_rate": false
+    },
+    "segment_publish_interval_s": 4.94,
+    "view_static_during_clip": true,
+    "view_check": {
+     "moved": false,
+     "reason": "static",
+     "shift_px": 0.0,
+     "scale": 0.999,
+     "rotation_deg": 0.021,
+     "inlier_ratio": 0.979,
+     "n_matches": 434
+    },
+    "ok": true
+   },
+   "chainage_km": 9.52,
+   "co_located": [],
+   "speed_suitability": "measured_marginal"
+  },
+  {
+   "id": "NYCDOT_6504ada3",
+   "name": "C5-LIE-17-EB_at_GCP-Ex22A_GCP",
+   "owner": "NYC DOT",
+   "ids": {
+    "511ny": 21551
+   },
+   "lat": 40.740069,
+   "lon": -73.844951,
+   "county": "Queens",
+   "kind": "mainline",
+   "exit": "22A",
+   "direction_hint": null,
+   "ptz": "unknown",
+   "feed": {
+    "type": "jpeg",
+    "url": "https://nyctmc.org/api/cameras/6504ada3-3a93-4811-b2cd-31c377066f66/image",
+    "host": "nyctmc.org"
+   },
+   "broken_flag_511ny": false,
+   "posted_limit_mph": 50,
+   "chainage_km": 9.67,
+   "co_located": [],
+   "speed_suitability": "snapshot_only"
+  },
+  {
+   "id": "R11_183",
+   "name": "I-678 at LIE",
+   "owner": "NYSDOT",
+   "ids": {
+    "511ny": 34424
+   },
+   "lat": 40.743394,
+   "lon": -73.83756,
+   "county": "Queens",
+   "kind": "cross_route",
+   "exit": null,
+   "direction_hint": null,
+   "ptz": "likely",
+   "feed": {
+    "type": "hls",
+    "url": "https://s7.nysdot.skyvdn.com/rtplive/R11_183/playlist.m3u8",
+    "host": "s7.nysdot.skyvdn.com",
+    "stream_id": "R11_183"
+   },
+   "broken_flag_511ny": false,
+   "posted_limit_mph": 50,
+   "chainage_km": 10.47,
+   "co_located": [],
+   "speed_suitability": "candidate_video_secondary"
+  },
+  {
+   "id": "NYCDOT_6ab24015",
+   "name": "LIE @ College Point Blvd",
+   "owner": "NYC DOT",
+   "ids": {
+    "511ny": 21526
+   },
+   "lat": 40.744001,
+   "lon": -73.837011,
+   "county": "Queens",
+   "kind": "mainline",
+   "exit": null,
+   "direction_hint": null,
+   "ptz": "unknown",
+   "feed": {
+    "type": "jpeg",
+    "url": "https://nyctmc.org/api/cameras/6ab24015-2446-4410-b7a4-d8dd13ed2f8b/image",
+    "host": "nyctmc.org"
+   },
+   "broken_flag_511ny": false,
+   "posted_limit_mph": 50,
+   "chainage_km": 10.47,
+   "co_located": [],
+   "speed_suitability": "snapshot_only"
+  },
+  {
+   "id": "R11_145",
+   "name": "I-495 at Lawrence Street",
+   "owner": "NYSDOT",
+   "ids": {
+    "511ny": 34327,
+    "opencctv": 185138
+   },
+   "lat": 40.743163,
+   "lon": -73.833446,
+   "county": "Queens",
+   "kind": "mainline",
+   "exit": null,
+   "direction_hint": null,
+   "ptz": "likely",
+   "feed": {
+    "type": "hls",
+    "url": "https://s53.nysdot.skyvdn.com/rtplive/R11_145/playlist.m3u8",
+    "host": "s53.nysdot.skyvdn.com",
+    "stream_id": "R11_145"
+   },
+   "broken_flag_511ny": false,
+   "posted_limit_mph": 50,
+   "opencctv_url": "https://opencctv.org/cameras/united-states/new-york/queens/i-495-at-lawrence-street-185138",
+   "measured": {
+    "camera_id": "R11_145",
+    "feed_type": "hls",
+    "url": "https://s53.nysdot.skyvdn.com/rtplive/R11_145/playlist.m3u8",
+    "variants": [
+     {
+      "bandwidth": 287264,
+      "codecs": "avc1.420014",
+      "width": 352,
+      "height": 240
+     }
+    ],
+    "target_duration_s": 6.0,
+    "segment_duration_s": 5.001,
+    "playlist_window_s": 15.003,
+    "playlist_segments": 3,
+    "recorded_utc": "2026-11-10T21:49:10.003+00:00",
+    "width": 352,
+    "height": 240,
+    "codec": "h264 Baseline",
+    "nominal_fps": 15.0,
+    "frames": 300,
+    "clip_seconds": 19.937,
+    "effective_fps": 14.997,
+    "frame_dt_ms": {
+     "mean": 66.68,
+     "std": 0.87,
+     "min": 65.0,
+     "p99": 68.0,
+     "max": 68.0
+    },
+    "timestamp_gaps_over_1_5x": 0,
+    "bitrate_kbps": 315.0,
+    "dup_frame_ratio": 0.0,
+    "unique_fps": 15.0,
+    "osd_clock": {
+     "events_per_s": 0.853,
+     "median_interval_frames": 15.5,
+     "n": 17,
+     "near_integer_rate": false
+    },
+    "segment_publish_interval_s": 4.96,
+    "view_static_during_clip": true,
+    "view_check": {
+     "moved": false,
+     "reason": "static",
+     "shift_px": 0.0,
+     "scale": 1.0,
+     "rotation_deg": 0.003,
+     "inlier_ratio": 0.963,
+     "n_matches": 216
+    },
+    "ok": true
+   },
+   "chainage_km": 10.78,
+   "co_located": [],
+   "speed_suitability": "measured_marginal"
+  },
+  {
+   "id": "R11_144",
+   "name": "I-495 at 138th Street",
+   "owner": "NYSDOT",
+   "ids": {
+    "511ny": 35928,
+    "opencctv": 15827
+   },
+   "lat": 40.74262,
+   "lon": -73.827937,
+   "county": "Queens",
+   "kind": "mainline",
+   "exit": null,
+   "direction_hint": null,
+   "ptz": "likely",
+   "feed": {
+    "type": "hls",
+    "url": "https://s53.nysdot.skyvdn.com/rtplive/R11_144/playlist.m3u8",
+    "host": "s53.nysdot.skyvdn.com",
+    "stream_id": "R11_144"
+   },
+   "broken_flag_511ny": false,
+   "posted_limit_mph": 50,
+   "opencctv_url": "https://opencctv.org/cameras/united-states/new-york/queens/i-495-at-138th-street-15827",
+   "chainage_km": 11.25,
+   "co_located": [],
+   "speed_suitability": "candidate_video"
+  },
+  {
+   "id": "NYCDOT_a6095c69",
+   "name": "Main St @ LIE N S/R",
+   "owner": "NYC DOT",
+   "ids": {
+    "511ny": 21357
+   },
+   "lat": 40.742587,
+   "lon": -73.825432,
+   "county": "Queens",
+   "kind": "service_road",
+   "exit": null,
+   "direction_hint": null,
+   "ptz": "unknown",
+   "feed": {
+    "type": "jpeg",
+    "url": "https://nyctmc.org/api/cameras/a6095c69-aef9-4a64-8091-9a2cb8645ee7/image",
+    "host": "nyctmc.org"
+   },
+   "broken_flag_511ny": false,
+   "posted_limit_mph": 50,
+   "chainage_km": 11.25,
+   "co_located": [],
+   "speed_suitability": "snapshot_only"
+  },
+  {
+   "id": "R11_146",
+   "name": "I-495 at 146th Street",
+   "owner": "NYSDOT",
+   "ids": {
+    "511ny": 35929,
+    "opencctv": 15829
+   },
+   "lat": 40.741496,
+   "lon": -73.823316,
+   "county": "Queens",
+   "kind": "mainline",
+   "exit": null,
+   "direction_hint": null,
+   "ptz": "likely",
+   "feed": {
+    "type": "hls",
+    "url": "https://s53.nysdot.skyvdn.com/rtplive/R11_146/playlist.m3u8",
+    "host": "s53.nysdot.skyvdn.com",
+    "stream_id": "R11_146"
+   },
+   "broken_flag_511ny": false,
+   "posted_limit_mph": 50,
+   "opencctv_url": "https://opencctv.org/cameras/united-states/new-york/queens/i-495-at-146th-street-15829",
+   "chainage_km": 11.66,
+   "co_located": [],
+   "speed_suitability": "candidate_video"
+  },
+  {
+   "id": "NYCDOT_21ca79e4",
+   "name": "Kissena Blvd @ LIE N S/R",
+   "owner": "NYC DOT",
+   "ids": {
+    "511ny": 21075
+   },
+   "lat": 40.739234,
+   "lon": -73.815061,
+   "county": "Queens",
+   "kind": "service_road",
+   "exit": null,
+   "direction_hint": null,
+   "ptz": "unknown",
+   "feed": {
+    "type": "jpeg",
+    "url": "https://nyctmc.org/api/cameras/21ca79e4-eec6-4073-914d-117409a7e677/image",
+    "host": "nyctmc.org"
+   },
+   "broken_flag_511ny": false,
+   "posted_limit_mph": 50,
+   "chainage_km": 12.44,
+   "co_located": [
+    "NYCDOT_69833518",
+    "R10_002",
+    "R11_147"
+   ],
+   "speed_suitability": "snapshot_only"
+  },
+  {
+   "id": "NYCDOT_69833518",
+   "name": "LIE ( S S/R ) @ Kissena Blvd",
+   "owner": "NYC DOT",
+   "ids": {
+    "511ny": 21308
+   },
+   "lat": 40.738943,
+   "lon": -73.815047,
+   "county": "Queens",
+   "kind": "service_road",
+   "exit": null,
+   "direction_hint": null,
+   "ptz": "unknown",
+   "feed": {
+    "type": "jpeg",
+    "url": "https://nyctmc.org/api/cameras/69833518-8972-4147-b518-2ab15dfe1b24/image",
+    "host": "nyctmc.org"
+   },
+   "broken_flag_511ny": false,
+   "posted_limit_mph": 50,
+   "chainage_km": 12.44,
+   "co_located": [
+    "NYCDOT_21ca79e4",
+    "R10_002",
+    "R11_147"
+   ],
+   "speed_suitability": "snapshot_only"
+  },
+  {
+   "id": "R10_002",
+   "name": "I-495 at Kissena Blvd",
+   "owner": "NYSDOT",
+   "ids": {
+    "511ny": 34336,
+    "opencctv": 16670
+   },
+   "lat": 40.738796,
+   "lon": -73.814738,
+   "county": "Queens",
+   "kind": "mainline",
+   "exit": null,
+   "direction_hint": null,
+   "ptz": "likely",
+   "feed": {
+    "type": "hls",
+    "url": "https://s51.nysdot.skyvdn.com/rtplive/R10_002/playlist.m3u8",
+    "host": "s51.nysdot.skyvdn.com",
+    "stream_id": "R10_002"
+   },
+   "broken_flag_511ny": false,
+   "posted_limit_mph": 50,
+   "opencctv_url": "https://opencctv.org/cameras/united-states/new-york/queens/i-495-at-kissena-blvd-16670",
+   "chainage_km": 12.44,
+   "co_located": [
+    "NYCDOT_21ca79e4",
+    "NYCDOT_69833518",
+    "R11_147"
+   ],
+   "speed_suitability": "candidate_video"
+  },
+  {
+   "id": "R11_147",
+   "name": "I-495 at Kissena Blvd",
+   "owner": "NYSDOT",
+   "ids": {
+    "511ny": 35930,
+    "opencctv": 16670
+   },
+   "lat": 40.738794,
+   "lon": -73.814722,
+   "county": "Queens",
+   "kind": "mainline",
+   "exit": null,
+   "direction_hint": null,
+   "ptz": "likely",
+   "feed": {
+    "type": "hls",
+    "url": "https://s53.nysdot.skyvdn.com/rtplive/R11_147/playlist.m3u8",
+    "host": "s53.nysdot.skyvdn.com",
+    "stream_id": "R11_147"
+   },
+   "broken_flag_511ny": false,
+   "posted_limit_mph": 50,
+   "opencctv_url": "https://opencctv.org/cameras/united-states/new-york/queens/i-495-at-kissena-blvd-16670",
+   "chainage_km": 12.44,
+   "co_located": [
+    "NYCDOT_21ca79e4",
+    "NYCDOT_69833518",
+    "R10_002"
+   ],
+   "speed_suitability": "candidate_video"
+  },
+  {
+   "id": "R11_148",
+   "name": "I-495 at 163rd Street",
+   "owner": "NYSDOT",
+   "ids": {
+    "511ny": 35931,
+    "opencctv": 15831
+   },
+   "lat": 40.73837,
+   "lon": -73.805972,
+   "county": "Queens",
+   "kind": "mainline",
+   "exit": null,
+   "direction_hint": null,
+   "ptz": "likely",
+   "feed": {
+    "type": "hls",
+    "url": "https://s53.nysdot.skyvdn.com/rtplive/R11_148/playlist.m3u8",
+    "host": "s53.nysdot.skyvdn.com",
+    "stream_id": "R11_148"
+   },
+   "broken_flag_511ny": false,
+   "posted_limit_mph": 50,
+   "opencctv_url": "https://opencctv.org/cameras/united-states/new-york/queens/i-495-at-163rd-street-15831",
+   "chainage_km": 13.18,
+   "co_located": [
+    "NYCDOT_8ff75339"
+   ],
+   "speed_suitability": "candidate_video"
+  },
+  {
+   "id": "NYCDOT_8ff75339",
+   "name": "C5-LIE-22-WB_at_163rd_St-Ex25",
+   "owner": "NYC DOT",
+   "ids": {
+    "511ny": 21334
+   },
+   "lat": 40.738651,
+   "lon": -73.805957,
+   "county": "Queens",
+   "kind": "mainline",
+   "exit": "25",
+   "direction_hint": null,
+   "ptz": "unknown",
+   "feed": {
+    "type": "jpeg",
+    "url": "https://nyctmc.org/api/cameras/8ff75339-6269-457e-8fb0-55af56997c5b/image",
+    "host": "nyctmc.org"
+   },
+   "broken_flag_511ny": false,
+   "posted_limit_mph": 50,
+   "chainage_km": 13.21,
+   "co_located": [
+    "R11_148"
+   ],
+   "speed_suitability": "snapshot_only"
+  },
+  {
+   "id": "R10_003",
+   "name": "I-495 at Utopia Pkwy",
+   "owner": "NYSDOT",
+   "ids": {
+    "511ny": 34347,
+    "opencctv": 16671
+   },
+   "lat": 40.738129,
+   "lon": -73.797132,
+   "county": "Queens",
+   "kind": "mainline",
+   "exit": null,
+   "direction_hint": null,
+   "ptz": "likely",
+   "feed": {
+    "type": "hls",
+    "url": "https://s51.nysdot.skyvdn.com/rtplive/R10_003/playlist.m3u8",
+    "host": "s51.nysdot.skyvdn.com",
+    "stream_id": "R10_003"
+   },
+   "broken_flag_511ny": false,
+   "posted_limit_mph": 50,
+   "opencctv_url": "https://opencctv.org/cameras/united-states/new-york/queens/i-495-at-utopia-pkwy-16671",
+   "chainage_km": 13.96,
+   "co_located": [
+    "R11_149"
+   ],
+   "speed_suitability": "candidate_video"
+  },
+  {
+   "id": "R11_149",
+   "name": "I-495 at 172nd Street",
+   "owner": "NYSDOT",
+   "ids": {
+    "511ny": 35932
+   },
+   "lat": 40.738129,
+   "lon": -73.797132,
+   "county": "Queens",
+   "kind": "mainline",
+   "exit": null,
+   "direction_hint": null,
+   "ptz": "likely",
+   "feed": {
+    "type": "hls",
+    "url": "https://s53.nysdot.skyvdn.com/rtplive/R11_149/playlist.m3u8",
+    "host": "s53.nysdot.skyvdn.com",
+    "stream_id": "R11_149"
+   },
+   "broken_flag_511ny": false,
+   "posted_limit_mph": 50,
+   "chainage_km": 13.96,
+   "co_located": [
+    "R10_003"
+   ],
+   "speed_suitability": "candidate_video"
+  },
+  {
+   "id": "R11_150",
+   "name": "I-495 at 185th Street",
+   "owner": "NYSDOT",
+   "ids": {
+    "511ny": 35933,
+    "opencctv": 15833
+   },
+   "lat": 40.73984,
+   "lon": -73.7902,
+   "county": "Queens",
+   "kind": "mainline",
+   "exit": null,
+   "direction_hint": null,
+   "ptz": "likely",
+   "feed": {
+    "type": "hls",
+    "url": "https://s53.nysdot.skyvdn.com/rtplive/R11_150/playlist.m3u8",
+    "host": "s53.nysdot.skyvdn.com",
+    "stream_id": "R11_150"
+   },
+   "broken_flag_511ny": false,
+   "posted_limit_mph": 50,
+   "opencctv_url": "https://opencctv.org/cameras/united-states/new-york/queens/i-495-at-185th-street-15833",
+   "measured": {
+    "camera_id": "R11_150",
+    "feed_type": "hls",
+    "url": "https://s53.nysdot.skyvdn.com/rtplive/R11_150/playlist.m3u8",
+    "variants": [
+     {
+      "bandwidth": 286361,
+      "codecs": "avc1.420014",
+      "width": 352,
+      "height": 240
+     }
+    ],
+    "target_duration_s": 6.0,
+    "segment_duration_s": 5.0,
+    "playlist_window_s": 15.0,
+    "playlist_segments": 3,
+    "recorded_utc": "2026-11-10T21:49:23.364+00:00",
+    "width": 352,
+    "height": 240,
+    "codec": "h264 Baseline",
+    "nominal_fps": 15.0,
+    "frames": 300,
+    "clip_seconds": 19.933,
+    "effective_fps": 15.0,
+    "frame_dt_ms": {
+     "mean": 66.67,
+     "std": 0.84,
+     "min": 65.0,
+     "p99": 68.0,
+     "max": 68.0
+    },
+    "timestamp_gaps_over_1_5x": 0,
+    "bitrate_kbps": 315.5,
+    "dup_frame_ratio": 0.0,
+    "unique_fps": 15.0,
+    "osd_clock": {
+     "events_per_s": 2.96,
+     "median_interval_frames": 5.0,
+     "n": 59,
+     "near_integer_rate": true
+    },
+    "segment_publish_interval_s": 4.92,
+    "view_static_during_clip": true,
+    "view_check": {
+     "moved": false,
+     "reason": "static",
+     "shift_px": 0.0,
+     "scale": 0.998,
+     "rotation_deg": 0.054,
+     "inlier_ratio": 0.861,
+     "n_matches": 72
+    },
+    "ok": true
+   },
+   "chainage_km": 14.57,
+   "co_located": [],
+   "speed_suitability": "measured_marginal"
+  },
+  {
+   "id": "R11_151",
+   "name": "I-495 at Underhill Avenue",
+   "owner": "NYSDOT",
+   "ids": {
+    "511ny": 35190,
+    "opencctv": 16809
+   },
+   "lat": 40.74249,
+   "lon": -73.780512,
+   "county": "Queens",
+   "kind": "mainline",
+   "exit": null,
+   "direction_hint": null,
+   "ptz": "likely",
+   "feed": {
+    "type": "hls",
+    "url": "https://s51.nysdot.skyvdn.com/rtplive/R11_151/playlist.m3u8",
+    "host": "s51.nysdot.skyvdn.com",
+    "stream_id": "R11_151"
+   },
+   "broken_flag_511ny": false,
+   "posted_limit_mph": 50,
+   "opencctv_url": "https://opencctv.org/cameras/united-states/new-york/queens/i-495-at-underhill-avenue-16809",
+   "chainage_km": 15.44,
+   "co_located": [],
+   "speed_suitability": "candidate_video"
+  },
+  {
+   "id": "R11_152",
+   "name": "I-495 at Francis Lewis Blvd.",
+   "owner": "NYSDOT",
+   "ids": {
+    "511ny": 35191,
+    "opencctv": 16810
+   },
+   "lat": 40.743447,
+   "lon": -73.774526,
+   "county": "Queens",
+   "kind": "mainline",
+   "exit": null,
+   "direction_hint": null,
+   "ptz": "likely",
+   "feed": {
+    "type": "hls",
+    "url": "https://s51.nysdot.skyvdn.com/rtplive/R11_152/playlist.m3u8",
+    "host": "s51.nysdot.skyvdn.com",
+    "stream_id": "R11_152"
+   },
+   "broken_flag_511ny": false,
+   "posted_limit_mph": 50,
+   "opencctv_url": "https://opencctv.org/cameras/united-states/new-york/queens/i-495-at-francis-lewis-blvd-16810",
+   "chainage_km": 15.96,
+   "co_located": [],
+   "speed_suitability": "candidate_video"
+  },
+  {
+   "id": "NYCDOT_800d29e7",
+   "name": "C5-LIE-27-WB_at_Clearview_Exwy-Ex27",
+   "owner": "NYC DOT",
+   "ids": {
+    "511ny": 21716
+   },
+   "lat": 40.745167,
+   "lon": -73.769961,
+   "county": "Queens",
+   "kind": "mainline",
+   "exit": "27",
+   "direction_hint": null,
+   "ptz": "unknown",
+   "feed": {
+    "type": "jpeg",
+    "url": "https://nyctmc.org/api/cameras/800d29e7-aa14-4269-b7a3-22661fe48f55/image",
+    "host": "nyctmc.org"
+   },
+   "broken_flag_511ny": false,
+   "posted_limit_mph": 50,
+   "chainage_km": 16.39,
+   "co_located": [
+    "R11_269"
+   ],
+   "speed_suitability": "snapshot_only"
+  },
+  {
+   "id": "R11_269",
+   "name": "I-495 at I-295/CVE",
+   "owner": "NYSDOT",
+   "ids": {
+    "511ny": 34864,
+    "opencctv": 14986
+   },
+   "lat": 40.744954,
+   "lon": -73.769768,
+   "county": "Queens",
+   "kind": "mainline",
+   "exit": null,
+   "direction_hint": null,
+   "ptz": "likely",
+   "feed": {
+    "type": "hls",
+    "url": "https://s9.nysdot.skyvdn.com/rtplive/R11_269/playlist.m3u8",
+    "host": "s9.nysdot.skyvdn.com",
+    "stream_id": "R11_269"
+   },
+   "broken_flag_511ny": false,
+   "posted_limit_mph": 50,
+   "opencctv_url": "https://opencctv.org/cameras/united-states/new-york/queens/i-495-at-i-295cve-14986",
+   "chainage_km": 16.42,
+   "co_located": [
+    "NYCDOT_800d29e7"
+   ],
+   "speed_suitability": "candidate_video"
+  },
+  {
+   "id": "NYCDOT_fcd793fc",
+   "name": "LIE @ Oceania St",
+   "owner": "NYC DOT",
+   "ids": {
+    "511ny": 21410
+   },
+   "lat": 40.7458,
+   "lon": -73.767759,
+   "county": "Queens",
+   "kind": "mainline",
+   "exit": null,
+   "direction_hint": null,
+   "ptz": "unknown",
+   "feed": {
+    "type": "jpeg",
+    "url": "https://nyctmc.org/api/cameras/fcd793fc-d600-40a6-949b-b168d96368fd/image",
+    "host": "nyctmc.org"
+   },
+   "broken_flag_511ny": false,
+   "posted_limit_mph": 50,
+   "chainage_km": 16.61,
+   "co_located": [],
+   "speed_suitability": "snapshot_only"
+  },
+  {
+   "id": "R10_005",
+   "name": "I-495 at Oceana St",
+   "owner": "NYSDOT",
+   "ids": {
+    "511ny": 34358,
+    "opencctv": 16672
+   },
+   "lat": 40.746821,
+   "lon": -73.763695,
+   "county": "Queens",
+   "kind": "mainline",
+   "exit": null,
+   "direction_hint": null,
+   "ptz": "likely",
+   "feed": {
+    "type": "hls",
+    "url": "https://s51.nysdot.skyvdn.com/rtplive/R10_005/playlist.m3u8",
+    "host": "s51.nysdot.skyvdn.com",
+    "stream_id": "R10_005"
+   },
+   "broken_flag_511ny": false,
+   "posted_limit_mph": 50,
+   "opencctv_url": "https://opencctv.org/cameras/united-states/new-york/queens/i-495-at-oceana-st-16672",
+   "chainage_km": 16.97,
+   "co_located": [
+    "NYCDOT_5e0a8966"
+   ],
+   "speed_suitability": "candidate_video"
+  },
+  {
+   "id": "NYCDOT_5e0a8966",
+   "name": "C5-LIE-28-EB_at_213th_St-Ex28",
+   "owner": "NYC DOT",
+   "ids": {
+    "511ny": 36041
+   },
+   "lat": 40.746696,
+   "lon": -73.763657,
+   "county": "Queens",
+   "kind": "mainline",
+   "exit": "28",
+   "direction_hint": null,
+   "ptz": "unknown",
+   "feed": {
+    "type": "jpeg",
+    "url": "https://nyctmc.org/api/cameras/5e0a8966-79ae-4a7b-9561-aca2c37b22ff/image",
+    "host": "nyctmc.org"
+   },
+   "broken_flag_511ny": false,
+   "posted_limit_mph": 50,
+   "chainage_km": 16.98,
+   "co_located": [
+    "R10_005"
+   ],
+   "speed_suitability": "snapshot_only"
+  },
+  {
+   "id": "R11_287",
+   "name": "I-495 at Bell Blvd",
+   "owner": "NYSDOT",
+   "ids": {
+    "511ny": 34895,
+    "opencctv": 15016
+   },
+   "lat": 40.747413,
+   "lon": -73.761597,
+   "county": "Queens",
+   "kind": "mainline",
+   "exit": null,
+   "direction_hint": null,
+   "ptz": "likely",
+   "feed": {
+    "type": "hls",
+    "url": "https://s9.nysdot.skyvdn.com/rtplive/R11_287/playlist.m3u8",
+    "host": "s9.nysdot.skyvdn.com",
+    "stream_id": "R11_287"
+   },
+   "broken_flag_511ny": false,
+   "posted_limit_mph": 50,
+   "opencctv_url": "https://opencctv.org/cameras/united-states/new-york/queens/i-495-at-bell-blvd-15016",
+   "chainage_km": 17.18,
+   "co_located": [],
+   "speed_suitability": "candidate_video"
+  },
+  {
+   "id": "NYCDOT_513234e1",
+   "name": "C5-LIE-29-WB_at_220th_St-Ex29",
+   "owner": "NYC DOT",
+   "ids": {
+    "511ny": 21441
+   },
+   "lat": 40.749079,
+   "lon": -73.758283,
+   "county": "Queens",
+   "kind": "mainline",
+   "exit": "29",
+   "direction_hint": null,
+   "ptz": "unknown",
+   "feed": {
+    "type": "jpeg",
+    "url": "https://nyctmc.org/api/cameras/513234e1-ea04-47bc-b607-c6ff1bb6a18d/image",
+    "host": "nyctmc.org"
+   },
+   "broken_flag_511ny": false,
+   "posted_limit_mph": 50,
+   "chainage_km": 17.51,
+   "co_located": [
+    "R11_154"
+   ],
+   "speed_suitability": "snapshot_only"
+  },
+  {
+   "id": "R11_154",
+   "name": "I-495 at 220th Street",
+   "owner": "NYSDOT",
+   "ids": {
+    "511ny": 34355,
+    "opencctv": 14485
+   },
+   "lat": 40.74883,
+   "lon": -73.758139,
+   "county": "Queens",
+   "kind": "mainline",
+   "exit": null,
+   "direction_hint": null,
+   "ptz": "likely",
+   "feed": {
+    "type": "hls",
+    "url": "https://s7.nysdot.skyvdn.com/rtplive/R11_154/playlist.m3u8",
+    "host": "s7.nysdot.skyvdn.com",
+    "stream_id": "R11_154"
+   },
+   "broken_flag_511ny": false,
+   "posted_limit_mph": 50,
+   "opencctv_url": "https://opencctv.org/cameras/united-states/new-york/queens/i-495-at-220th-street-14485",
+   "chainage_km": 17.54,
+   "co_located": [
+    "NYCDOT_513234e1"
+   ],
+   "speed_suitability": "candidate_video"
+  },
+  {
+   "id": "NYCDOT_316320b7",
+   "name": "Long Island Expy @ Exit 29",
+   "owner": "NYC DOT",
+   "ids": {
+    "511ny": 21162
+   },
+   "lat": 40.750793,
+   "lon": -73.750526,
+   "county": "Queens",
+   "kind": "mainline",
+   "exit": "29",
+   "direction_hint": null,
+   "ptz": "unknown",
+   "feed": {
+    "type": "jpeg",
+    "url": "https://nyctmc.org/api/cameras/316320b7-ff9c-44d4-b135-c780ee698eeb/image",
+    "host": "nyctmc.org"
+   },
+   "broken_flag_511ny": false,
+   "posted_limit_mph": 50,
+   "chainage_km": 18.22,
+   "co_located": [
+    "R10_006",
+    "R11_255"
+   ],
+   "speed_suitability": "snapshot_only"
+  },
+  {
+   "id": "R10_006",
+   "name": "I-495 at East Hampton Blvd Pedestrian Br",
+   "owner": "NYSDOT",
+   "ids": {
+    "511ny": 34369,
+    "opencctv": 16673
+   },
+   "lat": 40.750658,
+   "lon": -73.750207,
+   "county": "Queens",
+   "kind": "mainline",
+   "exit": null,
+   "direction_hint": null,
+   "ptz": "likely",
+   "feed": {
+    "type": "hls",
+    "url": "https://s51.nysdot.skyvdn.com/rtplive/R10_006/playlist.m3u8",
+    "host": "s51.nysdot.skyvdn.com",
+    "stream_id": "R10_006"
+   },
+   "broken_flag_511ny": false,
+   "posted_limit_mph": 50,
+   "opencctv_url": "https://opencctv.org/cameras/united-states/new-york/queens/i-495-at-east-hampton-blvd-pedestrian-br-16673",
+   "chainage_km": 18.25,
+   "co_located": [
+    "NYCDOT_316320b7",
+    "R11_255"
+   ],
+   "speed_suitability": "candidate_video"
+  },
+  {
+   "id": "R11_255",
+   "name": "I-495 at 228 Street",
+   "owner": "NYSDOT",
+   "ids": {
+    "511ny": 34516,
+    "opencctv": 14641
+   },
+   "lat": 40.75066,
+   "lon": -73.750199,
+   "county": "Queens",
+   "kind": "mainline",
+   "exit": null,
+   "direction_hint": null,
+   "ptz": "likely",
+   "feed": {
+    "type": "hls",
+    "url": "https://s7.nysdot.skyvdn.com/rtplive/R11_255/playlist.m3u8",
+    "host": "s7.nysdot.skyvdn.com",
+    "stream_id": "R11_255"
+   },
+   "broken_flag_511ny": false,
+   "posted_limit_mph": 50,
+   "opencctv_url": "https://opencctv.org/cameras/united-states/new-york/queens/i-495-at-228-street-14641",
+   "measured": {
+    "camera_id": "R11_255",
+    "feed_type": "hls",
+    "url": "https://s7.nysdot.skyvdn.com/rtplive/R11_255/playlist.m3u8",
+    "variants": [
+     {
+      "bandwidth": 285717,
+      "codecs": "avc1.640016",
+      "width": 640,
+      "height": 352
+     }
+    ],
+    "target_duration_s": 6.0,
+    "segment_duration_s": 5.004,
+    "playlist_window_s": 15.014,
+    "playlist_segments": 3,
+    "recorded_utc": "2026-11-10T21:49:36.718+00:00",
+    "width": 640,
+    "height": 352,
+    "codec": "h264 High",
+    "nominal_fps": 14.985,
+    "frames": 300,
+    "clip_seconds": 19.953000000000003,
+    "effective_fps": 14.985,
+    "frame_dt_ms": {
+     "mean": 66.73,
+     "std": 0.81,
+     "min": 65.0,
+     "p99": 68.0,
+     "max": 68.0
+    },
+    "timestamp_gaps_over_1_5x": 0,
+    "bitrate_kbps": 308.9,
+    "dup_frame_ratio": 0.0,
+    "unique_fps": 14.98,
+    "osd_clock": {
+     "events_per_s": 2.957,
+     "median_interval_frames": 5.0,
+     "n": 59,
+     "near_integer_rate": true
+    },
+    "segment_publish_interval_s": 4.99,
+    "view_static_during_clip": true,
+    "view_check": {
+     "moved": false,
+     "reason": "static",
+     "shift_px": 0.0,
+     "scale": 1.0,
+     "rotation_deg": -0.022,
+     "inlier_ratio": 0.922,
+     "n_matches": 218
+    },
+    "ok": true
+   },
+   "chainage_km": 18.25,
+   "co_located": [
+    "NYCDOT_316320b7",
+    "R10_006"
+   ],
+   "speed_suitability": "measured_marginal"
+  },
+  {
+   "id": "NYCDOT_5f91d1f5",
+   "name": "Long Island Expy @ East Hampton Blvd",
+   "owner": "NYC DOT",
+   "ids": {
+    "511ny": 21311
+   },
+   "lat": 40.752129,
+   "lon": -73.74689,
+   "county": "Queens",
+   "kind": "mainline",
+   "exit": null,
+   "direction_hint": null,
+   "ptz": "unknown",
+   "feed": {
+    "type": "jpeg",
+    "url": "https://nyctmc.org/api/cameras/5f91d1f5-bc11-44dd-a6a5-a36435ed680c/image",
+    "host": "nyctmc.org"
+   },
+   "broken_flag_511ny": false,
+   "posted_limit_mph": 50,
+   "chainage_km": 18.57,
+   "co_located": [],
+   "speed_suitability": "snapshot_only"
+  },
+  {
+   "id": "R11_254",
+   "name": "I-495 at Cross Island Parkway",
+   "owner": "NYSDOT",
+   "ids": {
+    "511ny": 34746,
+    "opencctv": 14872
+   },
+   "lat": 40.754613,
+   "lon": -73.742818,
+   "county": "Queens",
+   "kind": "mainline",
+   "exit": null,
+   "direction_hint": null,
+   "ptz": "likely",
+   "feed": {
+    "type": "hls",
+    "url": "https://s9.nysdot.skyvdn.com/rtplive/R11_254/playlist.m3u8",
+    "host": "s9.nysdot.skyvdn.com",
+    "stream_id": "R11_254"
+   },
+   "broken_flag_511ny": false,
+   "posted_limit_mph": 50,
+   "opencctv_url": "https://opencctv.org/cameras/united-states/new-york/queens/i-495-at-cross-island-parkway-14872",
+   "chainage_km": 19.01,
+   "co_located": [
+    "R10_007"
+   ],
+   "speed_suitability": "candidate_video"
+  },
+  {
+   "id": "R10_007",
+   "name": "I-495 at Cross Island Pkwy.",
+   "owner": "NYSDOT",
+   "ids": {
+    "511ny": 34380,
+    "opencctv": 16674
+   },
+   "lat": 40.754615,
+   "lon": -73.742816,
+   "county": "Queens",
+   "kind": "mainline",
+   "exit": null,
+   "direction_hint": null,
+   "ptz": "likely",
+   "feed": {
+    "type": "hls",
+    "url": "https://s51.nysdot.skyvdn.com/rtplive/R10_007/playlist.m3u8",
+    "host": "s51.nysdot.skyvdn.com",
+    "stream_id": "R10_007"
+   },
+   "broken_flag_511ny": false,
+   "posted_limit_mph": 50,
+   "opencctv_url": "https://opencctv.org/cameras/united-states/new-york/queens/i-495-at-cross-island-pkwy-16674",
+   "chainage_km": 19.01,
+   "co_located": [
+    "R11_254"
+   ],
+   "speed_suitability": "candidate_video"
+  },
+  {
+   "id": "NYCDOT_74fcddb5",
+   "name": "Long Island Expy @ Douglaston Pkwy",
+   "owner": "NYC DOT",
+   "ids": {
+    "511ny": 21249
+   },
+   "lat": 40.75692,
+   "lon": -73.73928,
+   "county": "Queens",
+   "kind": "mainline",
+   "exit": null,
+   "direction_hint": null,
+   "ptz": "unknown",
+   "feed": {
+    "type": "jpeg",
+    "url": "https://nyctmc.org/api/cameras/74fcddb5-5030-4be4-864c-e315e58b86f4/image",
+    "host": "nyctmc.org"
+   },
+   "broken_flag_511ny": false,
+   "posted_limit_mph": 50,
+   "chainage_km": 19.41,
+   "co_located": [],
+   "speed_suitability": "snapshot_only"
+  },
+  {
+   "id": "R10_008",
+   "name": "I-495 West of Marathon Pkwy",
+   "owner": "NYSDOT",
+   "ids": {
+    "511ny": 34392,
+    "opencctv": 16675
+   },
+   "lat": 40.759786,
+   "lon": -73.734113,
+   "county": "Queens",
+   "kind": "mainline",
+   "exit": null,
+   "direction_hint": null,
+   "ptz": "likely",
+   "feed": {
+    "type": "hls",
+    "url": "https://s51.nysdot.skyvdn.com/rtplive/R10_008/playlist.m3u8",
+    "host": "s51.nysdot.skyvdn.com",
+    "stream_id": "R10_008"
+   },
+   "broken_flag_511ny": false,
+   "posted_limit_mph": 50,
+   "opencctv_url": "https://opencctv.org/cameras/united-states/new-york/queens/i-495-west-of-marathon-pkwy-16675",
+   "chainage_km": 19.95,
+   "co_located": [],
+   "speed_suitability": "candidate_video"
+  },
+  {
+   "id": "NYCDOT_2b391c96",
+   "name": "LIE @ Marathon Pkwy",
+   "owner": "NYC DOT",
+   "ids": {
+    "511ny": 21131
+   },
+   "lat": 40.760716,
+   "lon": -73.73183,
+   "county": "Queens",
+   "kind": "mainline",
+   "exit": null,
+   "direction_hint": null,
+   "ptz": "unknown",
+   "feed": {
+    "type": "jpeg",
+    "url": "https://nyctmc.org/api/cameras/2b391c96-b487-4e60-81ad-784766fa48da/image",
+    "host": "nyctmc.org"
+   },
+   "broken_flag_511ny": false,
+   "posted_limit_mph": 50,
+   "chainage_km": 20.16,
+   "co_located": [],
+   "speed_suitability": "snapshot_only"
+  },
+  {
+   "id": "R11_155",
+   "name": "I-495 at 254th Street",
+   "owner": "NYSDOT",
+   "ids": {
+    "511ny": 34356,
+    "opencctv": 14486
+   },
+   "lat": 40.763509,
+   "lon": -73.726411,
+   "county": "Queens",
+   "kind": "mainline",
+   "exit": null,
+   "direction_hint": null,
+   "ptz": "likely",
+   "feed": {
+    "type": "hls",
+    "url": "https://s7.nysdot.skyvdn.com/rtplive/R11_155/playlist.m3u8",
+    "host": "s7.nysdot.skyvdn.com",
+    "stream_id": "R11_155"
+   },
+   "broken_flag_511ny": false,
+   "posted_limit_mph": 50,
+   "opencctv_url": "https://opencctv.org/cameras/united-states/new-york/queens/i-495-at-254th-street-14486",
+   "chainage_km": 20.72,
+   "co_located": [],
+   "speed_suitability": "candidate_video"
+  },
+  {
+   "id": "R10_009",
+   "name": "I-495 at Little Neck Pkwy",
+   "owner": "NYSDOT",
+   "ids": {
+    "511ny": 34403,
+    "opencctv": 16676
+   },
+   "lat": 40.764206,
+   "lon": -73.723425,
+   "county": "Queens",
+   "kind": "mainline",
+   "exit": null,
+   "direction_hint": null,
+   "ptz": "likely",
+   "feed": {
+    "type": "hls",
+    "url": "https://s51.nysdot.skyvdn.com/rtplive/R10_009/playlist.m3u8",
+    "host": "s51.nysdot.skyvdn.com",
+    "stream_id": "R10_009"
+   },
+   "broken_flag_511ny": false,
+   "posted_limit_mph": 50,
+   "opencctv_url": "https://opencctv.org/cameras/united-states/new-york/queens/i-495-at-little-neck-pkwy-16676",
+   "chainage_km": 20.98,
+   "co_located": [],
+   "speed_suitability": "candidate_video"
+  },
+  {
+   "id": "R10_010",
+   "name": "I-495 East of Little Neck Pkwy",
+   "owner": "NYSDOT",
+   "ids": {
+    "511ny": 34414,
+    "opencctv": 16677
+   },
+   "lat": 40.76946,
+   "lon": -73.706354,
+   "county": "Queens",
+   "kind": "mainline",
+   "exit": null,
+   "direction_hint": null,
+   "ptz": "likely",
+   "feed": {
+    "type": "hls",
+    "url": "https://s51.nysdot.skyvdn.com/rtplive/R10_010/playlist.m3u8",
+    "host": "s51.nysdot.skyvdn.com",
+    "stream_id": "R10_010"
+   },
+   "broken_flag_511ny": false,
+   "posted_limit_mph": 50,
+   "opencctv_url": "https://opencctv.org/cameras/united-states/new-york/queens/i-495-east-of-little-neck-pkwy-16677",
+   "chainage_km": 22.53,
+   "co_located": [],
+   "speed_suitability": "candidate_video"
+  },
+  {
+   "id": "R10_011",
+   "name": "I-495 West of New Hyde Park Rd",
+   "owner": "NYSDOT",
+   "ids": {
+    "511ny": 35383,
+    "opencctv": 15430
+   },
+   "lat": 40.767123,
+   "lon": -73.696315,
+   "county": "Nassau",
+   "kind": "mainline",
+   "exit": null,
+   "direction_hint": null,
+   "ptz": "likely",
+   "feed": {
+    "type": "hls",
+    "url": "https://s52.nysdot.skyvdn.com/rtplive/R10_011/playlist.m3u8",
+    "host": "s52.nysdot.skyvdn.com",
+    "stream_id": "R10_011"
+   },
+   "broken_flag_511ny": false,
+   "posted_limit_mph": 55,
+   "opencctv_url": "https://opencctv.org/cameras/united-states/new-york/queens/i-495-west-of-new-hyde-park-rd-15430",
+   "measured": {
+    "camera_id": "R10_011",
+    "feed_type": "hls",
+    "url": "https://s52.nysdot.skyvdn.com/rtplive/R10_011/playlist.m3u8",
+    "variants": [
+     {
+      "bandwidth": 215758,
+      "codecs": "avc1.4d401f",
+      "width": 640,
+      "height": 480
+     }
+    ],
+    "target_duration_s": 6.0,
+    "segment_duration_s": 5.005,
+    "playlist_window_s": 15.015,
+    "playlist_segments": 3,
+    "recorded_utc": "2026-11-10T21:49:50.238+00:00",
+    "width": 640,
+    "height": 480,
+    "codec": "h264 Main",
+    "nominal_fps": 14.985,
+    "frames": 300,
+    "clip_seconds": 19.953000000000003,
+    "effective_fps": 14.985,
+    "frame_dt_ms": {
+     "mean": 66.73,
+     "std": 0.44,
+     "min": 66.0,
+     "p99": 67.0,
+     "max": 67.0
+    },
+    "timestamp_gaps_over_1_5x": 0,
+    "bitrate_kbps": 241.4,
+    "dup_frame_ratio": 0.0,
+    "unique_fps": 14.98,
+    "osd_clock": {
+     "events_per_s": 1.303,
+     "median_interval_frames": 15.0,
+     "n": 26,
+     "near_integer_rate": false
+    },
+    "segment_publish_interval_s": 4.96,
+    "view_static_during_clip": true,
+    "view_check": {
+     "moved": false,
+     "reason": "static",
+     "shift_px": 0.0,
+     "scale": 1.0,
+     "rotation_deg": -0.01,
+     "inlier_ratio": 0.851,
+     "n_matches": 114
+    },
+    "ok": true
+   },
+   "chainage_km": 23.42,
+   "co_located": [],
+   "speed_suitability": "measured_good"
+  },
+  {
+   "id": "R10_012",
+   "name": "I-495 at New Hyde Park Rd",
+   "owner": "NYSDOT",
+   "ids": {
+    "511ny": 35384
+   },
+   "lat": 40.770902,
+   "lon": -73.687611,
+   "county": "Nassau",
+   "kind": "mainline",
+   "exit": null,
+   "direction_hint": null,
+   "ptz": "likely",
+   "feed": {
+    "type": "hls",
+    "url": "https://s52.nysdot.skyvdn.com/rtplive/R10_012/playlist.m3u8",
+    "host": "s52.nysdot.skyvdn.com",
+    "stream_id": "R10_012"
+   },
+   "broken_flag_511ny": false,
+   "posted_limit_mph": 55,
+   "chainage_km": 24.26,
+   "co_located": [],
+   "speed_suitability": "candidate_video"
+  },
+  {
+   "id": "R10_013",
+   "name": "I-495 at Shelter Rock Rd",
+   "owner": "NYSDOT",
+   "ids": {
+    "511ny": 35385,
+    "opencctv": 15432
+   },
+   "lat": 40.774339,
+   "lon": -73.670683,
+   "county": "Nassau",
+   "kind": "mainline",
+   "exit": null,
+   "direction_hint": null,
+   "ptz": "likely",
+   "feed": {
+    "type": "hls",
+    "url": "https://s52.nysdot.skyvdn.com/rtplive/R10_013/playlist.m3u8",
+    "host": "s52.nysdot.skyvdn.com",
+    "stream_id": "R10_013"
+   },
+   "broken_flag_511ny": false,
+   "posted_limit_mph": 55,
+   "opencctv_url": "https://opencctv.org/cameras/united-states/new-york/queens/i-495-at-shelter-rock-rd-15432",
+   "chainage_km": 25.74,
+   "co_located": [],
+   "speed_suitability": "candidate_video"
+  },
+  {
+   "id": "R10_014",
+   "name": "I-495 at Searingtown Road",
+   "owner": "NYSDOT",
+   "ids": {
+    "511ny": 35387,
+    "opencctv": 15434
+   },
+   "lat": 40.77946,
+   "lon": -73.662109,
+   "county": "Nassau",
+   "kind": "mainline",
+   "exit": null,
+   "direction_hint": null,
+   "ptz": "likely",
+   "feed": {
+    "type": "hls",
+    "url": "https://s52.nysdot.skyvdn.com/rtplive/R10_014/playlist.m3u8",
+    "host": "s52.nysdot.skyvdn.com",
+    "stream_id": "R10_014"
+   },
+   "broken_flag_511ny": false,
+   "posted_limit_mph": 55,
+   "opencctv_url": "https://opencctv.org/cameras/united-states/new-york/queens/i-495-at-searingtown-road-15434",
+   "measured": {
+    "camera_id": "R10_014",
+    "feed_type": "hls",
+    "url": "https://s52.nysdot.skyvdn.com/rtplive/R10_014/playlist.m3u8",
+    "variants": [
+     {
+      "bandwidth": 216359,
+      "codecs": "avc1.4d401f",
+      "width": 640,
+      "height": 480
+     }
+    ],
+    "target_duration_s": 6.0,
+    "segment_duration_s": 5.005,
+    "playlist_window_s": 15.014,
+    "playlist_segments": 3,
+    "recorded_utc": "2026-11-10T21:47:37.216+00:00",
+    "width": 640,
+    "height": 480,
+    "codec": "h264 Main",
+    "nominal_fps": 14.985,
+    "frames": 300,
+    "clip_seconds": 19.952,
+    "effective_fps": 14.986,
+    "frame_dt_ms": {
+     "mean": 66.73,
+     "std": 0.44,
+     "min": 66.0,
+     "p99": 67.0,
+     "max": 67.0
+    },
+    "timestamp_gaps_over_1_5x": 0,
+    "bitrate_kbps": 235.9,
+    "dup_frame_ratio": 0.0,
+    "unique_fps": 14.99,
+    "osd_clock": {
+     "events_per_s": 1.002,
+     "median_interval_frames": 15.0,
+     "n": 20,
+     "near_integer_rate": true
+    },
+    "segment_publish_interval_s": 4.93,
+    "view_static_during_clip": true,
+    "view_check": {
+     "moved": false,
+     "reason": "static",
+     "shift_px": 0.5,
+     "scale": 1.003,
+     "rotation_deg": -0.109,
+     "inlier_ratio": 0.5,
+     "n_matches": 28
+    },
+    "ok": true
+   },
+   "chainage_km": 26.66,
+   "co_located": [],
+   "speed_suitability": "measured_good"
+  },
+  {
+   "id": "R10_015",
+   "name": "I-495 at Willis Ave",
+   "owner": "NYSDOT",
+   "ids": {
+    "511ny": 35388,
+    "opencctv": 15435
+   },
+   "lat": 40.784756,
+   "lon": -73.64934,
+   "county": "Nassau",
+   "kind": "mainline",
+   "exit": null,
+   "direction_hint": null,
+   "ptz": "likely",
+   "feed": {
+    "type": "hls",
+    "url": "https://s52.nysdot.skyvdn.com/rtplive/R10_015/playlist.m3u8",
+    "host": "s52.nysdot.skyvdn.com",
+    "stream_id": "R10_015"
+   },
+   "broken_flag_511ny": false,
+   "posted_limit_mph": 55,
+   "opencctv_url": "https://opencctv.org/cameras/united-states/new-york/queens/i-495-at-willis-ave-15435",
+   "chainage_km": 27.88,
+   "co_located": [],
+   "speed_suitability": "candidate_video"
+  },
+  {
+   "id": "R10_016",
+   "name": "I-495 at Roslyn Rd",
+   "owner": "NYSDOT",
+   "ids": {
+    "511ny": 35389,
+    "opencctv": 15436
+   },
+   "lat": 40.784619,
+   "lon": -73.637858,
+   "county": "Nassau",
+   "kind": "mainline",
+   "exit": null,
+   "direction_hint": null,
+   "ptz": "likely",
+   "feed": {
+    "type": "hls",
+    "url": "https://s52.nysdot.skyvdn.com/rtplive/R10_016/playlist.m3u8",
+    "host": "s52.nysdot.skyvdn.com",
+    "stream_id": "R10_016"
+   },
+   "broken_flag_511ny": false,
+   "posted_limit_mph": 55,
+   "opencctv_url": "https://opencctv.org/cameras/united-states/new-york/queens/i-495-at-roslyn-rd-15436",
+   "chainage_km": 28.85,
+   "co_located": [],
+   "speed_suitability": "candidate_video"
+  },
+  {
+   "id": "R10_053",
+   "name": "I-495 NSP Connecter Over Height loc",
+   "owner": "NYSDOT",
+   "ids": {
+    "511ny": 35782,
+    "opencctv": 15695
+   },
+   "lat": 40.784418,
+   "lon": -73.629662,
+   "county": "Nassau",
+   "kind": "ramp_or_connector",
+   "exit": null,
+   "direction_hint": null,
+   "ptz": "likely",
+   "feed": {
+    "type": "hls",
+    "url": "https://s53.nysdot.skyvdn.com/rtplive/R10_053/playlist.m3u8",
+    "host": "s53.nysdot.skyvdn.com",
+    "stream_id": "R10_053"
+   },
+   "broken_flag_511ny": false,
+   "posted_limit_mph": 55,
+   "opencctv_url": "https://opencctv.org/cameras/united-states/new-york/queens/i-495-nsp-connecter-over-height-loc-15695",
+   "chainage_km": 30.12,
+   "co_located": [],
+   "speed_suitability": "candidate_video_secondary"
+  },
+  {
+   "id": "R10_062",
+   "name": "NSP at Exit 29A (Westbound LIE Connector)",
+   "owner": "NYSDOT",
+   "ids": {
+    "511ny": 34547
+   },
+   "lat": 40.780328,
+   "lon": -73.62716,
+   "county": "Nassau",
+   "kind": "cross_route",
+   "exit": "29A",
+   "direction_hint": "WB",
+   "ptz": "likely",
+   "feed": {
+    "type": "hls",
+    "url": "https://s51.nysdot.skyvdn.com/rtplive/R10_062/playlist.m3u8",
+    "host": "s51.nysdot.skyvdn.com",
+    "stream_id": "R10_062"
+   },
+   "broken_flag_511ny": false,
+   "posted_limit_mph": 55,
+   "chainage_km": 30.12,
+   "co_located": [
+    "R10_052"
+   ],
+   "speed_suitability": "candidate_video_secondary"
+  },
+  {
+   "id": "R10_052",
+   "name": "I-495 NSP Connecter",
+   "owner": "NYSDOT",
+   "ids": {
+    "511ny": 35781
+   },
+   "lat": 40.780328,
+   "lon": -73.62716,
+   "county": "Nassau",
+   "kind": "ramp_or_connector",
+   "exit": null,
+   "direction_hint": null,
+   "ptz": "likely",
+   "feed": {
+    "type": "hls",
+    "url": "https://s53.nysdot.skyvdn.com/rtplive/R10_052/playlist.m3u8",
+    "host": "s53.nysdot.skyvdn.com",
+    "stream_id": "R10_052"
+   },
+   "broken_flag_511ny": false,
+   "posted_limit_mph": 55,
+   "chainage_km": 30.12,
+   "co_located": [
+    "R10_062"
+   ],
+   "speed_suitability": "candidate_video_secondary"
+  },
+  {
+   "id": "R10_017",
+   "name": "I-495 at Glen Cove Rd",
+   "owner": "NYSDOT",
+   "ids": {
+    "511ny": 35390,
+    "opencctv": 15437
+   },
+   "lat": 40.783203,
+   "lon": -73.622815,
+   "county": "Nassau",
+   "kind": "mainline",
+   "exit": null,
+   "direction_hint": null,
+   "ptz": "likely",
+   "feed": {
+    "type": "hls",
+    "url": "https://s52.nysdot.skyvdn.com/rtplive/R10_017/playlist.m3u8",
+    "host": "s52.nysdot.skyvdn.com",
+    "stream_id": "R10_017"
+   },
+   "broken_flag_511ny": false,
+   "posted_limit_mph": 55,
+   "opencctv_url": "https://opencctv.org/cameras/united-states/new-york/queens/i-495-at-glen-cove-rd-15437",
+   "measured": {
+    "camera_id": "R10_017",
+    "feed_type": "hls",
+    "url": "https://s52.nysdot.skyvdn.com/rtplive/R10_017/playlist.m3u8",
+    "variants": [
+     {
+      "bandwidth": 224473,
+      "codecs": "avc1.4d401e",
+      "width": 640,
+      "height": 480
+     }
+    ],
+    "target_duration_s": 6.0,
+    "segment_duration_s": 5.005,
+    "playlist_window_s": 15.015,
+    "playlist_segments": 3,
+    "recorded_utc": "2026-11-10T21:47:23.471+00:00",
+    "width": 640,
+    "height": 480,
+    "codec": "h264 Main",
+    "nominal_fps": 14.985,
+    "frames": 300,
+    "clip_seconds": 19.953000000000003,
+    "effective_fps": 14.985,
+    "frame_dt_ms": {
+     "mean": 66.73,
+     "std": 0.44,
+     "min": 66.0,
+     "p99": 67.0,
+     "max": 67.0
+    },
+    "timestamp_gaps_over_1_5x": 0,
+    "bitrate_kbps": 242.3,
+    "dup_frame_ratio": 0.0,
+    "unique_fps": 14.98,
+    "osd_clock": {
+     "events_per_s": 1.002,
+     "median_interval_frames": 15.0,
+     "n": 20,
+     "near_integer_rate": true
+    },
+    "segment_publish_interval_s": 4.91,
+    "view_static_during_clip": true,
+    "view_check": {
+     "moved": false,
+     "reason": "static",
+     "shift_px": 0.424,
+     "scale": 1.004,
+     "rotation_deg": 0.076,
+     "inlier_ratio": 0.519,
+     "n_matches": 27
+    },
+    "ok": true
+   },
+   "chainage_km": 30.12,
+   "co_located": [],
+   "speed_suitability": "measured_good"
+  },
+  {
+   "id": "R10_018",
+   "name": "I-495 at Old Westbury Rd",
+   "owner": "NYSDOT",
+   "ids": {
+    "511ny": 35391
+   },
+   "lat": 40.781952,
+   "lon": -73.612178,
+   "county": "Nassau",
+   "kind": "mainline",
+   "exit": null,
+   "direction_hint": null,
+   "ptz": "likely",
+   "feed": {
+    "type": "hls",
+    "url": "https://s52.nysdot.skyvdn.com/rtplive/R10_018/playlist.m3u8",
+    "host": "s52.nysdot.skyvdn.com",
+    "stream_id": "R10_018"
+   },
+   "broken_flag_511ny": false,
+   "posted_limit_mph": 55,
+   "chainage_km": 31.03,
+   "co_located": [],
+   "speed_suitability": "candidate_video"
+  },
+  {
+   "id": "R10_019",
+   "name": "I-495 between Exits 40 and 39",
+   "owner": "NYSDOT",
+   "ids": {
+    "511ny": 35392,
+    "opencctv": 15439
+   },
+   "lat": 40.78222,
+   "lon": -73.59611,
+   "county": "Nassau",
+   "kind": "mainline",
+   "exit": "40-39",
+   "direction_hint": null,
+   "ptz": "likely",
+   "feed": {
+    "type": "hls",
+    "url": "https://s52.nysdot.skyvdn.com/rtplive/R10_019/playlist.m3u8",
+    "host": "s52.nysdot.skyvdn.com",
+    "stream_id": "R10_019"
+   },
+   "broken_flag_511ny": false,
+   "posted_limit_mph": 55,
+   "opencctv_url": "https://opencctv.org/cameras/united-states/new-york/queens/i-495-between-exits-40-and-39-15439",
+   "measured": {
+    "camera_id": "R10_019",
+    "feed_type": "hls",
+    "url": "https://s52.nysdot.skyvdn.com/rtplive/R10_019/playlist.m3u8",
+    "variants": [
+     {
+      "bandwidth": 216660,
+      "codecs": "avc1.4d401e",
+      "width": 640,
+      "height": 480
+     }
+    ],
+    "target_duration_s": 6.0,
+    "segment_duration_s": 5.005,
+    "playlist_window_s": 15.014,
+    "playlist_segments": 3,
+    "recorded_utc": "2026-11-10T21:50:03.670+00:00",
+    "width": 640,
+    "height": 480,
+    "codec": "h264 Main",
+    "nominal_fps": 14.985,
+    "frames": 300,
+    "clip_seconds": 19.952,
+    "effective_fps": 14.986,
+    "frame_dt_ms": {
+     "mean": 66.73,
+     "std": 0.44,
+     "min": 66.0,
+     "p99": 67.0,
+     "max": 67.0
+    },
+    "timestamp_gaps_over_1_5x": 0,
+    "bitrate_kbps": 239.1,
+    "dup_frame_ratio": 0.0,
+    "unique_fps": 14.99,
+    "osd_clock": {
+     "events_per_s": 2.005,
+     "median_interval_frames": 5.0,
+     "n": 40,
+     "near_integer_rate": true
+    },
+    "segment_publish_interval_s": 4.97,
+    "view_static_during_clip": true,
+    "view_check": {
+     "moved": false,
+     "reason": "static",
+     "shift_px": 0.0,
+     "scale": 1.0,
+     "rotation_deg": -0.007,
+     "inlier_ratio": 0.722,
+     "n_matches": 54
+    },
+    "ok": true
+   },
+   "chainage_km": 32.38,
+   "co_located": [],
+   "speed_suitability": "measured_good"
+  },
+  {
+   "id": "R10_020",
+   "name": "I-495 at Powells Lane",
+   "owner": "NYSDOT",
+   "ids": {
+    "511ny": 35393,
+    "opencctv": 15440
+   },
+   "lat": 40.780406,
+   "lon": -73.581291,
+   "county": "Nassau",
+   "kind": "mainline",
+   "exit": null,
+   "direction_hint": null,
+   "ptz": "likely",
+   "feed": {
+    "type": "hls",
+    "url": "https://s52.nysdot.skyvdn.com/rtplive/R10_020/playlist.m3u8",
+    "host": "s52.nysdot.skyvdn.com",
+    "stream_id": "R10_020"
+   },
+   "broken_flag_511ny": false,
+   "posted_limit_mph": 55,
+   "opencctv_url": "https://opencctv.org/cameras/united-states/new-york/queens/i-495-at-powells-lane-15440",
+   "chainage_km": 33.65,
+   "co_located": [],
+   "speed_suitability": "candidate_video"
+  },
+  {
+   "id": "R10_146",
+   "name": "NY 25 at I-495 SSR and Brush Hollow Rd.",
+   "owner": "NYSDOT",
+   "ids": {
+    "511ny": 35819,
+    "opencctv": 15728
+   },
+   "lat": 40.781128,
+   "lon": -73.557392,
+   "county": "Nassau",
+   "kind": "service_road",
+   "exit": null,
+   "direction_hint": null,
+   "ptz": "likely",
+   "feed": {
+    "type": "hls",
+    "url": "https://s53.nysdot.skyvdn.com/rtplive/R10_146/playlist.m3u8",
+    "host": "s53.nysdot.skyvdn.com",
+    "stream_id": "R10_146"
+   },
+   "broken_flag_511ny": false,
+   "posted_limit_mph": 55,
+   "opencctv_url": "https://opencctv.org/cameras/united-states/new-york/queens/ny-25-at-i-495-ssr-and-brush-hollow-rd-15728",
+   "chainage_km": 35.88,
+   "co_located": [],
+   "speed_suitability": "candidate_video_secondary"
+  },
+  {
+   "id": "R10_021",
+   "name": "I-495 at Jericho Tpke",
+   "owner": "NYSDOT",
+   "ids": {
+    "511ny": 35769,
+    "opencctv": 15683
+   },
+   "lat": 40.782869,
+   "lon": -73.554961,
+   "county": "Nassau",
+   "kind": "mainline",
+   "exit": null,
+   "direction_hint": null,
+   "ptz": "likely",
+   "feed": {
+    "type": "hls",
+    "url": "https://s53.nysdot.skyvdn.com/rtplive/R10_021/playlist.m3u8",
+    "host": "s53.nysdot.skyvdn.com",
+    "stream_id": "R10_021"
+   },
+   "broken_flag_511ny": false,
+   "posted_limit_mph": 55,
+   "opencctv_url": "https://opencctv.org/cameras/united-states/new-york/queens/i-495-at-jericho-tpke-15683",
+   "chainage_km": 35.88,
+   "co_located": [],
+   "speed_suitability": "candidate_video"
+  },
+  {
+   "id": "R10_022",
+   "name": "I-495 West of NY 106/107",
+   "owner": "NYSDOT",
+   "ids": {
+    "511ny": 35770,
+    "opencctv": 15684
+   },
+   "lat": 40.784735,
+   "lon": -73.535992,
+   "county": "Nassau",
+   "kind": "mainline",
+   "exit": null,
+   "direction_hint": null,
+   "ptz": "likely",
+   "feed": {
+    "type": "hls",
+    "url": "https://s53.nysdot.skyvdn.com/rtplive/R10_022/playlist.m3u8",
+    "host": "s53.nysdot.skyvdn.com",
+    "stream_id": "R10_022"
+   },
+   "broken_flag_511ny": false,
+   "posted_limit_mph": 55,
+   "opencctv_url": "https://opencctv.org/cameras/united-states/new-york/queens/i-495-west-of-ny-106107-15684",
+   "chainage_km": 37.49,
+   "co_located": [],
+   "speed_suitability": "candidate_video"
+  },
+  {
+   "id": "R10_023",
+   "name": "I-495 at NSP Connector Exit 42",
+   "owner": "NYSDOT",
+   "ids": {
+    "511ny": 35771,
+    "opencctv": 15685
+   },
+   "lat": 40.786802,
+   "lon": -73.527362,
+   "county": "Nassau",
+   "kind": "ramp_or_connector",
+   "exit": "42",
+   "direction_hint": null,
+   "ptz": "likely",
+   "feed": {
+    "type": "hls",
+    "url": "https://s53.nysdot.skyvdn.com/rtplive/R10_023/playlist.m3u8",
+    "host": "s53.nysdot.skyvdn.com",
+    "stream_id": "R10_023"
+   },
+   "broken_flag_511ny": false,
+   "posted_limit_mph": 55,
+   "opencctv_url": "https://opencctv.org/cameras/united-states/new-york/queens/i-495-at-nsp-connector-exit-42-15685",
+   "chainage_km": 37.49,
+   "co_located": [],
+   "speed_suitability": "candidate_video_secondary"
+  },
+  {
+   "id": "R10_344",
+   "name": "OVD LIE Westbound to NSP West",
+   "owner": "NYSDOT",
+   "ids": {
+    "511ny": 34612
+   },
+   "lat": 40.790138,
+   "lon": -73.518952,
+   "county": "Nassau",
+   "kind": "cross_route",
+   "exit": null,
+   "direction_hint": "WB",
+   "ptz": "likely",
+   "feed": {
+    "type": "hls",
+    "url": "https://s7.nysdot.skyvdn.com/rtplive/R10_344/playlist.m3u8",
+    "host": "s7.nysdot.skyvdn.com",
+    "stream_id": "R10_344"
+   },
+   "broken_flag_511ny": false,
+   "posted_limit_mph": 55,
+   "chainage_km": 40.33,
+   "co_located": [],
+   "speed_suitability": "candidate_video_secondary"
+  },
+  {
+   "id": "R10_024",
+   "name": "I-495 at South Oyster Bay Road",
+   "owner": "NYSDOT",
+   "ids": {
+    "511ny": 35773,
+    "opencctv": 15686
+   },
+   "lat": 40.796466,
+   "lon": -73.506084,
+   "county": "Nassau",
+   "kind": "mainline",
+   "exit": null,
+   "direction_hint": null,
+   "ptz": "likely",
+   "feed": {
+    "type": "hls",
+    "url": "https://s53.nysdot.skyvdn.com/rtplive/R10_024/playlist.m3u8",
+    "host": "s53.nysdot.skyvdn.com",
+    "stream_id": "R10_024"
+   },
+   "broken_flag_511ny": false,
+   "posted_limit_mph": 55,
+   "opencctv_url": "https://opencctv.org/cameras/united-states/new-york/queens/i-495-at-south-oyster-bay-road-15686",
+   "chainage_km": 40.33,
+   "co_located": [],
+   "speed_suitability": "candidate_video"
+  },
+  {
+   "id": "R10_075",
+   "name": "NSP at East of LIE Connector",
+   "owner": "NYSDOT",
+   "ids": {
+    "511ny": 35410
+   },
+   "lat": 40.793003,
+   "lon": -73.503772,
+   "county": "Nassau",
+   "kind": "cross_route",
+   "exit": null,
+   "direction_hint": null,
+   "ptz": "likely",
+   "feed": {
+    "type": "hls",
+    "url": "https://s52.nysdot.skyvdn.com/rtplive/R10_075/playlist.m3u8",
+    "host": "s52.nysdot.skyvdn.com",
+    "stream_id": "R10_075"
+   },
+   "broken_flag_511ny": false,
+   "posted_limit_mph": 55,
+   "chainage_km": 40.33,
+   "co_located": [],
+   "speed_suitability": "candidate_video_secondary"
+  },
+  {
+   "id": "R10_025",
+   "name": "I-495 at Route 135",
+   "owner": "NYSDOT",
+   "ids": {
+    "511ny": 35774,
+    "opencctv": 15687
+   },
+   "lat": 40.799354,
+   "lon": -73.488588,
+   "county": "Nassau",
+   "kind": "mainline",
+   "exit": null,
+   "direction_hint": null,
+   "ptz": "likely",
+   "feed": {
+    "type": "hls",
+    "url": "https://s53.nysdot.skyvdn.com/rtplive/R10_025/playlist.m3u8",
+    "host": "s53.nysdot.skyvdn.com",
+    "stream_id": "R10_025"
+   },
+   "broken_flag_511ny": false,
+   "posted_limit_mph": 55,
+   "opencctv_url": "https://opencctv.org/cameras/united-states/new-york/farmingdale/i-495-at-route-135-15687",
+   "chainage_km": 41.84,
+   "co_located": [],
+   "speed_suitability": "candidate_video"
+  },
+  {
+   "id": "R10_026",
+   "name": "I-495 at Manetto Hill Rd (Exit 45)",
+   "owner": "NYSDOT",
+   "ids": {
+    "511ny": 35775,
+    "opencctv": 15688
+   },
+   "lat": 40.797959,
+   "lon": -73.476578,
+   "county": "Nassau",
+   "kind": "mainline",
+   "exit": "45",
+   "direction_hint": null,
+   "ptz": "likely",
+   "feed": {
+    "type": "hls",
+    "url": "https://s53.nysdot.skyvdn.com/rtplive/R10_026/playlist.m3u8",
+    "host": "s53.nysdot.skyvdn.com",
+    "stream_id": "R10_026"
+   },
+   "broken_flag_511ny": false,
+   "posted_limit_mph": 55,
+   "opencctv_url": "https://opencctv.org/cameras/united-states/new-york/plainview/i-495-at-manetto-hill-rd-exit-45-15688",
+   "chainage_km": 42.86,
+   "co_located": [],
+   "speed_suitability": "candidate_video"
+  },
+  {
+   "id": "R10_027",
+   "name": "I-495 at Plainview Rd.",
+   "owner": "NYSDOT",
+   "ids": {
+    "511ny": 35776,
+    "opencctv": 15689
+   },
+   "lat": 40.792085,
+   "lon": -73.460963,
+   "county": "Nassau",
+   "kind": "mainline",
+   "exit": null,
+   "direction_hint": null,
+   "ptz": "likely",
+   "feed": {
+    "type": "hls",
+    "url": "https://s53.nysdot.skyvdn.com/rtplive/R10_027/playlist.m3u8",
+    "host": "s53.nysdot.skyvdn.com",
+    "stream_id": "R10_027"
+   },
+   "broken_flag_511ny": false,
+   "posted_limit_mph": 55,
+   "opencctv_url": "https://opencctv.org/cameras/united-states/new-york/plainview/i-495-at-plainview-rd-15689",
+   "measured": {
+    "camera_id": "R10_027",
+    "feed_type": "hls",
+    "url": "https://s53.nysdot.skyvdn.com/rtplive/R10_027/playlist.m3u8",
+    "variants": [
+     {
+      "bandwidth": 216059,
+      "codecs": "avc1.4d401e",
+      "width": 352,
+      "height": 240
+     }
+    ],
+    "target_duration_s": 6.0,
+    "segment_duration_s": 5.005,
+    "playlist_window_s": 15.014,
+    "playlist_segments": 3,
+    "recorded_utc": "2026-11-10T21:50:17.175+00:00",
+    "width": 352,
+    "height": 240,
+    "codec": "h264 Main",
+    "nominal_fps": 14.985,
+    "frames": 300,
+    "clip_seconds": 19.952,
+    "effective_fps": 14.986,
+    "frame_dt_ms": {
+     "mean": 66.73,
+     "std": 0.44,
+     "min": 66.0,
+     "p99": 67.0,
+     "max": 67.0
+    },
+    "timestamp_gaps_over_1_5x": 0,
+    "bitrate_kbps": 234.4,
+    "dup_frame_ratio": 0.0,
+    "unique_fps": 14.99,
+    "osd_clock": null,
+    "segment_publish_interval_s": 4.92,
+    "view_static_during_clip": true,
+    "view_check": {
+     "moved": false,
+     "reason": "static",
+     "shift_px": 0.0,
+     "scale": 0.995,
+     "rotation_deg": 0.26,
+     "inlier_ratio": 0.725,
+     "n_matches": 91
+    },
+    "ok": true
+   },
+   "chainage_km": 44.33,
+   "co_located": [],
+   "speed_suitability": "measured_marginal"
+  },
+  {
+   "id": "R10_028",
+   "name": "I-495 East of Round Swamp Rd",
+   "owner": "NYSDOT",
+   "ids": {
+    "511ny": 35777,
+    "opencctv": 15690
+   },
+   "lat": 40.783156,
+   "lon": -73.436699,
+   "county": "Nassau",
+   "kind": "mainline",
+   "exit": null,
+   "direction_hint": null,
+   "ptz": "likely",
+   "feed": {
+    "type": "hls",
+    "url": "https://s53.nysdot.skyvdn.com/rtplive/R10_028/playlist.m3u8",
+    "host": "s53.nysdot.skyvdn.com",
+    "stream_id": "R10_028"
+   },
+   "broken_flag_511ny": false,
+   "posted_limit_mph": 55,
+   "opencctv_url": "https://opencctv.org/cameras/united-states/new-york/dix-hills/i-495-east-of-round-swamp-rd-15690",
+   "chainage_km": 46.6,
+   "co_located": [],
+   "speed_suitability": "candidate_video"
+  },
+  {
+   "id": "R10_029",
+   "name": "I-495 at NY 110",
+   "owner": "NYSDOT",
+   "ids": {
+    "511ny": 35778,
+    "opencctv": 15691
+   },
+   "lat": 40.780727,
+   "lon": -73.418831,
+   "county": "Suffolk",
+   "kind": "mainline",
+   "exit": null,
+   "direction_hint": null,
+   "ptz": "likely",
+   "feed": {
+    "type": "hls",
+    "url": "https://s53.nysdot.skyvdn.com/rtplive/R10_029/playlist.m3u8",
+    "host": "s53.nysdot.skyvdn.com",
+    "stream_id": "R10_029"
+   },
+   "broken_flag_511ny": false,
+   "posted_limit_mph": 55,
+   "opencctv_url": "https://opencctv.org/cameras/united-states/new-york/melville/i-495-at-ny-110-15691",
+   "chainage_km": 48.13,
+   "co_located": [],
+   "speed_suitability": "candidate_video"
+  },
+  {
+   "id": "R10_030",
+   "name": "I-495 at Half Hollow Hills Road West",
+   "owner": "NYSDOT",
+   "ids": {
+    "511ny": 35779,
+    "opencctv": 15692
+   },
+   "lat": 40.784798,
+   "lon": -73.395521,
+   "county": "Suffolk",
+   "kind": "mainline",
+   "exit": null,
+   "direction_hint": null,
+   "ptz": "likely",
+   "feed": {
+    "type": "hls",
+    "url": "https://s53.nysdot.skyvdn.com/rtplive/R10_030/playlist.m3u8",
+    "host": "s53.nysdot.skyvdn.com",
+    "stream_id": "R10_030"
+   },
+   "broken_flag_511ny": false,
+   "posted_limit_mph": 55,
+   "opencctv_url": "https://opencctv.org/cameras/united-states/new-york/dix-hills/i-495-at-half-hollow-hills-road-west-15692",
+   "chainage_km": 50.14,
+   "co_located": [],
+   "speed_suitability": "candidate_video"
+  },
+  {
+   "id": "R10_031",
+   "name": "I-495 at Bagatelle Rd",
+   "owner": "NYSDOT",
+   "ids": {
+    "511ny": 34425,
+    "opencctv": 16678
+   },
+   "lat": 40.791387,
+   "lon": -73.363072,
+   "county": "Suffolk",
+   "kind": "mainline",
+   "exit": null,
+   "direction_hint": null,
+   "ptz": "likely",
+   "feed": {
+    "type": "hls",
+    "url": "https://s51.nysdot.skyvdn.com/rtplive/R10_031/playlist.m3u8",
+    "host": "s51.nysdot.skyvdn.com",
+    "stream_id": "R10_031"
+   },
+   "broken_flag_511ny": false,
+   "posted_limit_mph": 55,
+   "opencctv_url": "https://opencctv.org/cameras/united-states/new-york/commack/i-495-at-bagatelle-rd-16678",
+   "chainage_km": 52.97,
+   "co_located": [],
+   "speed_suitability": "candidate_video"
+  },
+  {
+   "id": "R10_032",
+   "name": "I-495 at Deer Park Ave",
+   "owner": "NYSDOT",
+   "ids": {
+    "511ny": 34436,
+    "opencctv": 16679
+   },
+   "lat": 40.800919,
+   "lon": -73.333432,
+   "county": "Suffolk",
+   "kind": "mainline",
+   "exit": null,
+   "direction_hint": null,
+   "ptz": "likely",
+   "feed": {
+    "type": "hls",
+    "url": "https://s51.nysdot.skyvdn.com/rtplive/R10_032/playlist.m3u8",
+    "host": "s51.nysdot.skyvdn.com",
+    "stream_id": "R10_032"
+   },
+   "broken_flag_511ny": false,
+   "posted_limit_mph": 55,
+   "opencctv_url": "https://opencctv.org/cameras/united-states/new-york/commack/i-495-at-deer-park-ave-16679",
+   "chainage_km": 55.68,
+   "co_located": [],
+   "speed_suitability": "candidate_video"
+  },
+  {
+   "id": "R10_1019",
+   "name": "LIE Welcome Center LIE East Bound",
+   "owner": "NYSDOT",
+   "ids": {
+    "511ny": 35101
+   },
+   "lat": 40.802423,
+   "lon": -73.316537,
+   "county": "Suffolk",
+   "kind": "rest_area",
+   "exit": null,
+   "direction_hint": "EB",
+   "ptz": "likely",
+   "feed": {
+    "type": "hls",
+    "url": "https://s9.nysdot.skyvdn.com/rtplive/R10_1019/playlist.m3u8",
+    "host": "s9.nysdot.skyvdn.com",
+    "stream_id": "R10_1019"
+   },
+   "broken_flag_511ny": false,
+   "posted_limit_mph": 55,
+   "chainage_km": 55.68,
+   "co_located": [],
+   "speed_suitability": "candidate_video_secondary"
+  },
+  {
+   "id": "R10_033",
+   "name": "I-495 at Rest Area",
+   "owner": "NYSDOT",
+   "ids": {
+    "511ny": 34447,
+    "opencctv": 16680
+   },
+   "lat": 40.8034,
+   "lon": -73.315102,
+   "county": "Suffolk",
+   "kind": "rest_area",
+   "exit": null,
+   "direction_hint": null,
+   "ptz": "likely",
+   "feed": {
+    "type": "hls",
+    "url": "https://s51.nysdot.skyvdn.com/rtplive/R10_033/playlist.m3u8",
+    "host": "s51.nysdot.skyvdn.com",
+    "stream_id": "R10_033"
+   },
+   "broken_flag_511ny": false,
+   "posted_limit_mph": 55,
+   "opencctv_url": "https://opencctv.org/cameras/united-states/new-york/commack/i-495-at-rest-area-16680",
+   "chainage_km": 58.79,
+   "co_located": [],
+   "speed_suitability": "candidate_video_secondary"
+  },
+  {
+   "id": "R10_034",
+   "name": "I-495 at Commack Road",
+   "owner": "NYSDOT",
+   "ids": {
+    "511ny": 34458,
+    "opencctv": 16681
+   },
+   "lat": 40.80439,
+   "lon": -73.296767,
+   "county": "Suffolk",
+   "kind": "mainline",
+   "exit": null,
+   "direction_hint": null,
+   "ptz": "likely",
+   "feed": {
+    "type": "hls",
+    "url": "https://s51.nysdot.skyvdn.com/rtplive/R10_034/playlist.m3u8",
+    "host": "s51.nysdot.skyvdn.com",
+    "stream_id": "R10_034"
+   },
+   "broken_flag_511ny": false,
+   "posted_limit_mph": 55,
+   "opencctv_url": "https://opencctv.org/cameras/united-states/new-york/commack/i-495-at-commack-road-16681",
+   "chainage_km": 58.79,
+   "co_located": [],
+   "speed_suitability": "candidate_video"
+  },
+  {
+   "id": "R10_168",
+   "name": "SAG North of I-495 at Exit S1",
+   "owner": "NYSDOT",
+   "ids": {
+    "511ny": 35446,
+    "opencctv": 15494
+   },
+   "lat": 40.808272,
+   "lon": -73.282621,
+   "county": "Suffolk",
+   "kind": "cross_route",
+   "exit": null,
+   "direction_hint": null,
+   "ptz": "likely",
+   "feed": {
+    "type": "hls",
+    "url": "https://s52.nysdot.skyvdn.com/rtplive/R10_168/playlist.m3u8",
+    "host": "s52.nysdot.skyvdn.com",
+    "stream_id": "R10_168"
+   },
+   "broken_flag_511ny": false,
+   "posted_limit_mph": 55,
+   "opencctv_url": "https://opencctv.org/cameras/united-states/new-york/hauppauge/sag-north-of-i-495-at-exit-s1-15494",
+   "chainage_km": 60.41,
+   "co_located": [],
+   "speed_suitability": "candidate_video_secondary"
+  },
+  {
+   "id": "R10_420",
+   "name": "OVD-LIE WB to Sagtikos Parkway NB",
+   "owner": "NYSDOT",
+   "ids": {
+    "511ny": 34687
+   },
+   "lat": 40.806778,
+   "lon": -73.27895,
+   "county": "Suffolk",
+   "kind": "cross_route",
+   "exit": null,
+   "direction_hint": null,
+   "ptz": "likely",
+   "feed": {
+    "type": "hls",
+    "url": "https://s7.nysdot.skyvdn.com/rtplive/R10_420/playlist.m3u8",
+    "host": "s7.nysdot.skyvdn.com",
+    "stream_id": "R10_420"
+   },
+   "broken_flag_511ny": false,
+   "posted_limit_mph": 55,
+   "chainage_km": 60.41,
+   "co_located": [],
+   "speed_suitability": "candidate_video_secondary"
+  },
+  {
+   "id": "R10_169",
+   "name": "SAG South of I-495 at Exit S2",
+   "owner": "NYSDOT",
+   "ids": {
+    "511ny": 35447,
+    "opencctv": 15495
+   },
+   "lat": 40.797502,
+   "lon": -73.278733,
+   "county": "Suffolk",
+   "kind": "cross_route",
+   "exit": null,
+   "direction_hint": null,
+   "ptz": "likely",
+   "feed": {
+    "type": "hls",
+    "url": "https://s52.nysdot.skyvdn.com/rtplive/R10_169/playlist.m3u8",
+    "host": "s52.nysdot.skyvdn.com",
+    "stream_id": "R10_169"
+   },
+   "broken_flag_511ny": false,
+   "posted_limit_mph": 55,
+   "opencctv_url": "https://opencctv.org/cameras/united-states/new-york/hauppauge/sag-south-of-i-495-at-exit-s2-15495",
+   "chainage_km": 60.41,
+   "co_located": [
+    "R10_421"
+   ],
+   "speed_suitability": "candidate_video_secondary"
+  },
+  {
+   "id": "R10_421",
+   "name": "OVD-LIE EB to Sagtikos Parkway SB",
+   "owner": "NYSDOT",
+   "ids": {
+    "511ny": 34688
+   },
+   "lat": 40.797491,
+   "lon": -73.278732,
+   "county": "Suffolk",
+   "kind": "cross_route",
+   "exit": null,
+   "direction_hint": null,
+   "ptz": "likely",
+   "feed": {
+    "type": "hls",
+    "url": "https://s7.nysdot.skyvdn.com/rtplive/R10_421/playlist.m3u8",
+    "host": "s7.nysdot.skyvdn.com",
+    "stream_id": "R10_421"
+   },
+   "broken_flag_511ny": false,
+   "posted_limit_mph": 55,
+   "chainage_km": 60.41,
+   "co_located": [
+    "R10_169"
+   ],
+   "speed_suitability": "candidate_video_secondary"
+  },
+  {
+   "id": "R10_035",
+   "name": "I-495 at Sagtikos Pkwy",
+   "owner": "NYSDOT",
+   "ids": {
+    "511ny": 34469,
+    "opencctv": 16682
+   },
+   "lat": 40.805115,
+   "lon": -73.277564,
+   "county": "Suffolk",
+   "kind": "mainline",
+   "exit": null,
+   "direction_hint": null,
+   "ptz": "likely",
+   "feed": {
+    "type": "hls",
+    "url": "https://s51.nysdot.skyvdn.com/rtplive/R10_035/playlist.m3u8",
+    "host": "s51.nysdot.skyvdn.com",
+    "stream_id": "R10_035"
+   },
+   "broken_flag_511ny": false,
+   "posted_limit_mph": 55,
+   "opencctv_url": "https://opencctv.org/cameras/united-states/new-york/commack/i-495-at-sagtikos-pkwy-16682",
+   "chainage_km": 60.41,
+   "co_located": [],
+   "speed_suitability": "candidate_video"
+  },
+  {
+   "id": "R10_036",
+   "name": "I-495 at Wicks Road Eastbound CD Rd",
+   "owner": "NYSDOT",
+   "ids": {
+    "511ny": 34480,
+    "opencctv": 16683
+   },
+   "lat": 40.804543,
+   "lon": -73.265624,
+   "county": "Suffolk",
+   "kind": "mainline",
+   "exit": null,
+   "direction_hint": "EB",
+   "ptz": "likely",
+   "feed": {
+    "type": "hls",
+    "url": "https://s51.nysdot.skyvdn.com/rtplive/R10_036/playlist.m3u8",
+    "host": "s51.nysdot.skyvdn.com",
+    "stream_id": "R10_036"
+   },
+   "broken_flag_511ny": false,
+   "posted_limit_mph": 55,
+   "opencctv_url": "https://opencctv.org/cameras/united-states/new-york/manhasset/i-495-at-wicks-road-eastbound-cd-rd-16683",
+   "measured": {
+    "camera_id": "R10_036",
+    "feed_type": "hls",
+    "url": "https://s51.nysdot.skyvdn.com/rtplive/R10_036/playlist.m3u8",
+    "variants": [
+     {
+      "bandwidth": 225374,
+      "codecs": "avc1.4d401e",
+      "width": 640,
+      "height": 480
+     }
+    ],
+    "target_duration_s": 6.0,
+    "segment_duration_s": 5.005,
+    "playlist_window_s": 15.015,
+    "playlist_segments": 3,
+    "recorded_utc": "2026-11-10T21:50:30.460+00:00",
+    "width": 640,
+    "height": 480,
+    "codec": "h264 Main",
+    "nominal_fps": 14.985,
+    "frames": 300,
+    "clip_seconds": 19.953000000000003,
+    "effective_fps": 14.985,
+    "frame_dt_ms": {
+     "mean": 66.73,
+     "std": 0.44,
+     "min": 66.0,
+     "p99": 67.0,
+     "max": 67.0
+    },
+    "timestamp_gaps_over_1_5x": 0,
+    "bitrate_kbps": 241.7,
+    "dup_frame_ratio": 0.0,
+    "unique_fps": 14.98,
+    "osd_clock": {
+     "events_per_s": 2.556,
+     "median_interval_frames": 4.0,
+     "n": 51,
+     "near_integer_rate": false
+    },
+    "segment_publish_interval_s": 5.03,
+    "view_static_during_clip": true,
+    "view_check": {
+     "moved": false,
+     "reason": "static",
+     "shift_px": 0.0,
+     "scale": 1.0,
+     "rotation_deg": 0.01,
+     "inlier_ratio": 0.875,
+     "n_matches": 144
+    },
+    "ok": true
+   },
+   "chainage_km": 61.41,
+   "co_located": [],
+   "speed_suitability": "measured_good"
+  },
+  {
+   "id": "R10_037",
+   "name": "I-495 at Exit 53 Ramp - Wicks Rd",
+   "owner": "NYSDOT",
+   "ids": {
+    "511ny": 34491,
+    "opencctv": 16684
+   },
+   "lat": 40.805057,
+   "lon": -73.260312,
+   "county": "Suffolk",
+   "kind": "ramp_or_connector",
+   "exit": "53",
+   "direction_hint": null,
+   "ptz": "likely",
+   "feed": {
+    "type": "hls",
+    "url": "https://s51.nysdot.skyvdn.com/rtplive/R10_037/playlist.m3u8",
+    "host": "s51.nysdot.skyvdn.com",
+    "stream_id": "R10_037"
+   },
+   "broken_flag_511ny": false,
+   "posted_limit_mph": 55,
+   "opencctv_url": "https://opencctv.org/cameras/united-states/new-york/wicks-rd/i-495-at-exit-53-ramp-wicks-rd-16684",
+   "chainage_km": 61.41,
+   "co_located": [],
+   "speed_suitability": "candidate_video_secondary"
+  },
+  {
+   "id": "R10_038",
+   "name": "I-495 at Washington Ave",
+   "owner": "NYSDOT",
+   "ids": {
+    "511ny": 34503,
+    "opencctv": 16686
+   },
+   "lat": 40.805394,
+   "lon": -73.248809,
+   "county": "Suffolk",
+   "kind": "mainline",
+   "exit": null,
+   "direction_hint": null,
+   "ptz": "likely",
+   "feed": {
+    "type": "hls",
+    "url": "https://s51.nysdot.skyvdn.com/rtplive/R10_038/playlist.m3u8",
+    "host": "s51.nysdot.skyvdn.com",
+    "stream_id": "R10_038"
+   },
+   "broken_flag_511ny": false,
+   "posted_limit_mph": 55,
+   "opencctv_url": "https://opencctv.org/cameras/united-states/new-york/manhasset/i-495-at-washington-ave-16686",
+   "chainage_km": 62.83,
+   "co_located": [],
+   "speed_suitability": "candidate_video"
+  },
+  {
+   "id": "R10_315",
+   "name": "495 Westbound at Exit 56 Rest Area Camera 1",
+   "owner": "NYSDOT",
+   "ids": {
+    "511ny": 35493
+   },
+   "lat": 40.808751,
+   "lon": -73.223459,
+   "county": "Suffolk",
+   "kind": "rest_area",
+   "exit": "56",
+   "direction_hint": "WB",
+   "ptz": "likely",
+   "feed": {
+    "type": "hls",
+    "url": "https://s52.nysdot.skyvdn.com/rtplive/R10_315/playlist.m3u8",
+    "host": "s52.nysdot.skyvdn.com",
+    "stream_id": "R10_315"
+   },
+   "broken_flag_511ny": false,
+   "posted_limit_mph": 55,
+   "chainage_km": 65.0,
+   "co_located": [
+    "R10_316"
+   ],
+   "speed_suitability": "candidate_video_secondary"
+  },
+  {
+   "id": "R10_316",
+   "name": "495 Westbound at Exit 56 Rest Area Camera 2",
+   "owner": "NYSDOT",
+   "ids": {
+    "511ny": 35494
+   },
+   "lat": 40.808751,
+   "lon": -73.223459,
+   "county": "Suffolk",
+   "kind": "rest_area",
+   "exit": "56",
+   "direction_hint": "WB",
+   "ptz": "likely",
+   "feed": {
+    "type": "hls",
+    "url": "https://s52.nysdot.skyvdn.com/rtplive/R10_316/playlist.m3u8",
+    "host": "s52.nysdot.skyvdn.com",
+    "stream_id": "R10_316"
+   },
+   "broken_flag_511ny": false,
+   "posted_limit_mph": 55,
+   "chainage_km": 65.0,
+   "co_located": [
+    "R10_315"
+   ],
+   "speed_suitability": "candidate_video_secondary"
+  },
+  {
+   "id": "R10_039",
+   "name": "I-495 at Motor Parkway Exit 55",
+   "owner": "NYSDOT",
+   "ids": {
+    "511ny": 34514,
+    "opencctv": 16687
+   },
+   "lat": 40.808161,
+   "lon": -73.223319,
+   "county": "Suffolk",
+   "kind": "mainline",
+   "exit": "55",
+   "direction_hint": null,
+   "ptz": "likely",
+   "feed": {
+    "type": "hls",
+    "url": "https://s51.nysdot.skyvdn.com/rtplive/R10_039/playlist.m3u8",
+    "host": "s51.nysdot.skyvdn.com",
+    "stream_id": "R10_039"
+   },
+   "broken_flag_511ny": false,
+   "posted_limit_mph": 55,
+   "opencctv_url": "https://opencctv.org/cameras/united-states/new-york/manhasset/i-495-at-motor-parkway-exit-55-16687",
+   "chainage_km": 65.0,
+   "co_located": [],
+   "speed_suitability": "candidate_video"
+  },
+  {
+   "id": "R10_040",
+   "name": "I-495 at Lincoln Blvd",
+   "owner": "NYSDOT",
+   "ids": {
+    "511ny": 34525,
+    "opencctv": 16688
+   },
+   "lat": 40.809053,
+   "lon": -73.205056,
+   "county": "Suffolk",
+   "kind": "mainline",
+   "exit": null,
+   "direction_hint": null,
+   "ptz": "likely",
+   "feed": {
+    "type": "hls",
+    "url": "https://s51.nysdot.skyvdn.com/rtplive/R10_040/playlist.m3u8",
+    "host": "s51.nysdot.skyvdn.com",
+    "stream_id": "R10_040"
+   },
+   "broken_flag_511ny": false,
+   "posted_limit_mph": 55,
+   "opencctv_url": "https://opencctv.org/cameras/united-states/new-york/manhasset/i-495-at-lincoln-blvd-16688",
+   "chainage_km": 66.54,
+   "co_located": [],
+   "speed_suitability": "candidate_video"
+  },
+  {
+   "id": "R10_041",
+   "name": "I-495 at Veterans Memorial Hwy(Exit 57)",
+   "owner": "NYSDOT",
+   "ids": {
+    "511ny": 35394,
+    "opencctv": 15441
+   },
+   "lat": 40.808881,
+   "lon": -73.186428,
+   "county": "Suffolk",
+   "kind": "mainline",
+   "exit": "57",
+   "direction_hint": null,
+   "ptz": "likely",
+   "feed": {
+    "type": "hls",
+    "url": "https://s52.nysdot.skyvdn.com/rtplive/R10_041/playlist.m3u8",
+    "host": "s52.nysdot.skyvdn.com",
+    "stream_id": "R10_041"
+   },
+   "broken_flag_511ny": false,
+   "posted_limit_mph": 55,
+   "opencctv_url": "https://opencctv.org/cameras/united-states/new-york/hauppauge/i-495-at-veterans-memorial-hwyexit-57-15441",
+   "measured": {
+    "camera_id": "R10_041",
+    "feed_type": "hls",
+    "url": "https://s52.nysdot.skyvdn.com/rtplive/R10_041/playlist.m3u8",
+    "variants": [
+     {
+      "bandwidth": 221812,
+      "codecs": "avc1.4d401e",
+      "width": 640,
+      "height": 480
+     }
+    ],
+    "target_duration_s": 6.0,
+    "segment_duration_s": 5.005,
+    "playlist_window_s": 15.014,
+    "playlist_segments": 3,
+    "recorded_utc": "2026-11-10T21:47:50.549+00:00",
+    "width": 640,
+    "height": 480,
+    "codec": "h264 Main",
+    "nominal_fps": 14.985,
+    "frames": 300,
+    "clip_seconds": 19.952,
+    "effective_fps": 14.986,
+    "frame_dt_ms": {
+     "mean": 66.73,
+     "std": 0.44,
+     "min": 66.0,
+     "p99": 67.0,
+     "max": 67.0
+    },
+    "timestamp_gaps_over_1_5x": 0,
+    "bitrate_kbps": 235.5,
+    "dup_frame_ratio": 0.0,
+    "unique_fps": 14.99,
+    "osd_clock": {
+     "events_per_s": 1.303,
+     "median_interval_frames": 15.0,
+     "n": 26,
+     "near_integer_rate": false
+    },
+    "segment_publish_interval_s": 4.95,
+    "view_static_during_clip": true,
+    "view_check": {
+     "moved": false,
+     "reason": "static",
+     "shift_px": 0.0,
+     "scale": 1.0,
+     "rotation_deg": 0.021,
+     "inlier_ratio": 0.753,
+     "n_matches": 97
+    },
+    "ok": true
+   },
+   "chainage_km": 68.11,
+   "co_located": [],
+   "speed_suitability": "measured_good"
+  },
+  {
+   "id": "R10_305",
+   "name": "495 Eastbound at Nichols Road",
+   "owner": "NYSDOT",
+   "ids": {
+    "511ny": 34370
+   },
+   "lat": 40.809045,
+   "lon": -73.160537,
+   "county": "Suffolk",
+   "kind": "mainline",
+   "exit": null,
+   "direction_hint": "EB",
+   "ptz": "likely",
+   "feed": {
+    "type": "hls",
+    "url": "https://s7.nysdot.skyvdn.com/rtplive/R10_305/playlist.m3u8",
+    "host": "s7.nysdot.skyvdn.com",
+    "stream_id": "R10_305"
+   },
+   "broken_flag_511ny": false,
+   "posted_limit_mph": 55,
+   "chainage_km": 70.29,
+   "co_located": [],
+   "speed_suitability": "candidate_video"
+  },
+  {
+   "id": "R10_042",
+   "name": "I-495 at Terry Road (Exits 59-58)",
+   "owner": "NYSDOT",
+   "ids": {
+    "511ny": 35395,
+    "opencctv": 15442
+   },
+   "lat": 40.811689,
+   "lon": -73.137521,
+   "county": "Suffolk",
+   "kind": "mainline",
+   "exit": "59-58",
+   "direction_hint": null,
+   "ptz": "likely",
+   "feed": {
+    "type": "hls",
+    "url": "https://s52.nysdot.skyvdn.com/rtplive/R10_042/playlist.m3u8",
+    "host": "s52.nysdot.skyvdn.com",
+    "stream_id": "R10_042"
+   },
+   "broken_flag_511ny": false,
+   "posted_limit_mph": 55,
+   "opencctv_url": "https://opencctv.org/cameras/united-states/new-york/hauppauge/i-495-at-terry-road-exits-59-58-15442",
+   "chainage_km": 72.25,
+   "co_located": [],
+   "speed_suitability": "candidate_video"
+  },
+  {
+   "id": "R10_043",
+   "name": "I-495 at Hawkins Ave",
+   "owner": "NYSDOT",
+   "ids": {
+    "511ny": 35396,
+    "opencctv": 15443
+   },
+   "lat": 40.813393,
+   "lon": -73.108326,
+   "county": "Suffolk",
+   "kind": "mainline",
+   "exit": null,
+   "direction_hint": null,
+   "ptz": "likely",
+   "feed": {
+    "type": "hls",
+    "url": "https://s52.nysdot.skyvdn.com/rtplive/R10_043/playlist.m3u8",
+    "host": "s52.nysdot.skyvdn.com",
+    "stream_id": "R10_043"
+   },
+   "broken_flag_511ny": false,
+   "posted_limit_mph": 55,
+   "opencctv_url": "https://opencctv.org/cameras/united-states/new-york/hauppauge/i-495-at-hawkins-ave-15443",
+   "chainage_km": 74.71,
+   "co_located": [],
+   "speed_suitability": "candidate_video"
+  },
+  {
+   "id": "R10_044",
+   "name": "I-495 at Patchogue-Holbrook Rd",
+   "owner": "NYSDOT",
+   "ids": {
+    "511ny": 35398,
+    "opencctv": 15445
+   },
+   "lat": 40.815606,
+   "lon": -73.084127,
+   "county": "Suffolk",
+   "kind": "mainline",
+   "exit": null,
+   "direction_hint": null,
+   "ptz": "likely",
+   "feed": {
+    "type": "hls",
+    "url": "https://s52.nysdot.skyvdn.com/rtplive/R10_044/playlist.m3u8",
+    "host": "s52.nysdot.skyvdn.com",
+    "stream_id": "R10_044"
+   },
+   "broken_flag_511ny": false,
+   "posted_limit_mph": 55,
+   "opencctv_url": "https://opencctv.org/cameras/united-states/new-york/holbrook-rd/i-495-at-patchogue-holbrook-rd-15445",
+   "measured": {
+    "camera_id": "R10_044",
+    "feed_type": "hls",
+    "url": "https://s52.nysdot.skyvdn.com/rtplive/R10_044/playlist.m3u8",
+    "variants": [
+     {
+      "bandwidth": 219665,
+      "codecs": "avc1.4d401f",
+      "width": 640,
+      "height": 480
+     }
+    ],
+    "target_duration_s": 6.0,
+    "segment_duration_s": 5.005,
+    "playlist_window_s": 15.014,
+    "playlist_segments": 3,
+    "recorded_utc": "2026-11-10T21:50:44.156+00:00",
+    "width": 640,
+    "height": 480,
+    "codec": "h264 Main",
+    "nominal_fps": 14.985,
+    "frames": 300,
+    "clip_seconds": 19.952,
+    "effective_fps": 14.986,
+    "frame_dt_ms": {
+     "mean": 66.73,
+     "std": 0.44,
+     "min": 66.0,
+     "p99": 67.0,
+     "max": 67.0
+    },
+    "timestamp_gaps_over_1_5x": 0,
+    "bitrate_kbps": 238.8,
+    "dup_frame_ratio": 0.0,
+    "unique_fps": 14.99,
+    "osd_clock": {
+     "events_per_s": 2.105,
+     "median_interval_frames": 7.0,
+     "n": 42,
+     "near_integer_rate": false
+    },
+    "segment_publish_interval_s": 4.9,
+    "view_static_during_clip": true,
+    "view_check": {
+     "moved": false,
+     "reason": "static",
+     "shift_px": 0.0,
+     "scale": 1.0,
+     "rotation_deg": -0.004,
+     "inlier_ratio": 0.929,
+     "n_matches": 127
+    },
+    "ok": true
+   },
+   "chainage_km": 76.76,
+   "co_located": [],
+   "speed_suitability": "measured_good"
+  },
+  {
+   "id": "R10_045",
+   "name": "I-495 at Holbrook Rd",
+   "owner": "NYSDOT",
+   "ids": {
+    "511ny": 35399,
+    "opencctv": 15446
+   },
+   "lat": 40.816239,
+   "lon": -73.07768,
+   "county": "Suffolk",
+   "kind": "mainline",
+   "exit": null,
+   "direction_hint": null,
+   "ptz": "likely",
+   "feed": {
+    "type": "hls",
+    "url": "https://s52.nysdot.skyvdn.com/rtplive/R10_045/playlist.m3u8",
+    "host": "s52.nysdot.skyvdn.com",
+    "stream_id": "R10_045"
+   },
+   "broken_flag_511ny": false,
+   "posted_limit_mph": 55,
+   "opencctv_url": "https://opencctv.org/cameras/united-states/new-york/hauppauge/i-495-at-holbrook-rd-15446",
+   "chainage_km": 77.31,
+   "co_located": [],
+   "speed_suitability": "candidate_video"
+  },
+  {
+   "id": "R10_046",
+   "name": "I-495 at Nicolls Rd",
+   "owner": "NYSDOT",
+   "ids": {
+    "511ny": 35400,
+    "opencctv": 15447
+   },
+   "lat": 40.820054,
+   "lon": -73.053608,
+   "county": "Suffolk",
+   "kind": "mainline",
+   "exit": null,
+   "direction_hint": null,
+   "ptz": "likely",
+   "feed": {
+    "type": "hls",
+    "url": "https://s52.nysdot.skyvdn.com/rtplive/R10_046/playlist.m3u8",
+    "host": "s52.nysdot.skyvdn.com",
+    "stream_id": "R10_046"
+   },
+   "broken_flag_511ny": false,
+   "posted_limit_mph": 55,
+   "opencctv_url": "https://opencctv.org/cameras/united-states/new-york/hauppauge/i-495-at-nicolls-rd-15447",
+   "chainage_km": 79.38,
+   "co_located": [],
+   "speed_suitability": "candidate_video"
+  },
+  {
+   "id": "R10_047",
+   "name": "I-495 at Waverly Ave",
+   "owner": "NYSDOT",
+   "ids": {
+    "511ny": 35401,
+    "opencctv": 15448
+   },
+   "lat": 40.821172,
+   "lon": -73.045929,
+   "county": "Suffolk",
+   "kind": "mainline",
+   "exit": null,
+   "direction_hint": null,
+   "ptz": "likely",
+   "feed": {
+    "type": "hls",
+    "url": "https://s52.nysdot.skyvdn.com/rtplive/R10_047/playlist.m3u8",
+    "host": "s52.nysdot.skyvdn.com",
+    "stream_id": "R10_047"
+   },
+   "broken_flag_511ny": false,
+   "posted_limit_mph": 55,
+   "opencctv_url": "https://opencctv.org/cameras/united-states/new-york/hauppauge/i-495-at-waverly-ave-15448",
+   "chainage_km": 80.04,
+   "co_located": [],
+   "speed_suitability": "candidate_video"
+  },
+  {
+   "id": "R10_048",
+   "name": "I-495 at Blue Point Rd",
+   "owner": "NYSDOT",
+   "ids": {
+    "511ny": 35402,
+    "opencctv": 15449
+   },
+   "lat": 40.822133,
+   "lon": -73.034905,
+   "county": "Suffolk",
+   "kind": "mainline",
+   "exit": null,
+   "direction_hint": null,
+   "ptz": "likely",
+   "feed": {
+    "type": "hls",
+    "url": "https://s52.nysdot.skyvdn.com/rtplive/R10_048/playlist.m3u8",
+    "host": "s52.nysdot.skyvdn.com",
+    "stream_id": "R10_048"
+   },
+   "broken_flag_511ny": false,
+   "posted_limit_mph": 55,
+   "opencctv_url": "https://opencctv.org/cameras/united-states/new-york/hauppauge/i-495-at-blue-point-rd-15449",
+   "chainage_km": 80.97,
+   "co_located": [],
+   "speed_suitability": "candidate_video"
+  },
+  {
+   "id": "R10_049",
+   "name": "I-495 at North Ocean Ave (Exit 63)",
+   "owner": "NYSDOT",
+   "ids": {
+    "511ny": 35403,
+    "opencctv": 15450
+   },
+   "lat": 40.823321,
+   "lon": -73.019955,
+   "county": "Suffolk",
+   "kind": "mainline",
+   "exit": "63",
+   "direction_hint": null,
+   "ptz": "likely",
+   "feed": {
+    "type": "hls",
+    "url": "https://s52.nysdot.skyvdn.com/rtplive/R10_049/playlist.m3u8",
+    "host": "s52.nysdot.skyvdn.com",
+    "stream_id": "R10_049"
+   },
+   "broken_flag_511ny": false,
+   "posted_limit_mph": 55,
+   "opencctv_url": "https://opencctv.org/cameras/united-states/new-york/hauppauge/i-495-at-north-ocean-ave-exit-63-15450",
+   "chainage_km": 82.24,
+   "co_located": [],
+   "speed_suitability": "candidate_video"
+  },
+  {
+   "id": "R10_050",
+   "name": "I-495 at NY 112 (Exit 64)",
+   "owner": "NYSDOT",
+   "ids": {
+    "511ny": 35404
+   },
+   "lat": 40.823663,
+   "lon": -72.99695,
+   "county": "Suffolk",
+   "kind": "mainline",
+   "exit": "64",
+   "direction_hint": null,
+   "ptz": "likely",
+   "feed": {
+    "type": "hls",
+    "url": "https://s52.nysdot.skyvdn.com/rtplive/R10_050/playlist.m3u8",
+    "host": "s52.nysdot.skyvdn.com",
+    "stream_id": "R10_050"
+   },
+   "broken_flag_511ny": false,
+   "posted_limit_mph": 55,
+   "chainage_km": 84.17,
+   "co_located": [],
+   "speed_suitability": "candidate_video"
+  },
+  {
+   "id": "R10_355",
+   "name": "LIE at Horse Block Rd",
+   "owner": "NYSDOT",
+   "ids": {
+    "511ny": 34828
+   },
+   "lat": 40.822067,
+   "lon": -72.974905,
+   "county": "Suffolk",
+   "kind": "mainline",
+   "exit": null,
+   "direction_hint": null,
+   "ptz": "likely",
+   "feed": {
+    "type": "hls",
+    "url": "https://s9.nysdot.skyvdn.com/rtplive/R10_355/playlist.m3u8",
+    "host": "s9.nysdot.skyvdn.com",
+    "stream_id": "R10_355"
+   },
+   "broken_flag_511ny": false,
+   "posted_limit_mph": 55,
+   "measured": {
+    "camera_id": "R10_355",
+    "feed_type": "hls",
+    "url": "https://s9.nysdot.skyvdn.com/rtplive/R10_355/playlist.m3u8",
+    "variants": [
+     {
+      "bandwidth": 152684,
+      "codecs": "avc1.4d401e",
+      "width": 640,
+      "height": 480
+     }
+    ],
+    "target_duration_s": 6.0,
+    "segment_duration_s": 5.005,
+    "playlist_window_s": 15.014,
+    "playlist_segments": 3,
+    "recorded_utc": "2026-11-10T21:50:57.646+00:00",
+    "width": 640,
+    "height": 480,
+    "codec": "h264 Main",
+    "nominal_fps": 14.985,
+    "frames": 300,
+    "clip_seconds": 19.952,
+    "effective_fps": 14.986,
+    "frame_dt_ms": {
+     "mean": 66.73,
+     "std": 0.44,
+     "min": 66.0,
+     "p99": 67.0,
+     "max": 67.0
+    },
+    "timestamp_gaps_over_1_5x": 0,
+    "bitrate_kbps": 167.9,
+    "dup_frame_ratio": 0.97,
+    "unique_fps": 0.45,
+    "osd_clock": {
+     "events_per_s": 2.005,
+     "median_interval_frames": 9.0,
+     "n": 40,
+     "near_integer_rate": true
+    },
+    "segment_publish_interval_s": 4.99,
+    "view_static_during_clip": false,
+    "view_check": {
+     "moved": true,
+     "reason": "only 1 feature matches: view changed",
+     "shift_px": NaN,
+     "scale": NaN,
+     "rotation_deg": NaN,
+     "inlier_ratio": 0.0,
+     "n_matches": 1
+    },
+    "ok": true
+   },
+   "chainage_km": 86.04,
+   "co_located": [],
+   "speed_suitability": "measured_unusable"
+  },
+  {
+   "id": "R10_314",
+   "name": "495 Eastbound at Exits 65-66 Rest Area (Fixed)",
+   "owner": "NYSDOT",
+   "ids": {
+    "511ny": 35492
+   },
+   "lat": 40.826748,
+   "lon": -72.95034,
+   "county": "Suffolk",
+   "kind": "rest_area",
+   "exit": "65-66",
+   "direction_hint": "EB",
+   "ptz": "fixed",
+   "feed": {
+    "type": "hls",
+    "url": "https://s52.nysdot.skyvdn.com/rtplive/R10_314/playlist.m3u8",
+    "host": "s52.nysdot.skyvdn.com",
+    "stream_id": "R10_314"
+   },
+   "broken_flag_511ny": false,
+   "posted_limit_mph": 55,
+   "chainage_km": 89.09,
+   "co_located": [
+    "R10_051"
+   ],
+   "speed_suitability": "candidate_video_secondary"
+  },
+  {
+   "id": "R10_051",
+   "name": "I-495 Exit 65/66 Rest area",
+   "owner": "NYSDOT",
+   "ids": {
+    "511ny": 35780,
+    "opencctv": 15693
+   },
+   "lat": 40.826758,
+   "lon": -72.950287,
+   "county": "Suffolk",
+   "kind": "rest_area",
+   "exit": "65",
+   "direction_hint": null,
+   "ptz": "likely",
+   "feed": {
+    "type": "hls",
+    "url": "https://s53.nysdot.skyvdn.com/rtplive/R10_051/playlist.m3u8",
+    "host": "s53.nysdot.skyvdn.com",
+    "stream_id": "R10_051"
+   },
+   "broken_flag_511ny": false,
+   "posted_limit_mph": 55,
+   "opencctv_url": "https://opencctv.org/cameras/united-states/new-york/manorville/i-495-exit-6566-rest-area-15693",
+   "chainage_km": 89.09,
+   "co_located": [
+    "R10_314"
+   ],
+   "speed_suitability": "candidate_video_secondary"
+  },
+  {
+   "id": "R10_356",
+   "name": "LIE West of CR101 Sills Rd",
+   "owner": "NYSDOT",
+   "ids": {
+    "511ny": 34827
+   },
+   "lat": 40.828503,
+   "lon": -72.939628,
+   "county": "Suffolk",
+   "kind": "mainline",
+   "exit": null,
+   "direction_hint": null,
+   "ptz": "likely",
+   "feed": {
+    "type": "hls",
+    "url": "https://s9.nysdot.skyvdn.com/rtplive/R10_356/playlist.m3u8",
+    "host": "s9.nysdot.skyvdn.com",
+    "stream_id": "R10_356"
+   },
+   "broken_flag_511ny": false,
+   "posted_limit_mph": 55,
+   "chainage_km": 89.09,
+   "co_located": [],
+   "speed_suitability": "candidate_video"
+  },
+  {
+   "id": "R10_357",
+   "name": "LIE at Moriches Middle Island",
+   "owner": "NYSDOT",
+   "ids": {
+    "511ny": 35655
+   },
+   "lat": 40.835879,
+   "lon": -72.905558,
+   "county": "Suffolk",
+   "kind": "mainline",
+   "exit": null,
+   "direction_hint": null,
+   "ptz": "likely",
+   "feed": {
+    "type": "hls",
+    "url": "https://s52.nysdot.skyvdn.com/rtplive/R10_357/playlist.m3u8",
+    "host": "s52.nysdot.skyvdn.com",
+    "stream_id": "R10_357"
+   },
+   "broken_flag_511ny": false,
+   "posted_limit_mph": 55,
+   "notes": "Seen zoomed onto an incident on 2026-11-10 (PTZ moves).",
+   "measured": {
+    "camera_id": "R10_357",
+    "feed_type": "hls",
+    "url": "https://s52.nysdot.skyvdn.com/rtplive/R10_357/playlist.m3u8",
+    "variants": [
+     {
+      "bandwidth": 230483,
+      "codecs": "avc1.4d401e",
+      "width": 768,
+      "height": 432
+     }
+    ],
+    "target_duration_s": 10.0,
+    "segment_duration_s": 5.005,
+    "playlist_window_s": 15.014,
+    "playlist_segments": 3,
+    "recorded_utc": "2026-11-10T21:48:03.970+00:00",
+    "width": 768,
+    "height": 432,
+    "codec": "h264 Main",
+    "nominal_fps": 14.985,
+    "frames": 298,
+    "clip_seconds": 19.952,
+    "effective_fps": 14.886,
+    "frame_dt_ms": {
+     "mean": 67.18,
+     "std": 7.73,
+     "min": 66.0,
+     "p99": 67.0,
+     "max": 200.0
+    },
+    "timestamp_gaps_over_1_5x": 1,
+    "bitrate_kbps": 258.0,
+    "dup_frame_ratio": 0.007,
+    "unique_fps": 14.78,
+    "osd_clock": {
+     "events_per_s": 1.754,
+     "median_interval_frames": 7.5,
+     "n": 35,
+     "near_integer_rate": false
+    },
+    "segment_publish_interval_s": 4.43,
+    "view_static_during_clip": true,
+    "view_check": {
+     "moved": false,
+     "reason": "static",
+     "shift_px": 1.363,
+     "scale": 0.997,
+     "rotation_deg": -0.123,
+     "inlier_ratio": 0.353,
+     "n_matches": 17
+    },
+    "ok": true
+   },
+   "chainage_km": 92.07,
+   "co_located": [],
+   "speed_suitability": "measured_good"
+  },
+  {
+   "id": "R10_358",
+   "name": "LIE at William Floyd Pkwy",
+   "owner": "NYSDOT",
+   "ids": {
+    "511ny": 34829
+   },
+   "lat": 40.843579,
+   "lon": -72.891041,
+   "county": "Suffolk",
+   "kind": "mainline",
+   "exit": null,
+   "direction_hint": null,
+   "ptz": "likely",
+   "feed": {
+    "type": "hls",
+    "url": "https://s9.nysdot.skyvdn.com/rtplive/R10_358/playlist.m3u8",
+    "host": "s9.nysdot.skyvdn.com",
+    "stream_id": "R10_358"
+   },
+   "broken_flag_511ny": false,
+   "posted_limit_mph": 55,
+   "chainage_km": 93.56,
+   "co_located": [],
+   "speed_suitability": "candidate_video"
+  },
+  {
+   "id": "R10_359",
+   "name": "LIE at Wading River Rd - Exit 69",
+   "owner": "NYSDOT",
+   "ids": {
+    "511ny": 35656
+   },
+   "lat": 40.863206,
+   "lon": -72.822466,
+   "county": "Suffolk",
+   "kind": "mainline",
+   "exit": "69",
+   "direction_hint": null,
+   "ptz": "likely",
+   "feed": {
+    "type": "hls",
+    "url": "https://s52.nysdot.skyvdn.com/rtplive/R10_359/playlist.m3u8",
+    "host": "s52.nysdot.skyvdn.com",
+    "stream_id": "R10_359"
+   },
+   "broken_flag_511ny": false,
+   "posted_limit_mph": 55,
+   "chainage_km": 99.73,
+   "co_located": [],
+   "speed_suitability": "candidate_video"
+  },
+  {
+   "id": "R10_360",
+   "name": "LIE at Captain Daniel Roe Hwy - Exit 70",
+   "owner": "NYSDOT",
+   "ids": {
+    "511ny": 35657
+   },
+   "lat": 40.871582,
+   "lon": -72.801897,
+   "county": "Suffolk",
+   "kind": "mainline",
+   "exit": "70",
+   "direction_hint": null,
+   "ptz": "likely",
+   "feed": {
+    "type": "hls",
+    "url": "https://s52.nysdot.skyvdn.com/rtplive/R10_360/playlist.m3u8",
+    "host": "s52.nysdot.skyvdn.com",
+    "stream_id": "R10_360"
+   },
+   "broken_flag_511ny": false,
+   "posted_limit_mph": 55,
+   "chainage_km": 101.69,
+   "co_located": [],
+   "speed_suitability": "candidate_video"
+  },
+  {
+   "id": "R10_361",
+   "name": "LIE at Edwards Ave (CR94) - Exit 71",
+   "owner": "NYSDOT",
+   "ids": {
+    "511ny": 35658
+   },
+   "lat": 40.90387,
+   "lon": -72.740505,
+   "county": "Suffolk",
+   "kind": "mainline",
+   "exit": "71",
+   "direction_hint": null,
+   "ptz": "likely",
+   "feed": {
+    "type": "hls",
+    "url": "https://s52.nysdot.skyvdn.com/rtplive/R10_361/playlist.m3u8",
+    "host": "s52.nysdot.skyvdn.com",
+    "stream_id": "R10_361"
+   },
+   "broken_flag_511ny": false,
+   "posted_limit_mph": 55,
+   "chainage_km": 107.98,
+   "co_located": [],
+   "speed_suitability": "candidate_video"
+  },
+  {
+   "id": "R10_362",
+   "name": "LIE at NY25 Exit 72 - 1",
+   "owner": "NYSDOT",
+   "ids": {
+    "511ny": 35659
+   },
+   "lat": 40.92047,
+   "lon": -72.723468,
+   "county": "Suffolk",
+   "kind": "mainline",
+   "exit": "72",
+   "direction_hint": null,
+   "ptz": "likely",
+   "feed": {
+    "type": "hls",
+    "url": "https://s52.nysdot.skyvdn.com/rtplive/R10_362/playlist.m3u8",
+    "host": "s52.nysdot.skyvdn.com",
+    "stream_id": "R10_362"
+   },
+   "broken_flag_511ny": false,
+   "posted_limit_mph": 55,
+   "chainage_km": 110.32,
+   "co_located": [
+    "R10_363"
+   ],
+   "speed_suitability": "candidate_video"
+  },
+  {
+   "id": "R10_363",
+   "name": "LIE at NY25 Exit 72 - 2",
+   "owner": "NYSDOT",
+   "ids": {
+    "511ny": 35660
+   },
+   "lat": 40.92047,
+   "lon": -72.723468,
+   "county": "Suffolk",
+   "kind": "mainline",
+   "exit": "72",
+   "direction_hint": null,
+   "ptz": "likely",
+   "feed": {
+    "type": "hls",
+    "url": "https://s52.nysdot.skyvdn.com/rtplive/R10_363/playlist.m3u8",
+    "host": "s52.nysdot.skyvdn.com",
+    "stream_id": "R10_363"
+   },
+   "broken_flag_511ny": false,
+   "posted_limit_mph": 55,
+   "measured": {
+    "camera_id": "R10_363",
+    "feed_type": "hls",
+    "url": "https://s52.nysdot.skyvdn.com/rtplive/R10_363/playlist.m3u8",
+    "variants": [
+     {
+      "bandwidth": 215157,
+      "codecs": "avc1.4d401e",
+      "width": 768,
+      "height": 432
+     }
+    ],
+    "target_duration_s": 8.0,
+    "segment_duration_s": 5.005,
+    "playlist_window_s": 15.014,
+    "playlist_segments": 3,
+    "recorded_utc": "2026-11-10T21:51:11.224+00:00",
+    "width": 768,
+    "height": 432,
+    "codec": "h264 Main",
+    "nominal_fps": 14.985,
+    "frames": 296,
+    "clip_seconds": 19.951,
+    "effective_fps": 14.786,
+    "frame_dt_ms": {
+     "mean": 67.63,
+     "std": 9.48,
+     "min": 66.0,
+     "p99": 70.96,
+     "max": 200.0
+    },
+    "timestamp_gaps_over_1_5x": 3,
+    "bitrate_kbps": 220.3,
+    "dup_frame_ratio": 0.555,
+    "unique_fps": 6.58,
+    "osd_clock": {
+     "events_per_s": 1.704,
+     "median_interval_frames": 8.0,
+     "n": 34,
+     "near_integer_rate": false
+    },
+    "segment_publish_interval_s": 4.79,
+    "view_static_during_clip": true,
+    "view_check": {
+     "moved": false,
+     "reason": "static",
+     "shift_px": 0.0,
+     "scale": 1.0,
+     "rotation_deg": 0.0,
+     "inlier_ratio": 0.955,
+     "n_matches": 661
+    },
+    "ok": true
+   },
+   "chainage_km": 110.32,
+   "co_located": [
+    "R10_362"
+   ],
+   "speed_suitability": "measured_marginal"
+  }
+ ]
+}
