@@ -48,6 +48,8 @@ def build_parser() -> argparse.ArgumentParser:
     fly.add_argument("--stall-action", default="land", choices=EXIT_ACTIONS,
                      help="what to do if perception stops producing commands for 3 s")
     fly.add_argument("--no-gps", action="store_true", help="don't require a global position (indoor/flow)")
+    fly.add_argument("--bench-test", action="store_true",
+                     help="PROPS OFF: engage OFFBOARD on the ground once the pilot arms (stage 2 test)")
     ap.add_argument("--out", default=None, help="save annotated video (bystander faces blurred)")
     ap.add_argument("--no-blur", action="store_true", help="don't blur non-target faces in --out")
     ap.add_argument("--show", action="store_true", help="show a window (needs a display)")
@@ -85,6 +87,9 @@ def main(argv=None) -> int:
         print(f"camera error: {e}")
         return 2
 
+    if args.bench_test and args.auto_takeoff is not None:
+        print("--bench-test and --auto-takeoff don't mix (bench test = props off, on the ground)")
+        return 2
     if args.fly:
         if not args.yes and not countdown(args.connect):
             return 1
@@ -92,7 +97,7 @@ def main(argv=None) -> int:
             sink = MavsdkOffboardSink(make_adapter(args.mavsdk_api), url=args.connect, rate_hz=args.rate,
                                       auto_takeoff_m=args.auto_takeoff, on_exit=args.on_exit,
                                       stall_action=args.stall_action, require_global=not args.no_gps,
-                                      emit=log.warning)
+                                      bench_test=args.bench_test, emit=log.warning)
         except BridgeUnavailable as e:
             print(f"MAVSDK problem: {e}")
             return 2

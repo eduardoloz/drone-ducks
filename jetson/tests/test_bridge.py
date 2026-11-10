@@ -244,3 +244,16 @@ def test_linkcheck_is_read_only():
     assert asyncio.run(watch(px4, "fake://", seconds=0.3, connect_timeout=1.0, emit=lines.append)) == 0
     assert px4.names() == ["connect"]                     # nothing but the connection
     assert any("mode=POSCTL" in line for line in lines) and "no commands" in lines[-1]
+
+
+def test_bench_test_engages_on_the_ground_after_the_pilot_arms():
+    px4 = FakePX4(in_air=False)
+    sink = make_sink(px4, bench_test=True, wait_for_pilot_s=2.0)
+    threading.Timer(0.3, lambda: setattr(px4, "armed", True)).start()
+    sink.start()
+    try:
+        assert "arm" not in px4.names() and "takeoff" not in px4.names()   # the pilot armed, not us
+        assert px4.log[1][2] is False                                       # didn't demand armable
+        assert sink.offboard_active and not px4.in_air
+    finally:
+        sink.stop()

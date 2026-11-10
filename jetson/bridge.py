@@ -316,7 +316,7 @@ class MavsdkOffboardSink(CommandSink):
                  command_timeout_s: float = 0.5, stall_timeout_s: float = 3.0, stall_action: str = "land",
                  auto_takeoff_m: Optional[float] = None, wait_for_pilot_s: float = 120.0,
                  connect_timeout_s: float = 30.0, ready_timeout_s: float = 90.0, require_global: bool = True,
-                 on_exit: str = "hold", engage_timeout_s: float = 3.0,
+                 on_exit: str = "hold", engage_timeout_s: float = 3.0, bench_test: bool = False,
                  emit: Optional[Callable[[str], None]] = None) -> None:
         if rate_hz < 5:
             raise ValueError("stream setpoints at >= 5 Hz (PX4 needs > 2 Hz; 10-20 Hz is typical)")
@@ -331,6 +331,7 @@ class MavsdkOffboardSink(CommandSink):
         self.connect_timeout_s, self.ready_timeout_s, self.require_global = connect_timeout_s, ready_timeout_s, \
             require_global
         self.on_exit, self.engage_timeout_s = on_exit, engage_timeout_s
+        self.bench_test = bench_test  # props-off test: engage OFFBOARD on the ground once armed
         self.emit = emit or (lambda msg: log.warning(msg))
         self.sent = 0
         self.offboard_active = False
@@ -376,10 +377,13 @@ class MavsdkOffboardSink(CommandSink):
         self.emit(f"[fly] connecting to {self.url}")
         await a.connect(self.url, self.connect_timeout_s)
         await asyncio.sleep(0.5)  # let telemetry arrive
-        need_arm = not a.in_air and self.auto_takeoff_m is not None
+        need_arm = not a.in_air and self.auto_takeoff_m is not None and not self.bench_test
         self.emit("[fly] waiting for a healthy position estimate" + (" and armable" if need_arm else ""))
         await a.wait_ready(need_arm, self.require_global, self.ready_timeout_s)
-        if not a.in_air:
+        if self.bench_test:
+            self.emit("[fly] BENCH TEST: PROPS MUST BE OFF. Waiting for the pilot to arm ...")
+            await self._wait_for(lambda: a.armed, self.wait_for_pilot_s, "pilot to arm")
+        elif not a.in_air:
             if self.auto_takeoff_m is not None:
                 self.emit(f"[fly] arming and taking off to {self.auto_takeoff_m:.1f} m")
                 await a.arm()

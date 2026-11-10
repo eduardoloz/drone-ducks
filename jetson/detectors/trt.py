@@ -27,14 +27,17 @@ import numpy as np
 
 from ..face import Face
 from . import decode
-from .base import BackendUnavailable, FaceDetector, require_file
+from .base import BackendUnavailable, FaceDetector, model_path, require_file
+
+DEFAULT_ENGINE = "yunet_640_fp16.engine"
 
 
 class TensorRTFaceDetector(FaceDetector):
     name = "tensorrt"
 
-    def __init__(self, engine: str, family: str = "auto", score_threshold: float = 0.6,
-                 nms_threshold: float = None, top_k: int = 50, input_width: int = 0) -> None:
+    def __init__(self, engine: str = "", family: str = "auto", score_threshold: float = 0.6,
+                 nms_threshold: float = None, top_k: int = 50, input_width: int = 0, model: str = "") -> None:
+        engine = engine or model or model_path(DEFAULT_ENGINE)  # `model` = alias used by bench specs
         try:
             import tensorrt as trt
         except ImportError as e:

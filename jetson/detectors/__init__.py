@@ -35,8 +35,6 @@ BACKENDS: Dict[str, Tuple[str, str]] = {
     "ultralytics": ("jetson.detectors.yolo_face", "UltralyticsFaceDetector"),
 }
 
-# Probing tensorrt needs an engine path; the others can be probed with their defaults.
-_PROBE_KWARGS = {"tensorrt": {"engine": "jetson/models/yunet_640_fp16.engine"}}
 
 __all__ = ["BACKENDS", "BackendUnavailable", "FaceDetector", "create_detector", "probe_backends"]
 
@@ -54,7 +52,7 @@ def probe_backends() -> List[Tuple[str, bool, str]]:
     out = []
     for name in BACKENDS:
         try:
-            det = create_detector(name, **_PROBE_KWARGS.get(name, {}))
+            det = create_detector(name)
             out.append((name, True, ", ".join(f"{k}={v}" for k, v in det.info().items())))
             det.close()
         except BackendUnavailable as e:

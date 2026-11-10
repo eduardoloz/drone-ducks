@@ -38,7 +38,7 @@ def make_detector(args) -> FaceDetector:
             kw["model"] = args.model
         kw["device"] = args.device or "cpu"
     elif args.backend == "tensorrt":
-        kw = {"engine": args.engine or args.model or "jetson/models/yunet_640_fp16.engine"}
+        kw = {"engine": args.engine or args.model or ""}
         if args.score is not None:
             kw["score_threshold"] = args.score
     elif args.backend == "ultralytics":
