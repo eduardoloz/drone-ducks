@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Calibrate an LIE camera</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 105%27%3E%3Cpath d=%27M6,9 Q50,0 94,9 L94,42 Q94,84 50,101 Q6,84 6,42 Z%27 fill=%27%23003f87%27/%3E%3Cpath d=%27M6,9 Q50,0 94,9 L94,29 L6,29 Z%27 fill=%27%23c8102e%27/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Overpass:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/style.css">
+  <style>
+    .cal { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(320px, 1fr); gap: 24px; padding: 20px; }
+    @media (max-width: 900px) { .cal { grid-template-columns: 1fr; } }
+    #canvas { width: 100%; height: auto; cursor: crosshair; border-radius: var(--radius); background: #000; display: block; }
+    .row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin: 10px 0; }
+    td input, td select { width: 4.2em; padding: 2px 4px; }
+  </style>
+</head>
+<body>
+  <header class="sign">
+    <div>
+      <h1>Long Island Expressway</h1>
+      <p class="sub">Traffic speed analytics from public NYSDOT cameras (student prototype)</p>
+    </div>
+    <nav aria-label="Main">
+      <a href="/#map">Map</a>
+      <a href="/#events">Speed estimates</a>
+      <a href="/calibrate" aria-current="page">Calibrate a camera</a>
+      <a href="/about">About and ethics</a>
+    </nav>
+  </header>
+  <main class="cal">
+    <section>
+      <div class="row">
+        <label>Camera <select id="cam"></select></label>
+        <button id="load">Load saved points</button>
+        <button id="clear">Clear points</button>
+        <button id="fit" class="primary">Fit calibration</button>
+      </div>
+      <canvas id="canvas" width="640" height="480" aria-label="Reference frame: click dash corners to add points"></canvas>
+      <p class="muted small">Red rings: your points. Green dots: where the fitted calibration puts them. Cyan lines: lanes
+        every 12 ft. Yellow lines: every 10 ft along the road. A good calibration sits exactly on the paint.</p>
+    </section>
+    <section>
+      <h2>Calibrate a camera</h2>
+      <p>Click the near and far ends of dashed lane-line segments on the empty-road frame. For each point, say which
+        lane line it is on (0, 1, …, counted across the road), which dash along that line (0 is the nearest), and
+        which end. Dashes are 10 ft with 30 ft gaps, and lanes are 12 ft wide.</p>
+      <div class="row">
+        <label>Next point: line <input id="next-line" type="number" value="0" min="0" style="width:4em"></label>
+        <label>dash <input id="next-dash" type="number" value="0" min="0" style="width:4em"></label>
+      </div>
+      <div id="result" class="callout small">Load the saved points or click at least 4 points, then fit.</div>
+      <table>
+        <thead><tr><th>u</th><th>v</th><th>Line</th><th>Dash</th><th>End</th><th class="num">Error, m</th><th></th></tr></thead>
+        <tbody id="pts"></tbody>
+      </table>
+      <div class="row"><button id="download">Download points JSON</button></div>
+      <p class="muted small">Save the download as <code>cctv/data/calibration/&lt;camera&gt;.points.json</code>, then run
+        <code>python -m cctv.calibrate fit --camera &lt;camera&gt;</code> to write the calibration the pipeline uses.
+        Nothing is saved by this page.</p>
+    </section>
+  </main>
+  <footer class="disclaimer">
+    <span>Speeds are estimates with stated uncertainty, for traffic analytics only. They are not evidence of any
+      violation, and no vehicle or person is identified.</span>
+  </footer>
+  <script src="/static/calibrate.js"></script>
+</body>
+</html>

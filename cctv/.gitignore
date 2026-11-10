@@ -1,0 +1,27 @@
+# Track-local ignores for cctv/ (root .gitignore already covers __pycache__, *.pt, .venv/)
+.venv/
+# Raw footage, frames, model weights and databases are never committed
+data/clips/
+data/frames/
+data/models/
+data/db/
+data/runs/
+*.ts
+*.mp4
+*.mkv
+*.avi
+*.jpg
+*.jpeg
+*.png
+*.pt
+*.onnx
+*.engine
+*.sqlite
+*.sqlite3
+*.db
+# Except small, intentional docs images
+!docs/img/*.png
+!docs/img/*.jpg
+# Calibration reference frames are small, needed to detect PTZ moves, and committed
+# (image: NYSDOT / 511NY public camera feed)
+!data/calibration/*.ref.jpg

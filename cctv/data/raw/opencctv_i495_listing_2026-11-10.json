@@ -1,0 +1,597 @@
+[
+ {
+  "name": "I-495 at 220th Street",
+  "url": "https://opencctv.org/cameras/united-states/new-york/queens/i-495-at-220th-street-14485",
+  "lat": 40.74907,
+  "lon": -73.75828,
+  "place": "Queens, New York, US"
+ },
+ {
+  "name": "I-495 at 254th Street",
+  "url": "https://opencctv.org/cameras/united-states/new-york/queens/i-495-at-254th-street-14486",
+  "lat": 40.76378,
+  "lon": -73.72657,
+  "place": "Queens, New York, US"
+ },
+ {
+  "name": "I-495 ramp to W/B I-278",
+  "url": "https://opencctv.org/cameras/united-states/new-york/new-york/i-495-ramp-to-wb-i-278-14619",
+  "lat": 40.73494,
+  "lon": -73.92397,
+  "place": "New York, New York, US"
+ },
+ {
+  "name": "I-495 at 228 Street",
+  "url": "https://opencctv.org/cameras/united-states/new-york/queens/i-495-at-228-street-14641",
+  "lat": 40.75058,
+  "lon": -73.75017,
+  "place": "Queens, New York, US"
+ },
+ {
+  "name": "I-495 at 50 St (Lower Level)",
+  "url": "https://opencctv.org/cameras/united-states/new-york/new-york/i-495-at-50-st-lower-level-14856",
+  "lat": 40.73122,
+  "lon": -73.91717,
+  "place": "New York, New York, US"
+ },
+ {
+  "name": "I-495 at Cross Island Parkway",
+  "url": "https://opencctv.org/cameras/united-states/new-york/queens/i-495-at-cross-island-parkway-14872",
+  "lat": 40.75482,
+  "lon": -73.74305,
+  "place": "Queens, New York, US"
+ },
+ {
+  "name": "I-495 at I-295/CVE",
+  "url": "https://opencctv.org/cameras/united-states/new-york/queens/i-495-at-i-295cve-14986",
+  "lat": 40.74517,
+  "lon": -73.76995,
+  "place": "Queens, New York, US"
+ },
+ {
+  "name": "I-495 at Bell Blvd",
+  "url": "https://opencctv.org/cameras/united-states/new-york/queens/i-495-at-bell-blvd-15016",
+  "lat": 40.74746,
+  "lon": -73.76162,
+  "place": "Queens, New York, US"
+ },
+ {
+  "name": "I-495 at 48 St (Upper Level)",
+  "url": "https://opencctv.org/cameras/united-states/new-york/new-york/i-495-at-48-st-upper-level-15286",
+  "lat": 40.73214,
+  "lon": -73.91962,
+  "place": "New York, New York, US"
+ },
+ {
+  "name": "I-495 West of New Hyde Park Rd",
+  "url": "https://opencctv.org/cameras/united-states/new-york/queens/i-495-west-of-new-hyde-park-rd-15430",
+  "lat": 40.767013,
+  "lon": -73.696306,
+  "place": "Queens, New York, US"
+ },
+ {
+  "name": "I-495 East of New Hyde Park Rd",
+  "url": "https://opencctv.org/cameras/united-states/new-york/queens/i-495-east-of-new-hyde-park-rd-15431",
+  "lat": 40.770817,
+  "lon": -73.687524,
+  "place": "Queens, New York, US"
+ },
+ {
+  "name": "I-495 at Shelter Rock Rd",
+  "url": "https://opencctv.org/cameras/united-states/new-york/queens/i-495-at-shelter-rock-rd-15432",
+  "lat": 40.774248,
+  "lon": -73.670624,
+  "place": "Queens, New York, US"
+ },
+ {
+  "name": "I-495 at Searingtown Road",
+  "url": "https://opencctv.org/cameras/united-states/new-york/queens/i-495-at-searingtown-road-15434",
+  "lat": 40.779792,
+  "lon": -73.66222,
+  "place": "Queens, New York, US"
+ },
+ {
+  "name": "I-495 at Willis Ave",
+  "url": "https://opencctv.org/cameras/united-states/new-york/queens/i-495-at-willis-ave-15435",
+  "lat": 40.785093,
+  "lon": -73.649408,
+  "place": "Queens, New York, US"
+ },
+ {
+  "name": "I-495 at Roslyn Rd",
+  "url": "https://opencctv.org/cameras/united-states/new-york/queens/i-495-at-roslyn-rd-15436",
+  "lat": 40.784926,
+  "lon": -73.637802,
+  "place": "Queens, New York, US"
+ },
+ {
+  "name": "I-495 at Glen Cove Rd",
+  "url": "https://opencctv.org/cameras/united-states/new-york/queens/i-495-at-glen-cove-rd-15437",
+  "lat": 40.782931,
+  "lon": -73.622855,
+  "place": "Queens, New York, US"
+ },
+ {
+  "name": "I-495 Exits 40-39 w/of Wheatley Rd",
+  "url": "https://opencctv.org/cameras/united-states/new-york/queens/i-495-exits-40-39-wof-wheatley-rd-15438",
+  "lat": 40.782156,
+  "lon": -73.611989,
+  "place": "Queens, New York, US"
+ },
+ {
+  "name": "I-495 between Exits 40 and 39",
+  "url": "https://opencctv.org/cameras/united-states/new-york/queens/i-495-between-exits-40-and-39-15439",
+  "lat": 40.782477,
+  "lon": -73.596263,
+  "place": "Queens, New York, US"
+ },
+ {
+  "name": "I-495 at Powells Lane",
+  "url": "https://opencctv.org/cameras/united-states/new-york/queens/i-495-at-powells-lane-15440",
+  "lat": 40.780277,
+  "lon": -73.581407,
+  "place": "Queens, New York, US"
+ },
+ {
+  "name": "I-495 at Veterans Memorial Hwy(Exit 57)",
+  "url": "https://opencctv.org/cameras/united-states/new-york/hauppauge/i-495-at-veterans-memorial-hwyexit-57-15441",
+  "lat": 40.809263,
+  "lon": -73.186422,
+  "place": "Hauppauge, New York, US"
+ },
+ {
+  "name": "I-495 at Terry Road (Exits 59-58)",
+  "url": "https://opencctv.org/cameras/united-states/new-york/hauppauge/i-495-at-terry-road-exits-59-58-15442",
+  "lat": 40.81205,
+  "lon": -73.137576,
+  "place": "Hauppauge, New York, US"
+ },
+ {
+  "name": "I-495 at Hawkins Ave",
+  "url": "https://opencctv.org/cameras/united-states/new-york/hauppauge/i-495-at-hawkins-ave-15443",
+  "lat": 40.813286,
+  "lon": -73.108309,
+  "place": "Hauppauge, New York, US"
+ },
+ {
+  "name": "I-495 at Patchogue-Holbrook Rd",
+  "url": "https://opencctv.org/cameras/united-states/new-york/holbrook-rd/i-495-at-patchogue-holbrook-rd-15445",
+  "lat": 40.815508,
+  "lon": -73.084111,
+  "place": "Holbrook Rd, New York, US"
+ },
+ {
+  "name": "I-495 at Holbrook Rd",
+  "url": "https://opencctv.org/cameras/united-states/new-york/hauppauge/i-495-at-holbrook-rd-15446",
+  "lat": 40.816612,
+  "lon": -73.077754,
+  "place": "Hauppauge, New York, US"
+ },
+ {
+  "name": "I-495 at Nicolls Rd",
+  "url": "https://opencctv.org/cameras/united-states/new-york/hauppauge/i-495-at-nicolls-rd-15447",
+  "lat": 40.819958,
+  "lon": -73.053581,
+  "place": "Hauppauge, New York, US"
+ },
+ {
+  "name": "I-495 at Waverly Ave",
+  "url": "https://opencctv.org/cameras/united-states/new-york/hauppauge/i-495-at-waverly-ave-15448",
+  "lat": 40.821554,
+  "lon": -73.04601,
+  "place": "Hauppauge, New York, US"
+ },
+ {
+  "name": "I-495 at Blue Point Rd",
+  "url": "https://opencctv.org/cameras/united-states/new-york/hauppauge/i-495-at-blue-point-rd-15449",
+  "lat": 40.822026,
+  "lon": -73.034889,
+  "place": "Hauppauge, New York, US"
+ },
+ {
+  "name": "I-495 at North Ocean Ave (Exit 63)",
+  "url": "https://opencctv.org/cameras/united-states/new-york/hauppauge/i-495-at-north-ocean-ave-exit-63-15450",
+  "lat": 40.823704,
+  "lon": -73.019984,
+  "place": "Hauppauge, New York, US"
+ },
+ {
+  "name": "SAG North of I-495 at Exit S1",
+  "url": "https://opencctv.org/cameras/united-states/new-york/hauppauge/sag-north-of-i-495-at-exit-s1-15494",
+  "lat": 40.808203,
+  "lon": -73.282811,
+  "place": "Hauppauge, New York, US"
+ },
+ {
+  "name": "SAG South of I-495 at Exit S2",
+  "url": "https://opencctv.org/cameras/united-states/new-york/hauppauge/sag-south-of-i-495-at-exit-s2-15495",
+  "lat": 40.797521,
+  "lon": -73.278401,
+  "place": "Hauppauge, New York, US"
+ },
+ {
+  "name": "I-495 at ramp to Westbound BQE",
+  "url": "https://opencctv.org/cameras/united-states/new-york/new-york/i-495-at-ramp-to-westbound-bqe-15598",
+  "lat": 40.73452,
+  "lon": -73.92161,
+  "place": "New York, New York, US"
+ },
+ {
+  "name": "I-495 at ramp from Eastbound BQE",
+  "url": "https://opencctv.org/cameras/united-states/new-york/new-york/i-495-at-ramp-from-eastbound-bqe-15599",
+  "lat": 40.73338,
+  "lon": -73.92137,
+  "place": "New York, New York, US"
+ },
+ {
+  "name": "I-495 at 48th Street/Lower Level",
+  "url": "https://opencctv.org/cameras/united-states/new-york/new-york/i-495-at-48th-streetlower-level-15601",
+  "lat": 40.73195,
+  "lon": -73.91923,
+  "place": "New York, New York, US"
+ },
+ {
+  "name": "I-495 at Between 50th and 58th Street",
+  "url": "https://opencctv.org/cameras/united-states/new-york/new-york/i-495-at-between-50th-and-58th-street-15602",
+  "lat": 40.73123,
+  "lon": -73.91724,
+  "place": "New York, New York, US"
+ },
+ {
+  "name": "I-495 at 58th Street/Lower Level",
+  "url": "https://opencctv.org/cameras/united-states/new-york/new-york/i-495-at-58th-streetlower-level-15603",
+  "lat": 40.73018,
+  "lon": -73.91212,
+  "place": "New York, New York, US"
+ },
+ {
+  "name": "I-495 at 60th Street",
+  "url": "https://opencctv.org/cameras/united-states/new-york/new-york/i-495-at-60th-street-15604",
+  "lat": 40.72632,
+  "lon": -73.90527,
+  "place": "New York, New York, US"
+ },
+ {
+  "name": "I-495 at Grand Avenue",
+  "url": "https://opencctv.org/cameras/united-states/new-york/queens/i-495-at-grand-avenue-15605",
+  "lat": 40.72532,
+  "lon": -73.89694,
+  "place": "Queens, New York, US"
+ },
+ {
+  "name": "I-495 at 75th Street",
+  "url": "https://opencctv.org/cameras/united-states/new-york/queens/i-495-at-75th-street-15606",
+  "lat": 40.72833,
+  "lon": -73.88615,
+  "place": "Queens, New York, US"
+ },
+ {
+  "name": "I-495 at 84th Street",
+  "url": "https://opencctv.org/cameras/united-states/new-york/queens/i-495-at-84th-street-15607",
+  "lat": 40.72951,
+  "lon": -73.87743,
+  "place": "Queens, New York, US"
+ },
+ {
+  "name": "I-495 at Jericho Tpke",
+  "url": "https://opencctv.org/cameras/united-states/new-york/queens/i-495-at-jericho-tpke-15683",
+  "lat": 40.78315,
+  "lon": -73.555027,
+  "place": "Queens, New York, US"
+ },
+ {
+  "name": "I-495 West of NY 106/107",
+  "url": "https://opencctv.org/cameras/united-states/new-york/queens/i-495-west-of-ny-106107-15684",
+  "lat": 40.784982,
+  "lon": -73.536072,
+  "place": "Queens, New York, US"
+ },
+ {
+  "name": "I-495 at NSP Connector Exit 42",
+  "url": "https://opencctv.org/cameras/united-states/new-york/queens/i-495-at-nsp-connector-exit-42-15685",
+  "lat": 40.78645,
+  "lon": -73.527178,
+  "place": "Queens, New York, US"
+ },
+ {
+  "name": "I-495 at South Oyster Bay Road",
+  "url": "https://opencctv.org/cameras/united-states/new-york/queens/i-495-at-south-oyster-bay-road-15686",
+  "lat": 40.79683,
+  "lon": -73.506268,
+  "place": "Queens, New York, US"
+ },
+ {
+  "name": "I-495 at Route 135",
+  "url": "https://opencctv.org/cameras/united-states/new-york/farmingdale/i-495-at-route-135-15687",
+  "lat": 40.799785,
+  "lon": -73.488585,
+  "place": "Farmingdale, New York, US"
+ },
+ {
+  "name": "I-495 at Manetto Hill Rd (Exit 45)",
+  "url": "https://opencctv.org/cameras/united-states/new-york/plainview/i-495-at-manetto-hill-rd-exit-45-15688",
+  "lat": 40.797777,
+  "lon": -73.476646,
+  "place": "Plainview, New York, US"
+ },
+ {
+  "name": "I-495 at Plainview Rd.",
+  "url": "https://opencctv.org/cameras/united-states/new-york/plainview/i-495-at-plainview-rd-15689",
+  "lat": 40.792391,
+  "lon": -73.460688,
+  "place": "Plainview, New York, US"
+ },
+ {
+  "name": "I-495 East of Round Swamp Rd",
+  "url": "https://opencctv.org/cameras/united-states/new-york/dix-hills/i-495-east-of-round-swamp-rd-15690",
+  "lat": 40.783028,
+  "lon": -73.436756,
+  "place": "Dix Hills, New York, US"
+ },
+ {
+  "name": "I-495 at NY 110",
+  "url": "https://opencctv.org/cameras/united-states/new-york/melville/i-495-at-ny-110-15691",
+  "lat": 40.78046,
+  "lon": -73.418816,
+  "place": "Melville, New York, US"
+ },
+ {
+  "name": "I-495 at Half Hollow Hills Road West",
+  "url": "https://opencctv.org/cameras/united-states/new-york/dix-hills/i-495-at-half-hollow-hills-road-west-15692",
+  "lat": 40.785158,
+  "lon": -73.395656,
+  "place": "Dix Hills, New York, US"
+ },
+ {
+  "name": "I-495 Exit 65/66 Rest area",
+  "url": "https://opencctv.org/cameras/united-states/new-york/manorville/i-495-exit-6566-rest-area-15693",
+  "lat": 40.826449,
+  "lon": -72.950186,
+  "place": "Manorville, New York, US"
+ },
+ {
+  "name": "I-495 NSP Connecter Over Height loc",
+  "url": "https://opencctv.org/cameras/united-states/new-york/queens/i-495-nsp-connecter-over-height-loc-15695",
+  "lat": 40.784125,
+  "lon": -73.629704,
+  "place": "Queens, New York, US"
+ },
+ {
+  "name": "NY 25 at I-495 SSR and Brush Hollow Rd.",
+  "url": "https://opencctv.org/cameras/united-states/new-york/queens/ny-25-at-i-495-ssr-and-brush-hollow-rd-15728",
+  "lat": 40.781245,
+  "lon": -73.557475,
+  "place": "Queens, New York, US"
+ },
+ {
+  "name": "I-495 at Queens Blvd",
+  "url": "https://opencctv.org/cameras/united-states/new-york/queens/i-495-at-queens-blvd-15824",
+  "lat": 40.73301,
+  "lon": -73.86836,
+  "place": "Queens, New York, US"
+ },
+ {
+  "name": "I-495 at 99th Street",
+  "url": "https://opencctv.org/cameras/united-states/new-york/queens/i-495-at-99th-street-15825",
+  "lat": 40.73593,
+  "lon": -73.85864,
+  "place": "Queens, New York, US"
+ },
+ {
+  "name": "I-495 at Grand Central Parkway",
+  "url": "https://opencctv.org/cameras/united-states/new-york/queens/i-495-at-grand-central-parkway-15826",
+  "lat": 40.73911,
+  "lon": -73.84618,
+  "place": "Queens, New York, US"
+ },
+ {
+  "name": "I-495 at 138th Street",
+  "url": "https://opencctv.org/cameras/united-states/new-york/queens/i-495-at-138th-street-15827",
+  "lat": 40.74287,
+  "lon": -73.82789,
+  "place": "Queens, New York, US"
+ },
+ {
+  "name": "I-495 at 146th Street",
+  "url": "https://opencctv.org/cameras/united-states/new-york/queens/i-495-at-146th-street-15829",
+  "lat": 40.74175,
+  "lon": -73.82317,
+  "place": "Queens, New York, US"
+ },
+ {
+  "name": "I-495 at Kissena Blvd",
+  "url": "https://opencctv.org/cameras/united-states/new-york/queens/i-495-at-kissena-blvd-15830",
+  "lat": 40.73869,
+  "lon": -73.81476,
+  "place": "Queens, New York, US"
+ },
+ {
+  "name": "I-495 at 163rd Street",
+  "url": "https://opencctv.org/cameras/united-states/new-york/queens/i-495-at-163rd-street-15831",
+  "lat": 40.73864,
+  "lon": -73.80596,
+  "place": "Queens, New York, US"
+ },
+ {
+  "name": "I-495 at 185th Street",
+  "url": "https://opencctv.org/cameras/united-states/new-york/queens/i-495-at-185th-street-15833",
+  "lat": 40.74009,
+  "lon": -73.79032,
+  "place": "Queens, New York, US"
+ },
+ {
+  "name": "I-495 at Kissena Blvd",
+  "url": "https://opencctv.org/cameras/united-states/new-york/queens/i-495-at-kissena-blvd-16670",
+  "lat": 40.738692,
+  "lon": -73.814765,
+  "place": "Queens, New York, US"
+ },
+ {
+  "name": "I-495 at Utopia Pkwy",
+  "url": "https://opencctv.org/cameras/united-states/new-york/queens/i-495-at-utopia-pkwy-16671",
+  "lat": 40.738011,
+  "lon": -73.79712,
+  "place": "Queens, New York, US"
+ },
+ {
+  "name": "I-495 at Oceana St",
+  "url": "https://opencctv.org/cameras/united-states/new-york/queens/i-495-at-oceana-st-16672",
+  "lat": 40.746698,
+  "lon": -73.763638,
+  "place": "Queens, New York, US"
+ },
+ {
+  "name": "I-495 at East Hampton Blvd Pedestrian Br",
+  "url": "https://opencctv.org/cameras/united-states/new-york/queens/i-495-at-east-hampton-blvd-pedestrian-br-16673",
+  "lat": 40.750563,
+  "lon": -73.750172,
+  "place": "Queens, New York, US"
+ },
+ {
+  "name": "I-495 at Cross Island Pkwy.",
+  "url": "https://opencctv.org/cameras/united-states/new-york/queens/i-495-at-cross-island-pkwy-16674",
+  "lat": 40.754822,
+  "lon": -73.743048,
+  "place": "Queens, New York, US"
+ },
+ {
+  "name": "I-495 West of Marathon Pkwy",
+  "url": "https://opencctv.org/cameras/united-states/new-york/queens/i-495-west-of-marathon-pkwy-16675",
+  "lat": 40.759981,
+  "lon": -73.734234,
+  "place": "Queens, New York, US"
+ },
+ {
+  "name": "I-495 at Little Neck Pkwy",
+  "url": "https://opencctv.org/cameras/united-states/new-york/queens/i-495-at-little-neck-pkwy-16676",
+  "lat": 40.764521,
+  "lon": -73.72349,
+  "place": "Queens, New York, US"
+ },
+ {
+  "name": "I-495 East of Little Neck Pkwy",
+  "url": "https://opencctv.org/cameras/united-states/new-york/queens/i-495-east-of-little-neck-pkwy-16677",
+  "lat": 40.76978,
+  "lon": -73.706321,
+  "place": "Queens, New York, US"
+ },
+ {
+  "name": "I-495 at Bagatelle Rd",
+  "url": "https://opencctv.org/cameras/united-states/new-york/commack/i-495-at-bagatelle-rd-16678",
+  "lat": 40.791743,
+  "lon": -73.363223,
+  "place": "Commack, New York, US"
+ },
+ {
+  "name": "I-495 at Deer Park Ave",
+  "url": "https://opencctv.org/cameras/united-states/new-york/commack/i-495-at-deer-park-ave-16679",
+  "lat": 40.801269,
+  "lon": -73.333628,
+  "place": "Commack, New York, US"
+ },
+ {
+  "name": "I-495 at Rest Area",
+  "url": "https://opencctv.org/cameras/united-states/new-york/commack/i-495-at-rest-area-16680",
+  "lat": 40.803776,
+  "lon": -73.315147,
+  "place": "Commack, New York, US"
+ },
+ {
+  "name": "I-495 at Commack Road",
+  "url": "https://opencctv.org/cameras/united-states/new-york/commack/i-495-at-commack-road-16681",
+  "lat": 40.804787,
+  "lon": -73.296796,
+  "place": "Commack, New York, US"
+ },
+ {
+  "name": "I-495 at Sagtikos Pkwy",
+  "url": "https://opencctv.org/cameras/united-states/new-york/commack/i-495-at-sagtikos-pkwy-16682",
+  "lat": 40.805363,
+  "lon": -73.277557,
+  "place": "Commack, New York, US"
+ },
+ {
+  "name": "I-495 at Wicks Road Eastbound CD Rd",
+  "url": "https://opencctv.org/cameras/united-states/new-york/manhasset/i-495-at-wicks-road-eastbound-cd-rd-16683",
+  "lat": 40.804156,
+  "lon": -73.265629,
+  "place": "Manhasset, New York, US"
+ },
+ {
+  "name": "I-495 at Exit 53 Ramp - Wicks Rd",
+  "url": "https://opencctv.org/cameras/united-states/new-york/wicks-rd/i-495-at-exit-53-ramp-wicks-rd-16684",
+  "lat": 40.805198,
+  "lon": -73.260317,
+  "place": "Wicks Rd, New York, US"
+ },
+ {
+  "name": "I-495 at Washington Ave",
+  "url": "https://opencctv.org/cameras/united-states/new-york/manhasset/i-495-at-washington-ave-16686",
+  "lat": 40.805798,
+  "lon": -73.24886,
+  "place": "Manhasset, New York, US"
+ },
+ {
+  "name": "I-495 at Motor Parkway Exit 55",
+  "url": "https://opencctv.org/cameras/united-states/new-york/manhasset/i-495-at-motor-parkway-exit-55-16687",
+  "lat": 40.808563,
+  "lon": -73.22341,
+  "place": "Manhasset, New York, US"
+ },
+ {
+  "name": "I-495 at Lincoln Blvd",
+  "url": "https://opencctv.org/cameras/united-states/new-york/manhasset/i-495-at-lincoln-blvd-16688",
+  "lat": 40.809443,
+  "lon": -73.20505,
+  "place": "Manhasset, New York, US"
+ },
+ {
+  "name": "I-278 at ramp to I-495",
+  "url": "https://opencctv.org/cameras/united-states/new-york/new-york/i-278-at-ramp-to-i-495-16796",
+  "lat": 40.73477,
+  "lon": -73.92189,
+  "place": "New York, New York, US"
+ },
+ {
+  "name": "I-495 at Queens Midtown Tunnel",
+  "url": "https://opencctv.org/cameras/united-states/new-york/manhattan/i-495-at-queens-midtown-tunnel-16806",
+  "lat": 40.7415,
+  "lon": -73.9504,
+  "place": "Manhattan, New York, US"
+ },
+ {
+  "name": "I-495 at 27th Street",
+  "url": "https://opencctv.org/cameras/united-states/new-york/new-york/i-495-at-27th-street-16807",
+  "lat": 40.73957,
+  "lon": -73.94227,
+  "place": "New York, New York, US"
+ },
+ {
+  "name": "I-495 at Greenpoint Avenue",
+  "url": "https://opencctv.org/cameras/united-states/new-york/new-york/i-495-at-greenpoint-avenue-16808",
+  "lat": 40.73636,
+  "lon": -73.92886,
+  "place": "New York, New York, US"
+ },
+ {
+  "name": "I-495 at Underhill Avenue",
+  "url": "https://opencctv.org/cameras/united-states/new-york/queens/i-495-at-underhill-avenue-16809",
+  "lat": 40.74274,
+  "lon": -73.78062,
+  "place": "Queens, New York, US"
+ },
+ {
+  "name": "I-495 at Francis Lewis Blvd.",
+  "url": "https://opencctv.org/cameras/united-states/new-york/queens/i-495-at-francis-lewis-blvd-16810",
+  "lat": 40.74335,
+  "lon": -73.7745,
+  "place": "Queens, New York, US"
+ },
+ {
+  "name": "I-495 at Lawrence Street",
+  "url": "https://opencctv.org/cameras/united-states/new-york/queens/i-495-at-lawrence-street-185138",
+  "lat": 40.74343,
+  "lon": -73.8334,
+  "place": "Queens, New York, US"
+ }
+]

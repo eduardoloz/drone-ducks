@@ -1,0 +1,242 @@
+{
+ "camera_id": "R10_041",
+ "image_size": [
+  640,
+  480
+ ],
+ "source_frame": "median of 60 frames of R10_041_20261110T213935Z.ts (data/frames/R10_041_bg.png, not committed)",
+ "view": "NYSDOT Camera 041 'LIEwb Exit 57 at Vets Highway' preset as seen 2026-11-10 21:39 UTC; near (right) carriageway",
+ "lane_width_ft": 12,
+ "dash_ft": 10,
+ "gap_ft": 30,
+ "unknown_phase_lines": [
+  1
+ ],
+ "notes": "Line 0 = broken line between the 1st and 2nd general lanes right of the HOV buffer; line 1 = next broken line to the right. Dash corners from thresholded paint components (PCA endpoints), checked by eye on a 2.6x zoom. Nearest dashes are cut by the frame bottom, so only their far ends are used. Transverse lines are concrete pavement joints (assumed perpendicular to the lanes); both independently put the line-1 dash phase near 0, i.e. dashes on the two lines are painted in phase.",
+ "points": [
+  {
+   "img": [
+    345.0,
+    454.0
+   ],
+   "line": 0,
+   "dash": 0,
+   "end": "end"
+  },
+  {
+   "img": [
+    411.3,
+    390.4
+   ],
+   "line": 0,
+   "dash": 1,
+   "end": "start"
+  },
+  {
+   "img": [
+    430.7,
+    373.7
+   ],
+   "line": 0,
+   "dash": 1,
+   "end": "end"
+  },
+  {
+   "img": [
+    473.4,
+    333.4
+   ],
+   "line": 0,
+   "dash": 2,
+   "end": "start"
+  },
+  {
+   "img": [
+    486.7,
+    321.7
+   ],
+   "line": 0,
+   "dash": 2,
+   "end": "end"
+  },
+  {
+   "img": [
+    516.0,
+    294.0
+   ],
+   "line": 0,
+   "dash": 3,
+   "end": "start"
+  },
+  {
+   "img": [
+    525.0,
+    286.0
+   ],
+   "line": 0,
+   "dash": 3,
+   "end": "end"
+  },
+  {
+   "img": [
+    546.5,
+    265.6
+   ],
+   "line": 0,
+   "dash": 4,
+   "end": "start"
+  },
+  {
+   "img": [
+    554.2,
+    259.2
+   ],
+   "line": 0,
+   "dash": 4,
+   "end": "end"
+  },
+  {
+   "img": [
+    450.2,
+    464.4
+   ],
+   "line": 1,
+   "dash": 0,
+   "end": "end"
+  },
+  {
+   "img": [
+    499.5,
+    398.4
+   ],
+   "line": 1,
+   "dash": 1,
+   "end": "start"
+  },
+  {
+   "img": [
+    514.1,
+    380.1
+   ],
+   "line": 1,
+   "dash": 1,
+   "end": "end"
+  },
+  {
+   "img": [
+    545.6,
+    338.5
+   ],
+   "line": 1,
+   "dash": 2,
+   "end": "start"
+  },
+  {
+   "img": [
+    555.0,
+    327.0
+   ],
+   "line": 1,
+   "dash": 2,
+   "end": "end"
+  },
+  {
+   "img": [
+    576.8,
+    298.6
+   ],
+   "line": 1,
+   "dash": 3,
+   "end": "start"
+  },
+  {
+   "img": [
+    584.4,
+    289.5
+   ],
+   "line": 1,
+   "dash": 3,
+   "end": "end"
+  },
+  {
+   "img": [
+    601.0,
+    268.0
+   ],
+   "line": 1,
+   "dash": 4,
+   "end": "start"
+  },
+  {
+   "img": [
+    606.2,
+    262.2
+   ],
+   "line": 1,
+   "dash": 4,
+   "end": "end"
+  }
+ ],
+ "roi_polygon": [
+  [
+   60,
+   480
+  ],
+  [
+   470,
+   288
+  ],
+  [
+   640,
+   288
+  ],
+  [
+   640,
+   330
+  ],
+  [
+   568,
+   480
+  ]
+ ],
+ "osd_boxes": [
+  [
+   0.0,
+   0.0,
+   0.22,
+   0.3
+  ],
+  [
+   0.77,
+   0.06,
+   1.0,
+   0.15
+  ]
+ ],
+ "transverse_lines": [
+  [
+   [
+    405,
+    345
+   ],
+   [
+    431,
+    346
+   ],
+   [
+    592,
+    358.5
+   ]
+  ],
+  [
+   [
+    479,
+    285
+   ],
+   [
+    568.5,
+    289
+   ]
+  ]
+ ]
+}
