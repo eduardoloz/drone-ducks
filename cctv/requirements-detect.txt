@@ -1,0 +1,8 @@
+# Detection + tracking (YOLO + ByteTrack). Heavy: ~1 GB installed.
+# torch 2.2.2 is the newest PyTorch with Intel-macOS wheels. On Apple Silicon or
+# Linux you can drop the torch pins and take the latest.
+-r requirements.txt
+torch==2.2.2
+torchvision==0.17.2
+ultralytics==8.4.182     # same version as setup/.venv-typefly (known good here)
+lap==0.5.12              # linear assignment used by ByteTrack

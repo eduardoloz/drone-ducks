@@ -1,0 +1,5037 @@
+{
+ "source": "https://api-511x-nysdot.carsprogram.org/cameras/map-features (loaded by https://511ny.org map)",
+ "fetched_at": "2026-11-10T21:33:22.364Z",
+ "note": "Snapshot of the official 511NY public map camera layer, filtered to cameras within 600 m of an I-495/LIE-named camera. Captured once via a normal browser session on https://511ny.org. For ongoing use, request official 511NY developer feed access (https://511ny.org/help/24).",
+ "n": 207,
+ "cams": [
+  {
+   "id": 21681,
+   "name": "Jackson Ave @ 11 ST",
+   "route": "Jackson Ave @ 11 ST",
+   "owner": "NYC DOT",
+   "lon": -73.95146,
+   "lat": 40.74327,
+   "lastUpdated": 1793038582901,
+   "loc": {
+    "fips": 36,
+    "routeId": "Jackson Ave @ 11 ST",
+    "localRoad": true
+   },
+   "views": [
+    {
+     "n": "Jackson Ave @ 11 ST",
+     "t": "STILL_IMAGE",
+     "u": "https://nyctmc.org/api/cameras/76c47885-cc54-4e0d-989c-01cf1256dd1a/image",
+     "p": "https://nyctmc.org/api/cameras/76c47885-cc54-4e0d-989c-01cf1256dd1a/image",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 20956,
+   "name": "Long Island Expy @ QMT @ Pulaski Br",
+   "route": "Long Island Expy @ QMT @ Pulaski Br",
+   "owner": "NYC DOT",
+   "lon": -73.9509,
+   "lat": 40.74148,
+   "lastUpdated": 1793038585380,
+   "loc": {
+    "fips": 36,
+    "routeId": "Long Island Expy @ QMT @ Pulaski Br",
+    "localRoad": true
+   },
+   "views": [
+    {
+     "n": "Long Island Expy @ QMT @ Pulaski Br",
+     "t": "STILL_IMAGE",
+     "u": "https://nyctmc.org/api/cameras/67f77766-bd19-4082-adeb-88d59866c490/image",
+     "p": "https://nyctmc.org/api/cameras/67f77766-bd19-4082-adeb-88d59866c490/image",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 35187,
+   "name": "I-495 at Queens Midtown Tunnel",
+   "route": "I-495",
+   "owner": "NYSDOT",
+   "lon": -73.95040690550502,
+   "lat": 40.74156521230424,
+   "lastUpdated": 1793818118331,
+   "loc": {
+    "fips": 36,
+    "routeId": "I-495",
+    "linearReference": 1.5180566800400073,
+    "localRoad": false,
+    "cityReference": "in New York City"
+   },
+   "views": [
+    {
+     "n": "I-495 at Queens Midtown Tunnel",
+     "t": "WMP",
+     "u": "https://s51.nysdot.skyvdn.com/rtplive/R11_127/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R11_127.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 21699,
+   "name": "Jackson Ave @ 21 St",
+   "route": "Jackson Ave @ 21 St",
+   "owner": "NYC DOT",
+   "lon": -73.94847,
+   "lat": 40.74464,
+   "lastUpdated": 1793038587921,
+   "loc": {
+    "fips": 36,
+    "routeId": "Jackson Ave @ 21 St",
+    "localRoad": true
+   },
+   "views": [
+    {
+     "n": "Jackson Ave @ 21 St",
+     "t": "STILL_IMAGE",
+     "u": "https://nyctmc.org/api/cameras/8a60eb4e-4069-4c0f-9bca-b8cc52915ffb/image",
+     "p": "https://nyctmc.org/api/cameras/8a60eb4e-4069-4c0f-9bca-b8cc52915ffb/image",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 35188,
+   "name": "I-495 at 27th Street",
+   "route": "I-495",
+   "owner": "NYSDOT",
+   "lon": -73.94223652772004,
+   "lat": 40.73961774738926,
+   "lastUpdated": 1793818118337,
+   "loc": {
+    "fips": 36,
+    "routeId": "I-495",
+    "linearReference": 1.9728189323967957,
+    "localRoad": false,
+    "cityReference": "in New York City"
+   },
+   "views": [
+    {
+     "n": "I-495 at 27th Street",
+     "t": "WMP",
+     "u": "https://s51.nysdot.skyvdn.com/rtplive/R11_128/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R11_128.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 21271,
+   "name": "C5-LIE-02-EB_at_27th_St-Ex15",
+   "route": "C5-LIE-02-EB_at_27th_St-Ex15",
+   "owner": "NYC DOT",
+   "lon": -73.941697,
+   "lat": 40.739299,
+   "lastUpdated": 1793038582206,
+   "loc": {
+    "fips": 36,
+    "routeId": "C5-LIE-02-EB_at_27th_St-Ex15",
+    "localRoad": true
+   },
+   "views": [
+    {
+     "n": "C5-LIE-02-EB_at_27th_St-Ex15",
+     "t": "STILL_IMAGE",
+     "u": "https://nyctmc.org/api/cameras/43e3d020-e4f2-4599-a19f-72ae778f1dcd/image",
+     "p": "https://nyctmc.org/api/cameras/43e3d020-e4f2-4599-a19f-72ae778f1dcd/image",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 21327,
+   "name": "Van Dam St Bet. 48 Ave & Hunter Pt",
+   "route": "Van Dam St Bet. 48 Ave & Hunter Pt",
+   "owner": "NYC DOT",
+   "lon": -73.9345,
+   "lat": 40.740368,
+   "lastUpdated": 1793038583624,
+   "loc": {
+    "fips": 36,
+    "routeId": "Van Dam St Bet. 48 Ave & Hunter Pt",
+    "localRoad": true
+   },
+   "views": [
+    {
+     "n": "Van Dam St Bet. 48 Ave & Hunter Pt",
+     "t": "STILL_IMAGE",
+     "u": "https://nyctmc.org/api/cameras/7e36617c-4210-4371-90df-89cfc2d25df2/image",
+     "p": "https://nyctmc.org/api/cameras/7e36617c-4210-4371-90df-89cfc2d25df2/image",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 21219,
+   "name": "Van Dam St @ 48 Ave",
+   "route": "Van Dam St @ 48 Ave",
+   "owner": "NYC DOT",
+   "lon": -73.9343,
+   "lat": 40.741099,
+   "lastUpdated": 1793038585436,
+   "loc": {
+    "fips": 36,
+    "routeId": "Van Dam St @ 48 Ave",
+    "localRoad": true
+   },
+   "views": [
+    {
+     "n": "Van Dam St @ 48 Ave",
+     "t": "STILL_IMAGE",
+     "u": "https://nyctmc.org/api/cameras/8645493f-d08c-4c0e-a572-b40f5fbeec56/image",
+     "p": "https://nyctmc.org/api/cameras/8645493f-d08c-4c0e-a572-b40f5fbeec56/image",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 21516,
+   "name": "Long Island Expy @ Greenpoint Ave",
+   "route": "Long Island Expy @ Greenpoint Ave",
+   "owner": "NYC DOT",
+   "lon": -73.930969,
+   "lat": 40.737146,
+   "lastUpdated": 1793038588331,
+   "loc": {
+    "fips": 36,
+    "routeId": "Long Island Expy @ Greenpoint Ave",
+    "localRoad": true
+   },
+   "views": [
+    {
+     "n": "Long Island Expy @ Greenpoint Ave",
+     "t": "STILL_IMAGE",
+     "u": "https://nyctmc.org/api/cameras/5e621a58-dade-4b9a-aef8-24b3038455a4/image",
+     "p": "https://nyctmc.org/api/cameras/5e621a58-dade-4b9a-aef8-24b3038455a4/image",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 36056,
+   "name": "48 Ave @ 38 St",
+   "route": "48 Ave @ 38 St",
+   "owner": "NYC DOT",
+   "lon": -73.9303818,
+   "lat": 40.7403311,
+   "lastUpdated": 1793038586442,
+   "loc": {
+    "fips": 36,
+    "routeId": "48 Ave @ 38 St",
+    "localRoad": true
+   },
+   "views": [
+    {
+     "n": "48 Ave @ 38 St",
+     "t": "STILL_IMAGE",
+     "u": "https://nyctmc.org/api/cameras/675e7a19-df11-4f31-9682-ee509eb1f9ed/image",
+     "p": "https://nyctmc.org/api/cameras/675e7a19-df11-4f31-9682-ee509eb1f9ed/image",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 35189,
+   "name": "I-495 at Greenpoint Avenue",
+   "route": "I-495",
+   "owner": "NYSDOT",
+   "lon": -73.92882610415538,
+   "lat": 40.73646509665467,
+   "lastUpdated": 1793818118343,
+   "loc": {
+    "fips": 36,
+    "routeId": "I-495",
+    "linearReference": 2.714831244926554,
+    "localRoad": false,
+    "cityReference": "in New York City"
+   },
+   "views": [
+    {
+     "n": "I-495 at Greenpoint Avenue",
+     "t": "WMP",
+     "u": "https://s51.nysdot.skyvdn.com/rtplive/R11_129/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R11_129.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 36089,
+   "name": "Basler",
+   "route": "Basler",
+   "owner": "NYC DOT",
+   "lon": -73.927775,
+   "lat": 40.740449,
+   "lastUpdated": 1793038586621,
+   "loc": {
+    "fips": 36,
+    "routeId": "Basler",
+    "localRoad": true
+   },
+   "views": [
+    {
+     "n": "Basler",
+     "t": "STILL_IMAGE",
+     "u": "https://nyctmc.org/api/cameras/fbacede1-8110-4425-80d3-74d9a1be297a/image",
+     "p": "https://nyctmc.org/api/cameras/fbacede1-8110-4425-80d3-74d9a1be297a/image",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 35176,
+   "name": "I-278 at 54th Avenue",
+   "route": "I-278",
+   "owner": "NYSDOT",
+   "lon": -73.92480314921389,
+   "lat": 40.73244228751348,
+   "lastUpdated": 1793818118261,
+   "loc": {
+    "fips": 36,
+    "routeId": "I-278",
+    "linearReference": 22.074503627893566,
+    "localRoad": false,
+    "cityReference": "in New York City"
+   },
+   "views": [
+    {
+     "n": "I-278 at 54th Avenue",
+     "t": "WMP",
+     "u": "https://s51.nysdot.skyvdn.com/rtplive/R11_096/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R11_096.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 21127,
+   "name": "C5-BQE-31-EB_at_54th_Ave",
+   "route": "C5-BQE-31-EB_at_54th_Ave",
+   "owner": "NYC DOT",
+   "lon": -73.924803,
+   "lat": 40.732548,
+   "lastUpdated": 1793038588483,
+   "loc": {
+    "fips": 36,
+    "routeId": "C5-BQE-31-EB_at_54th_Ave",
+    "localRoad": true
+   },
+   "views": [
+    {
+     "n": "C5-BQE-31-EB_at_54th_Ave",
+     "t": "STILL_IMAGE",
+     "u": "https://nyctmc.org/api/cameras/7384e16f-2921-4b14-b5a8-15cf58ef7ef0/image",
+     "p": "https://nyctmc.org/api/cameras/7384e16f-2921-4b14-b5a8-15cf58ef7ef0/image",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 34492,
+   "name": "I-495 ramp to W/B I-278",
+   "route": "I-495",
+   "owner": "NYSDOT",
+   "lon": -73.92380282466699,
+   "lat": 40.73515326915948,
+   "lastUpdated": 1793818114660,
+   "loc": {
+    "fips": 36,
+    "routeId": "I-495",
+    "linearReference": 2.994971693686175,
+    "localRoad": false,
+    "cityReference": "in New York City"
+   },
+   "views": [
+    {
+     "n": "I-495 ramp to W/B I-278",
+     "t": "WMP",
+     "u": "https://s7.nysdot.skyvdn.com/rtplive/R11_232/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R11_232.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 35177,
+   "name": "I-278 at LIE Interchange/Shelter-2",
+   "route": "I-278",
+   "owner": "NYSDOT",
+   "lon": -73.92178385793777,
+   "lat": 40.73457705833463,
+   "lastUpdated": 1793818118267,
+   "loc": {
+    "fips": 36,
+    "routeId": "I-278",
+    "linearReference": 22.295839295848864,
+    "localRoad": false,
+    "cityReference": "in New York City"
+   },
+   "views": [
+    {
+     "n": "I-278 at LIE Interchange/Shelter-2",
+     "t": "WMP",
+     "u": "https://s51.nysdot.skyvdn.com/rtplive/R11_097/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R11_097.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 35541,
+   "name": "I-495 at ramp to Westbound BQE",
+   "route": "I-278",
+   "owner": "NYSDOT",
+   "lon": -73.92165886795915,
+   "lat": 40.73461480486059,
+   "lastUpdated": 1793818120233,
+   "loc": {
+    "fips": 36,
+    "routeId": "I-278",
+    "linearReference": 22.302897583256584,
+    "localRoad": false,
+    "cityReference": "in New York City"
+   },
+   "views": [
+    {
+     "n": "I-495 at ramp to Westbound BQE",
+     "t": "WMP",
+     "u": "https://s52.nysdot.skyvdn.com/rtplive/R11_131/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R11_131.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 35542,
+   "name": "I-495 at ramp from Eastbound BQE",
+   "route": "I-495",
+   "owner": "NYSDOT",
+   "lon": -73.92128609309714,
+   "lat": 40.733440971609,
+   "lastUpdated": 1793818120239,
+   "loc": {
+    "fips": 36,
+    "routeId": "I-495",
+    "linearReference": 3.1726403015805413,
+    "localRoad": false,
+    "cityReference": "in New York City"
+   },
+   "views": [
+    {
+     "n": "I-495 at ramp from Eastbound BQE",
+     "t": "WMP",
+     "u": "https://s52.nysdot.skyvdn.com/rtplive/R11_132/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R11_132.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 35178,
+   "name": "I-278 at 45th Street",
+   "route": "I-278",
+   "owner": "NYSDOT",
+   "lon": -73.92106737912187,
+   "lat": 40.73478786853767,
+   "lastUpdated": 1793818118273,
+   "loc": {
+    "fips": 36,
+    "routeId": "I-278",
+    "linearReference": 22.336161750681637,
+    "localRoad": false,
+    "cityReference": "in New York City"
+   },
+   "views": [
+    {
+     "n": "I-278 at 45th Street",
+     "t": "WMP",
+     "u": "https://s51.nysdot.skyvdn.com/rtplive/R11_098/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R11_098.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 35069,
+   "name": "I-495 at 48 St (Upper Level)",
+   "route": "I-495",
+   "owner": "NYSDOT",
+   "lon": -73.91954564145739,
+   "lat": 40.7322157548358,
+   "lastUpdated": 1793818117626,
+   "loc": {
+    "fips": 36,
+    "routeId": "I-495",
+    "linearReference": 3.297245731751076,
+    "localRoad": false,
+    "cityReference": "in New York City"
+   },
+   "views": [
+    {
+     "n": "I-495 at 48 St (Upper Level)",
+     "t": "WMP",
+     "u": "https://s9.nysdot.skyvdn.com/rtplive/R11_225/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R11_225.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 21323,
+   "name": "C5-LIE-08-EB_48th_St_LL-Ex16",
+   "route": "C5-LIE-08-EB_48th_St_LL-Ex16",
+   "owner": "NYC DOT",
+   "lon": -73.919235,
+   "lat": 40.731963,
+   "lastUpdated": 1793038583069,
+   "loc": {
+    "fips": 36,
+    "routeId": "C5-LIE-08-EB_48th_St_LL-Ex16",
+    "localRoad": true
+   },
+   "views": [
+    {
+     "n": "C5-LIE-08-EB_48th_St_LL-Ex16",
+     "t": "STILL_IMAGE",
+     "u": "https://nyctmc.org/api/cameras/21dd2187-79ff-4cf9-bc11-055a04cdfb3f/image",
+     "p": "https://nyctmc.org/api/cameras/21dd2187-79ff-4cf9-bc11-055a04cdfb3f/image",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 35543,
+   "name": "I-495 at 48th Street/Lower Level",
+   "route": "I-495",
+   "owner": "NYSDOT",
+   "lon": -73.91917422910626,
+   "lat": 40.73201408466452,
+   "lastUpdated": 1793818120245,
+   "loc": {
+    "fips": 36,
+    "routeId": "I-495",
+    "linearReference": 3.3211967897437527,
+    "localRoad": false,
+    "cityReference": "in New York City"
+   },
+   "views": [
+    {
+     "n": "I-495 at 48th Street/Lower Level",
+     "t": "WMP",
+     "u": "https://s52.nysdot.skyvdn.com/rtplive/R11_134/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R11_134.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 35544,
+   "name": "I-495 at Between 50th and 58th Street",
+   "route": "I-495",
+   "owner": "NYSDOT",
+   "lon": -73.91721159134477,
+   "lat": 40.73128789719471,
+   "lastUpdated": 1793818120251,
+   "loc": {
+    "fips": 36,
+    "routeId": "I-495",
+    "linearReference": 3.4360836177714655,
+    "localRoad": false,
+    "cityReference": "in New York City"
+   },
+   "views": [
+    {
+     "n": "I-495 at Between 50th and 58th Street",
+     "t": "WMP",
+     "u": "https://s52.nysdot.skyvdn.com/rtplive/R11_135/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R11_135.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 34728,
+   "name": "I-495 at 50 St (Lower Level)",
+   "route": "I-495",
+   "owner": "NYSDOT",
+   "lon": -73.9171457829039,
+   "lat": 40.73126935480459,
+   "lastUpdated": 1793818115829,
+   "loc": {
+    "fips": 36,
+    "routeId": "I-495",
+    "linearReference": 3.4397600062613627,
+    "localRoad": false,
+    "cityReference": "in New York City"
+   },
+   "views": [
+    {
+     "n": "I-495 at 50 St (Lower Level)",
+     "t": "WMP",
+     "u": "https://s9.nysdot.skyvdn.com/rtplive/R11_230/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R11_230.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 35545,
+   "name": "I-495 at 58th Street/Lower Level",
+   "route": "I-495",
+   "owner": "NYSDOT",
+   "lon": -73.91221909323512,
+   "lat": 40.72996390470618,
+   "lastUpdated": 1793818120257,
+   "loc": {
+    "fips": 36,
+    "routeId": "I-495",
+    "linearReference": 3.7135923586903092,
+    "localRoad": false,
+    "cityReference": "in New York City"
+   },
+   "views": [
+    {
+     "n": "I-495 at 58th Street/Lower Level",
+     "t": "WMP",
+     "u": "https://s52.nysdot.skyvdn.com/rtplive/R11_136/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R11_136.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 21662,
+   "name": "C5-LIE-11-EB_at_60th_St-Ex18",
+   "route": "C5-LIE-11-EB_at_60th_St-Ex18",
+   "owner": "NYC DOT",
+   "lon": -73.905287,
+   "lat": 40.726307,
+   "lastUpdated": 1793038587770,
+   "loc": {
+    "fips": 36,
+    "routeId": "C5-LIE-11-EB_at_60th_St-Ex18",
+    "localRoad": true
+   },
+   "views": [
+    {
+     "n": "C5-LIE-11-EB_at_60th_St-Ex18",
+     "t": "STILL_IMAGE",
+     "u": "https://nyctmc.org/api/cameras/77ea2042-4c1b-4a2c-b861-88dfa9f579f8/image",
+     "p": "https://nyctmc.org/api/cameras/77ea2042-4c1b-4a2c-b861-88dfa9f579f8/image",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 35546,
+   "name": "I-495 at 60th Street",
+   "route": "I-495",
+   "owner": "NYSDOT",
+   "lon": -73.90515293917922,
+   "lat": 40.72651347092617,
+   "lastUpdated": 1793818120263,
+   "loc": {
+    "fips": 36,
+    "routeId": "I-495",
+    "linearReference": 4.156772812957966,
+    "localRoad": false,
+    "cityReference": "in New York City"
+   },
+   "views": [
+    {
+     "n": "I-495 at 60th Street",
+     "t": "WMP",
+     "u": "https://s52.nysdot.skyvdn.com/rtplive/R11_137/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R11_137.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 21701,
+   "name": "Flushing Ave @ 61 St",
+   "route": "Flushing Ave @ 61 St",
+   "owner": "NYC DOT",
+   "lon": -73.904092,
+   "lat": 40.721009,
+   "lastUpdated": 1793038587926,
+   "loc": {
+    "fips": 36,
+    "routeId": "Flushing Ave @ 61 St",
+    "localRoad": true
+   },
+   "views": [
+    {
+     "n": "Flushing Ave @ 61 St",
+     "t": "STILL_IMAGE",
+     "u": "https://nyctmc.org/api/cameras/8c13c3b4-b227-4278-9beb-e58314c042d5/image",
+     "p": "https://nyctmc.org/api/cameras/8c13c3b4-b227-4278-9beb-e58314c042d5/image",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 21743,
+   "name": "Flushing Ave @ Fresh Pond Rd",
+   "route": "Flushing Ave @ Fresh Pond Rd",
+   "owner": "NYC DOT",
+   "lon": -73.903107,
+   "lat": 40.721888,
+   "lastUpdated": 1793038584937,
+   "loc": {
+    "fips": 36,
+    "routeId": "Flushing Ave @ Fresh Pond Rd",
+    "localRoad": true
+   },
+   "views": [
+    {
+     "n": "Flushing Ave @ Fresh Pond Rd",
+     "t": "STILL_IMAGE",
+     "u": "https://nyctmc.org/api/cameras/b9085289-750b-403a-8031-681678d35ae0/image",
+     "p": "https://nyctmc.org/api/cameras/b9085289-750b-403a-8031-681678d35ae0/image",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 21595,
+   "name": "Flushing Ave @ Grand Ave & 64 St",
+   "route": "Flushing Ave @ Grand Ave & 64 St",
+   "owner": "NYC DOT",
+   "lon": -73.901592,
+   "lat": 40.722749,
+   "lastUpdated": 1793038585316,
+   "loc": {
+    "fips": 36,
+    "routeId": "Flushing Ave @ Grand Ave & 64 St",
+    "localRoad": true
+   },
+   "views": [
+    {
+     "n": "Flushing Ave @ Grand Ave & 64 St",
+     "t": "STILL_IMAGE",
+     "u": "https://nyctmc.org/api/cameras/b47d139f-69ae-427e-86b4-f970f9e990e1/image",
+     "p": "https://nyctmc.org/api/cameras/b47d139f-69ae-427e-86b4-f970f9e990e1/image",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 21400,
+   "name": "Grand Ave @ Hamilton Pl",
+   "route": "Grand Ave @ Hamilton Pl",
+   "owner": "NYC DOT",
+   "lon": -73.898416,
+   "lat": 40.724536,
+   "lastUpdated": 1793038589155,
+   "loc": {
+    "fips": 36,
+    "routeId": "Grand Ave @ Hamilton Pl",
+    "localRoad": true
+   },
+   "views": [
+    {
+     "n": "Grand Ave @ Hamilton Pl",
+     "t": "STILL_IMAGE",
+     "u": "https://nyctmc.org/api/cameras/b08600e6-7189-4104-a484-709dc81a3fa7/image",
+     "p": "https://nyctmc.org/api/cameras/b08600e6-7189-4104-a484-709dc81a3fa7/image",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 35547,
+   "name": "I-495 at Grand Avenue",
+   "route": "I-495",
+   "owner": "NYSDOT",
+   "lon": -73.8969242071953,
+   "lat": 40.72542086701565,
+   "lastUpdated": 1793818120268,
+   "loc": {
+    "fips": 36,
+    "routeId": "I-495",
+    "linearReference": 4.597112686829293,
+    "localRoad": false,
+    "cityReference": "in New York City"
+   },
+   "views": [
+    {
+     "n": "I-495 at Grand Avenue",
+     "t": "WMP",
+     "u": "https://s52.nysdot.skyvdn.com/rtplive/R11_138/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R11_138.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 21454,
+   "name": "Grand Ave @ LIE",
+   "route": "Grand Ave @ LIE",
+   "owner": "NYC DOT",
+   "lon": -73.895635,
+   "lat": 40.725764,
+   "lastUpdated": 1793038583723,
+   "loc": {
+    "fips": 36,
+    "routeId": "Grand Ave @ LIE",
+    "localRoad": true
+   },
+   "views": [
+    {
+     "n": "Grand Ave @ LIE",
+     "t": "STILL_IMAGE",
+     "u": "https://nyctmc.org/api/cameras/7c92c63b-2786-4600-9108-62cea2806345/image",
+     "p": "https://nyctmc.org/api/cameras/7c92c63b-2786-4600-9108-62cea2806345/image",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 35548,
+   "name": "I-495 at 75th Street",
+   "route": "I-495",
+   "owner": "NYSDOT",
+   "lon": -73.886044282169,
+   "lat": 40.728096126673385,
+   "lastUpdated": 1793818120274,
+   "loc": {
+    "fips": 36,
+    "routeId": "I-495",
+    "linearReference": 5.2237479187468825,
+    "localRoad": false,
+    "cityReference": "in New York City"
+   },
+   "views": [
+    {
+     "n": "I-495 at 75th Street",
+     "t": "WMP",
+     "u": "https://s52.nysdot.skyvdn.com/rtplive/R11_139/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R11_139.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 35549,
+   "name": "I-495 at 84th Street",
+   "route": "I-495",
+   "owner": "NYSDOT",
+   "lon": -73.87760363953122,
+   "lat": 40.729747385925094,
+   "lastUpdated": 1793818120280,
+   "loc": {
+    "fips": 36,
+    "routeId": "I-495",
+    "linearReference": 5.6873384602896575,
+    "localRoad": false,
+    "cityReference": "in New York City"
+   },
+   "views": [
+    {
+     "n": "I-495 at 84th Street",
+     "t": "WMP",
+     "u": "https://s52.nysdot.skyvdn.com/rtplive/R11_140/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R11_140.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 21569,
+   "name": "Woodhaven Blvd @ Dry Harbor Rd",
+   "route": "Woodhaven Blvd @ Dry Harbor Rd",
+   "owner": "NYC DOT",
+   "lon": -73.870974,
+   "lat": 40.727879,
+   "lastUpdated": 1793038586975,
+   "loc": {
+    "fips": 36,
+    "routeId": "Woodhaven Blvd @ Dry Harbor Rd",
+    "localRoad": true
+   },
+   "views": [
+    {
+     "n": "Woodhaven Blvd @ Dry Harbor Rd",
+     "t": "STILL_IMAGE",
+     "u": "https://nyctmc.org/api/cameras/d019c28c-80f5-490b-8a35-198477ac3fb0/image",
+     "p": "https://nyctmc.org/api/cameras/d019c28c-80f5-490b-8a35-198477ac3fb0/image",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 21313,
+   "name": "Woodhaven Blvd @ Hoffman Dr",
+   "route": "Woodhaven Blvd @ Hoffman Dr",
+   "owner": "NYC DOT",
+   "lon": -73.870783,
+   "lat": 40.733178,
+   "lastUpdated": 1793038582513,
+   "loc": {
+    "fips": 36,
+    "routeId": "Woodhaven Blvd @ Hoffman Dr",
+    "localRoad": true
+   },
+   "views": [
+    {
+     "n": "Woodhaven Blvd @ Hoffman Dr",
+     "t": "STILL_IMAGE",
+     "u": "https://nyctmc.org/api/cameras/69cc3528-455a-47a5-85c5-6f6a954d45f6/image",
+     "p": "https://nyctmc.org/api/cameras/69cc3528-455a-47a5-85c5-6f6a954d45f6/image",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 21187,
+   "name": "Qns Blvd @ QnCnt Mall",
+   "route": "Qns Blvd @ QnCnt Mall",
+   "owner": "NYC DOT",
+   "lon": -73.869324,
+   "lat": 40.733568,
+   "lastUpdated": 1793038581548,
+   "loc": {
+    "fips": 36,
+    "routeId": "Qns Blvd @ QnCnt Mall",
+    "localRoad": true
+   },
+   "views": [
+    {
+     "n": "Qns Blvd @ QnCnt Mall",
+     "t": "STILL_IMAGE",
+     "u": "https://nyctmc.org/api/cameras/52f3d48e-3bb4-4c83-bec2-1fb664d56501/image",
+     "p": "https://nyctmc.org/api/cameras/52f3d48e-3bb4-4c83-bec2-1fb664d56501/image",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 20951,
+   "name": "C5-LIE-15-WB_at_Queens_Blvd-Ex19",
+   "route": "C5-LIE-15-WB_at_Queens_Blvd-Ex19",
+   "owner": "NYC DOT",
+   "lon": -73.8692,
+   "lat": 40.732725,
+   "lastUpdated": 1793038586962,
+   "loc": {
+    "fips": 36,
+    "routeId": "C5-LIE-15-WB_at_Queens_Blvd-Ex19",
+    "localRoad": true
+   },
+   "views": [
+    {
+     "n": "C5-LIE-15-WB_at_Queens_Blvd-Ex19",
+     "t": "STILL_IMAGE",
+     "u": "https://nyctmc.org/api/cameras/ae1960ee-1f34-4774-88f5-b195b9c2a505/image",
+     "p": "https://nyctmc.org/api/cameras/ae1960ee-1f34-4774-88f5-b195b9c2a505/image",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 35924,
+   "name": "I-495 at Queens Blvd",
+   "route": "I-495",
+   "owner": "NYSDOT",
+   "lon": -73.86819996998616,
+   "lat": 40.732745151908965,
+   "lastUpdated": 1793818122285,
+   "loc": {
+    "fips": 36,
+    "routeId": "I-495",
+    "linearReference": 6.222789981584177,
+    "localRoad": false,
+    "cityReference": "in New York City"
+   },
+   "views": [
+    {
+     "n": "I-495 at Queens Blvd",
+     "t": "WMP",
+     "u": "https://s53.nysdot.skyvdn.com/rtplive/R11_141/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R11_141.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 21066,
+   "name": "Queens Blvd @ 63 Dr",
+   "route": "Queens Blvd @ 63 Dr",
+   "owner": "NYC DOT",
+   "lon": -73.86235,
+   "lat": 40.730072,
+   "lastUpdated": 1793038583912,
+   "loc": {
+    "fips": 36,
+    "routeId": "Queens Blvd @ 63 Dr",
+    "localRoad": true
+   },
+   "views": [
+    {
+     "n": "Queens Blvd @ 63 Dr",
+     "t": "STILL_IMAGE",
+     "u": "https://nyctmc.org/api/cameras/0bf496dc-36dd-4311-808e-84ab6acec605/image",
+     "p": "https://nyctmc.org/api/cameras/0bf496dc-36dd-4311-808e-84ab6acec605/image",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 35925,
+   "name": "I-495 at 99th Street",
+   "route": "I-495",
+   "owner": "NYSDOT",
+   "lon": -73.85849887883548,
+   "lat": 40.73566507117376,
+   "lastUpdated": 1793818122295,
+   "loc": {
+    "fips": 36,
+    "routeId": "I-495",
+    "linearReference": 6.770387243127039,
+    "localRoad": false,
+    "cityReference": "in New York City"
+   },
+   "views": [
+    {
+     "n": "I-495 at 99th Street",
+     "t": "WMP",
+     "u": "https://s53.nysdot.skyvdn.com/rtplive/R11_142/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R11_142.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 35923,
+   "name": "907M at 55th Avenue",
+   "route": "907M",
+   "owner": "NYSDOT",
+   "lon": -73.84696441263162,
+   "lat": 40.74383456615706,
+   "lastUpdated": 1793818122275,
+   "loc": {
+    "fips": 36,
+    "routeId": "907M",
+    "linearReference": 5.089135433736999,
+    "localRoad": false,
+    "cityReference": "in New York City"
+   },
+   "views": [
+    {
+     "n": "907M at 55th Avenue",
+     "t": "WMP",
+     "u": "https://s53.nysdot.skyvdn.com/rtplive/R11_120/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R11_120.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 35927,
+   "name": "I-495 at Grand Central Parkway",
+   "route": "I-495",
+   "owner": "NYSDOT",
+   "lon": -73.84646788421028,
+   "lat": 40.73944252357181,
+   "lastUpdated": 1793818122309,
+   "loc": {
+    "fips": 36,
+    "routeId": "I-495",
+    "linearReference": 7.457666738397218,
+    "localRoad": false,
+    "cityReference": "in New York City"
+   },
+   "views": [
+    {
+     "n": "I-495 at Grand Central Parkway",
+     "t": "WMP",
+     "u": "https://s53.nysdot.skyvdn.com/rtplive/R11_143/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R11_143.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 21551,
+   "name": "C5-LIE-17-EB_at_GCP-Ex22A_GCP",
+   "route": "C5-LIE-17-EB_at_GCP-Ex22A_GCP",
+   "owner": "NYC DOT",
+   "lon": -73.844951,
+   "lat": 40.740069,
+   "lastUpdated": 1793038581318,
+   "loc": {
+    "fips": 36,
+    "routeId": "C5-LIE-17-EB_at_GCP-Ex22A_GCP",
+    "localRoad": true
+   },
+   "views": [
+    {
+     "n": "C5-LIE-17-EB_at_GCP-Ex22A_GCP",
+     "t": "STILL_IMAGE",
+     "u": "https://nyctmc.org/api/cameras/6504ada3-3a93-4811-b2cd-31c377066f66/image",
+     "p": "https://nyctmc.org/api/cameras/6504ada3-3a93-4811-b2cd-31c377066f66/image",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 34424,
+   "name": "I-678 at LIE",
+   "route": "I-678",
+   "owner": "NYSDOT",
+   "lon": -73.837560051341,
+   "lat": 40.7433940067356,
+   "lastUpdated": 1793038578593,
+   "loc": {
+    "fips": 36,
+    "routeId": "I-678",
+    "linearReference": 8.125134217445613,
+    "localRoad": false,
+    "cityReference": "in New York City"
+   },
+   "views": [
+    {
+     "n": "I-678 at LIE",
+     "t": "WMP",
+     "u": "https://s7.nysdot.skyvdn.com/rtplive/R11_183/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R11_183.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 21526,
+   "name": "LIE @ College Point Blvd",
+   "route": "LIE @ College Point Blvd",
+   "owner": "NYC DOT",
+   "lon": -73.837011,
+   "lat": 40.744001,
+   "lastUpdated": 1793038585821,
+   "loc": {
+    "fips": 36,
+    "routeId": "LIE @ College Point Blvd",
+    "localRoad": true
+   },
+   "views": [
+    {
+     "n": "LIE @ College Point Blvd",
+     "t": "STILL_IMAGE",
+     "u": "https://nyctmc.org/api/cameras/6ab24015-2446-4410-b7a4-d8dd13ed2f8b/image",
+     "p": "https://nyctmc.org/api/cameras/6ab24015-2446-4410-b7a4-d8dd13ed2f8b/image",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 34426,
+   "name": "I-678 at College Point Blvd.",
+   "route": "I-678",
+   "owner": "NYSDOT",
+   "lon": -73.8346274420201,
+   "lat": 40.74843695892514,
+   "lastUpdated": 1793818114298,
+   "loc": {
+    "fips": 36,
+    "routeId": "I-678",
+    "linearReference": 8.511467756729495,
+    "localRoad": false,
+    "cityReference": "in New York City"
+   },
+   "views": [
+    {
+     "n": "I-678 at College Point Blvd.",
+     "t": "WMP",
+     "u": "https://s7.nysdot.skyvdn.com/rtplive/R11_184/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R11_184.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 34327,
+   "name": "I-495 at Lawrence Street",
+   "route": "I-495",
+   "owner": "NYSDOT",
+   "lon": -73.83344583799872,
+   "lat": 40.74316301720696,
+   "lastUpdated": 1793818113887,
+   "loc": {
+    "fips": 36,
+    "routeId": "I-495",
+    "linearReference": 8.213685517539986,
+    "localRoad": false,
+    "cityReference": "in New York City"
+   },
+   "views": [
+    {
+     "n": "I-495 at Lawrence Street",
+     "t": "WMP",
+     "u": "https://s53.nysdot.skyvdn.com/rtplive/R11_145/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R11_145.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 21876,
+   "name": "College Point Blvd @ Booth Memorial Ave",
+   "route": "College Point Blvd @ Booth Memorial Ave",
+   "owner": "NYC DOT",
+   "lon": -73.833113,
+   "lat": 40.747994,
+   "lastUpdated": 1793038582215,
+   "loc": {
+    "fips": 36,
+    "routeId": "College Point Blvd @ Booth Memorial Ave",
+    "localRoad": true
+   },
+   "views": [
+    {
+     "n": "College Point Blvd @ Booth Memorial Ave",
+     "t": "STILL_IMAGE",
+     "u": "https://nyctmc.org/api/cameras/ee4709ba-ce23-4f26-a970-02e5ce9cf7f2/image",
+     "p": "https://nyctmc.org/api/cameras/ee4709ba-ce23-4f26-a970-02e5ce9cf7f2/image",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 35928,
+   "name": "I-495 at 138th Street",
+   "route": "I-495",
+   "owner": "NYSDOT",
+   "lon": -73.82793657495912,
+   "lat": 40.74261981905679,
+   "lastUpdated": 1793818122315,
+   "loc": {
+    "fips": 36,
+    "routeId": "I-495",
+    "linearReference": 8.50508594279463,
+    "localRoad": false,
+    "cityReference": "in New York City"
+   },
+   "views": [
+    {
+     "n": "I-495 at 138th Street",
+     "t": "WMP",
+     "u": "https://s53.nysdot.skyvdn.com/rtplive/R11_144/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R11_144.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 21357,
+   "name": "Main St @ LIE N S/R",
+   "route": "Main St @ LIE N S/R",
+   "owner": "NYC DOT",
+   "lon": -73.825432,
+   "lat": 40.742587,
+   "lastUpdated": 1793038584493,
+   "loc": {
+    "fips": 36,
+    "routeId": "Main St @ LIE N S/R",
+    "localRoad": true
+   },
+   "views": [
+    {
+     "n": "Main St @ LIE N S/R",
+     "t": "STILL_IMAGE",
+     "u": "https://nyctmc.org/api/cameras/a6095c69-aef9-4a64-8091-9a2cb8645ee7/image",
+     "p": "https://nyctmc.org/api/cameras/a6095c69-aef9-4a64-8091-9a2cb8645ee7/image",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 35929,
+   "name": "I-495 at 146th Street",
+   "route": "I-495",
+   "owner": "NYSDOT",
+   "lon": -73.82331633868577,
+   "lat": 40.74149635217767,
+   "lastUpdated": 1793818122321,
+   "loc": {
+    "fips": 36,
+    "routeId": "I-495",
+    "linearReference": 8.761028104526126,
+    "localRoad": false,
+    "cityReference": "in New York City"
+   },
+   "views": [
+    {
+     "n": "I-495 at 146th Street",
+     "t": "WMP",
+     "u": "https://s53.nysdot.skyvdn.com/rtplive/R11_146/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R11_146.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 21075,
+   "name": "Kissena Blvd @ LIE N S/R",
+   "route": "Kissena Blvd @ LIE N S/R",
+   "owner": "NYC DOT",
+   "lon": -73.815061,
+   "lat": 40.739234,
+   "lastUpdated": 1793038585249,
+   "loc": {
+    "fips": 36,
+    "routeId": "Kissena Blvd @ LIE N S/R",
+    "localRoad": true
+   },
+   "views": [
+    {
+     "n": "Kissena Blvd @ LIE N S/R",
+     "t": "STILL_IMAGE",
+     "u": "https://nyctmc.org/api/cameras/21ca79e4-eec6-4073-914d-117409a7e677/image",
+     "p": "https://nyctmc.org/api/cameras/21ca79e4-eec6-4073-914d-117409a7e677/image",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 21308,
+   "name": "LIE ( S S/R ) @ Kissena Blvd",
+   "route": "LIE ( S S/R ) @ Kissena Blvd",
+   "owner": "NYC DOT",
+   "lon": -73.815047,
+   "lat": 40.738943,
+   "lastUpdated": 1793038581807,
+   "loc": {
+    "fips": 36,
+    "routeId": "LIE ( S S/R ) @ Kissena Blvd",
+    "localRoad": true
+   },
+   "views": [
+    {
+     "n": "LIE ( S S/R ) @ Kissena Blvd",
+     "t": "STILL_IMAGE",
+     "u": "https://nyctmc.org/api/cameras/69833518-8972-4147-b518-2ab15dfe1b24/image",
+     "p": "https://nyctmc.org/api/cameras/69833518-8972-4147-b518-2ab15dfe1b24/image",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 34336,
+   "name": "I-495 at Kissena Blvd",
+   "route": "I-495",
+   "owner": "NYSDOT",
+   "lon": -73.8147380665428,
+   "lat": 40.73879643324308,
+   "lastUpdated": 1793818113942,
+   "loc": {
+    "fips": 36,
+    "routeId": "I-495",
+    "linearReference": 9.248951206318054,
+    "localRoad": false,
+    "cityReference": "in New York City"
+   },
+   "views": [
+    {
+     "n": "I-495 at Kissena Blvd",
+     "t": "WMP",
+     "u": "https://s51.nysdot.skyvdn.com/rtplive/R10_002/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R10_002.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 35930,
+   "name": "I-495 at Kissena Blvd",
+   "route": "I-495",
+   "owner": "NYSDOT",
+   "lon": -73.81472231039393,
+   "lat": 40.738794100364736,
+   "lastUpdated": 1793818122328,
+   "loc": {
+    "fips": 36,
+    "routeId": "I-495",
+    "linearReference": 9.249791746735342,
+    "localRoad": false,
+    "cityReference": "in New York City"
+   },
+   "views": [
+    {
+     "n": "I-495 at Kissena Blvd",
+     "t": "WMP",
+     "u": "https://s53.nysdot.skyvdn.com/rtplive/R11_147/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R11_147.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 35931,
+   "name": "I-495 at 163rd Street",
+   "route": "I-495",
+   "owner": "NYSDOT",
+   "lon": -73.80597183114348,
+   "lat": 40.73836983822925,
+   "lastUpdated": 1793818122334,
+   "loc": {
+    "fips": 36,
+    "routeId": "I-495",
+    "linearReference": 9.710140047723877,
+    "localRoad": false,
+    "cityReference": "in New York City"
+   },
+   "views": [
+    {
+     "n": "I-495 at 163rd Street",
+     "t": "WMP",
+     "u": "https://s53.nysdot.skyvdn.com/rtplive/R11_148/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R11_148.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 21334,
+   "name": "C5-LIE-22-WB_at_163rd_St-Ex25",
+   "route": "C5-LIE-22-WB_at_163rd_St-Ex25",
+   "owner": "NYC DOT",
+   "lon": -73.80595654,
+   "lat": 40.73865138,
+   "lastUpdated": 1793038582549,
+   "loc": {
+    "fips": 36,
+    "routeId": "C5-LIE-22-WB_at_163rd_St-Ex25",
+    "localRoad": true
+   },
+   "views": [
+    {
+     "n": "C5-LIE-22-WB_at_163rd_St-Ex25",
+     "t": "STILL_IMAGE",
+     "u": "https://nyctmc.org/api/cameras/8ff75339-6269-457e-8fb0-55af56997c5b/image",
+     "p": "https://nyctmc.org/api/cameras/8ff75339-6269-457e-8fb0-55af56997c5b/image",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 34347,
+   "name": "I-495 at Utopia Pkwy",
+   "route": "I-495",
+   "owner": "NYSDOT",
+   "lon": -73.79713201989232,
+   "lat": 40.73812898237404,
+   "lastUpdated": 1793038577812,
+   "loc": {
+    "fips": 36,
+    "routeId": "I-495",
+    "linearReference": 10.174463474220014,
+    "localRoad": false,
+    "cityReference": "in New York City"
+   },
+   "views": [
+    {
+     "n": "I-495 at Utopia Pkwy",
+     "t": "WMP",
+     "u": "https://s51.nysdot.skyvdn.com/rtplive/R10_003/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R10_003.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 35932,
+   "name": "I-495 at 172nd Street",
+   "route": "I-495",
+   "owner": "NYSDOT",
+   "lon": -73.79713201989232,
+   "lat": 40.73812898237404,
+   "lastUpdated": 1793038580903,
+   "loc": {
+    "fips": 36,
+    "routeId": "I-495",
+    "linearReference": 10.174463474220014,
+    "localRoad": false,
+    "cityReference": "in New York City"
+   },
+   "views": [
+    {
+     "n": "I-495 at 172nd Street",
+     "t": "WMP",
+     "u": "https://s53.nysdot.skyvdn.com/rtplive/R11_149/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R11_149.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 35933,
+   "name": "I-495 at 185th Street",
+   "route": "I-495",
+   "owner": "NYSDOT",
+   "lon": -73.79019994798088,
+   "lat": 40.739839571864835,
+   "lastUpdated": 1793818122340,
+   "loc": {
+    "fips": 36,
+    "routeId": "I-495",
+    "linearReference": 10.557595627193413,
+    "localRoad": false,
+    "cityReference": "in New York City"
+   },
+   "views": [
+    {
+     "n": "I-495 at 185th Street",
+     "t": "WMP",
+     "u": "https://s53.nysdot.skyvdn.com/rtplive/R11_150/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R11_150.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 35190,
+   "name": "I-495 at Underhill Avenue",
+   "route": "I-495",
+   "owner": "NYSDOT",
+   "lon": -73.78051203311104,
+   "lat": 40.742489509093474,
+   "lastUpdated": 1793818118349,
+   "loc": {
+    "fips": 36,
+    "routeId": "I-495",
+    "linearReference": 11.097834608478784,
+    "localRoad": false,
+    "cityReference": "in New York City"
+   },
+   "views": [
+    {
+     "n": "I-495 at Underhill Avenue",
+     "t": "WMP",
+     "u": "https://s51.nysdot.skyvdn.com/rtplive/R11_151/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R11_151.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 35191,
+   "name": "I-495 at Francis Lewis Blvd.",
+   "route": "I-495",
+   "owner": "NYSDOT",
+   "lon": -73.77452554768307,
+   "lat": 40.74344656426968,
+   "lastUpdated": 1793818118355,
+   "loc": {
+    "fips": 36,
+    "routeId": "I-495",
+    "linearReference": 11.419017124483915,
+    "localRoad": false,
+    "cityReference": "in New York City"
+   },
+   "views": [
+    {
+     "n": "I-495 at Francis Lewis Blvd.",
+     "t": "WMP",
+     "u": "https://s51.nysdot.skyvdn.com/rtplive/R11_152/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R11_152.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 35538,
+   "name": "I-295 at 56th Avenue",
+   "route": "I-295",
+   "owner": "NYSDOT",
+   "lon": -73.77342197247384,
+   "lat": 40.748398459583655,
+   "lastUpdated": 1793818120212,
+   "loc": {
+    "fips": 36,
+    "routeId": "I-295",
+    "linearReference": 1.9826273102640066,
+    "localRoad": false,
+    "cityReference": "in New York City"
+   },
+   "views": [
+    {
+     "n": "I-295 at 56th Avenue",
+     "t": "WMP",
+     "u": "https://s52.nysdot.skyvdn.com/rtplive/R11_109/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R11_109.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 35830,
+   "name": "295 Just South of VMS66",
+   "route": "I-295",
+   "owner": "NYSDOT",
+   "lon": -73.77341843716358,
+   "lat": 40.74839116478655,
+   "lastUpdated": 1793818121590,
+   "loc": {
+    "fips": 36,
+    "routeId": "I-295",
+    "linearReference": 1.9820903393168754,
+    "localRoad": false,
+    "cityReference": "in New York City"
+   },
+   "views": [
+    {
+     "n": "295 Just South of VMS66",
+     "t": "WMP",
+     "u": "https://s53.nysdot.skyvdn.com/rtplive/R10_176/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R10_176.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 35537,
+   "name": "I-295 at 64th Avenue",
+   "route": "I-295",
+   "owner": "NYSDOT",
+   "lon": -73.77031954988074,
+   "lat": 40.74182851790021,
+   "lastUpdated": 1793818120206,
+   "loc": {
+    "fips": 36,
+    "routeId": "I-295",
+    "linearReference": 1.5010130988152752,
+    "localRoad": false,
+    "cityReference": "in New York City"
+   },
+   "views": [
+    {
+     "n": "I-295 at 64th Avenue",
+     "t": "WMP",
+     "u": "https://s52.nysdot.skyvdn.com/rtplive/R11_108/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R11_108.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 21716,
+   "name": "C5-LIE-27-WB_at_Clearview_Exwy-Ex27",
+   "route": "C5-LIE-27-WB_at_Clearview_Exwy-Ex27",
+   "owner": "NYC DOT",
+   "lon": -73.76996066,
+   "lat": 40.74516675,
+   "lastUpdated": 1793038582576,
+   "loc": {
+    "fips": 36,
+    "routeId": "C5-LIE-27-WB_at_Clearview_Exwy-Ex27",
+    "localRoad": true
+   },
+   "views": [
+    {
+     "n": "C5-LIE-27-WB_at_Clearview_Exwy-Ex27",
+     "t": "STILL_IMAGE",
+     "u": "https://nyctmc.org/api/cameras/800d29e7-aa14-4269-b7a3-22661fe48f55/image",
+     "p": "https://nyctmc.org/api/cameras/800d29e7-aa14-4269-b7a3-22661fe48f55/image",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 34864,
+   "name": "I-495 at I-295/CVE",
+   "route": "I-495",
+   "owner": "NYSDOT",
+   "lon": -73.76976811042934,
+   "lat": 40.74495422412944,
+   "lastUpdated": 1793818116635,
+   "loc": {
+    "fips": 36,
+    "routeId": "I-495",
+    "linearReference": 11.692694499813568,
+    "localRoad": false,
+    "cityReference": "in New York City"
+   },
+   "views": [
+    {
+     "n": "I-495 at I-295/CVE",
+     "t": "WMP",
+     "u": "https://s9.nysdot.skyvdn.com/rtplive/R11_269/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R11_269.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 21410,
+   "name": "LIE @ Oceania St",
+   "route": "LIE @ Oceania St",
+   "owner": "NYC DOT",
+   "lon": -73.767759,
+   "lat": 40.7458,
+   "lastUpdated": 1793038582737,
+   "loc": {
+    "fips": 36,
+    "routeId": "LIE @ Oceania St",
+    "localRoad": true
+   },
+   "views": [
+    {
+     "n": "LIE @ Oceania St",
+     "t": "STILL_IMAGE",
+     "u": "https://nyctmc.org/api/cameras/fcd793fc-d600-40a6-949b-b168d96368fd/image",
+     "p": "https://nyctmc.org/api/cameras/fcd793fc-d600-40a6-949b-b168d96368fd/image",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 34358,
+   "name": "I-495 at Oceana St",
+   "route": "I-495",
+   "owner": "NYSDOT",
+   "lon": -73.7636946713644,
+   "lat": 40.74682146880407,
+   "lastUpdated": 1793818114065,
+   "loc": {
+    "fips": 36,
+    "routeId": "I-495",
+    "linearReference": 12.037183191748836,
+    "localRoad": false,
+    "cityReference": "in New York City"
+   },
+   "views": [
+    {
+     "n": "I-495 at Oceana St",
+     "t": "WMP",
+     "u": "https://s51.nysdot.skyvdn.com/rtplive/R10_005/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R10_005.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 36041,
+   "name": "C5-LIE-28-EB_at_213th_St-Ex28",
+   "route": "C5-LIE-28-EB_at_213th_St-Ex28",
+   "owner": "NYC DOT",
+   "lon": -73.76365673,
+   "lat": 40.74669647,
+   "lastUpdated": 1793038582011,
+   "loc": {
+    "fips": 36,
+    "routeId": "C5-LIE-28-EB_at_213th_St-Ex28",
+    "localRoad": true
+   },
+   "views": [
+    {
+     "n": "C5-LIE-28-EB_at_213th_St-Ex28",
+     "t": "STILL_IMAGE",
+     "u": "https://nyctmc.org/api/cameras/5e0a8966-79ae-4a7b-9561-aca2c37b22ff/image",
+     "p": "https://nyctmc.org/api/cameras/5e0a8966-79ae-4a7b-9561-aca2c37b22ff/image",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 34895,
+   "name": "I-495 at Bell Blvd",
+   "route": "I-495",
+   "owner": "NYSDOT",
+   "lon": -73.76159676152055,
+   "lat": 40.747412807898286,
+   "lastUpdated": 1793818116813,
+   "loc": {
+    "fips": 36,
+    "routeId": "I-495",
+    "linearReference": 12.154576159047691,
+    "localRoad": false,
+    "cityReference": "in New York City"
+   },
+   "views": [
+    {
+     "n": "I-495 at Bell Blvd",
+     "t": "WMP",
+     "u": "https://s9.nysdot.skyvdn.com/rtplive/R11_287/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R11_287.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 21441,
+   "name": "C5-LIE-29-WB_at_220th_St-Ex29",
+   "route": "C5-LIE-29-WB_at_220th_St-Ex29",
+   "owner": "NYC DOT",
+   "lon": -73.75828283,
+   "lat": 40.74907941,
+   "lastUpdated": 1793038587608,
+   "loc": {
+    "fips": 36,
+    "routeId": "C5-LIE-29-WB_at_220th_St-Ex29",
+    "localRoad": true
+   },
+   "views": [
+    {
+     "n": "C5-LIE-29-WB_at_220th_St-Ex29",
+     "t": "STILL_IMAGE",
+     "u": "https://nyctmc.org/api/cameras/513234e1-ea04-47bc-b607-c6ff1bb6a18d/image",
+     "p": "https://nyctmc.org/api/cameras/513234e1-ea04-47bc-b607-c6ff1bb6a18d/image",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 34355,
+   "name": "I-495 at 220th Street",
+   "route": "I-495",
+   "owner": "NYSDOT",
+   "lon": -73.75813897250508,
+   "lat": 40.74883033788716,
+   "lastUpdated": 1793818114047,
+   "loc": {
+    "fips": 36,
+    "routeId": "I-495",
+    "linearReference": 12.36138030090624,
+    "localRoad": false,
+    "cityReference": "in New York City"
+   },
+   "views": [
+    {
+     "n": "I-495 at 220th Street",
+     "t": "WMP",
+     "u": "https://s7.nysdot.skyvdn.com/rtplive/R11_154/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R11_154.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 21162,
+   "name": "Long Island Expy @ Exit 29",
+   "route": "Long Island Expy @ Exit 29",
+   "owner": "NYC DOT",
+   "lon": -73.750526,
+   "lat": 40.750793,
+   "lastUpdated": 1793038585514,
+   "loc": {
+    "fips": 36,
+    "routeId": "Long Island Expy @ Exit 29",
+    "localRoad": true
+   },
+   "views": [
+    {
+     "n": "Long Island Expy @ Exit 29",
+     "t": "STILL_IMAGE",
+     "u": "https://nyctmc.org/api/cameras/316320b7-ff9c-44d4-b135-c780ee698eeb/image",
+     "p": "https://nyctmc.org/api/cameras/316320b7-ff9c-44d4-b135-c780ee698eeb/image",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 34369,
+   "name": "I-495 at East Hampton Blvd Pedestrian Br",
+   "route": "I-495",
+   "owner": "NYSDOT",
+   "lon": -73.75020708478738,
+   "lat": 40.7506581793062,
+   "lastUpdated": 1793818114113,
+   "loc": {
+    "fips": 36,
+    "routeId": "I-495",
+    "linearReference": 12.79722259571089,
+    "localRoad": false,
+    "cityReference": "in New York City"
+   },
+   "views": [
+    {
+     "n": "I-495 at East Hampton Blvd Pedestrian Br",
+     "t": "WMP",
+     "u": "https://s51.nysdot.skyvdn.com/rtplive/R10_006/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R10_006.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 34516,
+   "name": "I-495 at 228 Street",
+   "route": "I-495",
+   "owner": "NYSDOT",
+   "lon": -73.75019941626564,
+   "lat": 40.750659801554214,
+   "lastUpdated": 1793818114786,
+   "loc": {
+    "fips": 36,
+    "routeId": "I-495",
+    "linearReference": 12.797639379380488,
+    "localRoad": false,
+    "cityReference": "in New York City"
+   },
+   "views": [
+    {
+     "n": "I-495 at 228 Street",
+     "t": "WMP",
+     "u": "https://s7.nysdot.skyvdn.com/rtplive/R11_255/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R11_255.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 21311,
+   "name": "Long Island Expy @ East Hampton Blvd",
+   "route": "Long Island Expy @ East Hampton Blvd",
+   "owner": "NYC DOT",
+   "lon": -73.74689,
+   "lat": 40.752129,
+   "lastUpdated": 1793038582755,
+   "loc": {
+    "fips": 36,
+    "routeId": "Long Island Expy @ East Hampton Blvd",
+    "localRoad": true
+   },
+   "views": [
+    {
+     "n": "Long Island Expy @ East Hampton Blvd",
+     "t": "STILL_IMAGE",
+     "u": "https://nyctmc.org/api/cameras/5f91d1f5-bc11-44dd-a6a5-a36435ed680c/image",
+     "p": "https://nyctmc.org/api/cameras/5f91d1f5-bc11-44dd-a6a5-a36435ed680c/image",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 34746,
+   "name": "I-495 at Cross Island Parkway",
+   "route": "I-495",
+   "owner": "NYSDOT",
+   "lon": -73.74281829148025,
+   "lat": 40.7546133104158,
+   "lastUpdated": 1793818115914,
+   "loc": {
+    "fips": 36,
+    "routeId": "I-495",
+    "linearReference": 13.275742619797741,
+    "localRoad": false,
+    "cityReference": "in New York City"
+   },
+   "views": [
+    {
+     "n": "I-495 at Cross Island Parkway",
+     "t": "WMP",
+     "u": "https://s9.nysdot.skyvdn.com/rtplive/R11_254/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R11_254.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 34380,
+   "name": "I-495 at Cross Island Pkwy.",
+   "route": "I-495",
+   "owner": "NYSDOT",
+   "lon": -73.74281582678361,
+   "lat": 40.754614895895585,
+   "lastUpdated": 1793818114172,
+   "loc": {
+    "fips": 36,
+    "routeId": "I-495",
+    "linearReference": 13.275911873839135,
+    "localRoad": false,
+    "cityReference": "in New York City"
+   },
+   "views": [
+    {
+     "n": "I-495 at Cross Island Pkwy.",
+     "t": "WMP",
+     "u": "https://s51.nysdot.skyvdn.com/rtplive/R10_007/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R10_007.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 21802,
+   "name": "Cross Island Pkwy @ West Alley Rd",
+   "route": "Cross Island Pkwy @ West Alley Rd",
+   "owner": "NYC DOT",
+   "lon": -73.742662,
+   "lat": 40.751127,
+   "lastUpdated": 1793038588983,
+   "loc": {
+    "fips": 36,
+    "routeId": "Cross Island Pkwy @ West Alley Rd",
+    "localRoad": true
+   },
+   "views": [
+    {
+     "n": "Cross Island Pkwy @ West Alley Rd",
+     "t": "STILL_IMAGE",
+     "u": "https://nyctmc.org/api/cameras/fb34b9cf-f64d-4645-96f6-bd0243dffda0/image",
+     "p": "https://nyctmc.org/api/cameras/fb34b9cf-f64d-4645-96f6-bd0243dffda0/image",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 35829,
+   "name": "CIP South of West Alley Rd.",
+   "route": "907A",
+   "owner": "NYSDOT",
+   "lon": -73.74061296173487,
+   "lat": 40.750046399767676,
+   "lastUpdated": 1793818121584,
+   "loc": {
+    "fips": 36,
+    "routeId": "907A",
+    "linearReference": 4.6215445382783935,
+    "localRoad": false,
+    "cityReference": "in New York City"
+   },
+   "views": [
+    {
+     "n": "CIP South of West Alley Rd.",
+     "t": "WMP",
+     "u": "https://s53.nysdot.skyvdn.com/rtplive/R10_175/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R10_175.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 21249,
+   "name": "Long Island Expy @ Douglaston Pkwy",
+   "route": "Long Island Expy @ Douglaston Pkwy",
+   "owner": "NYC DOT",
+   "lon": -73.73928,
+   "lat": 40.75692,
+   "lastUpdated": 1793038582503,
+   "loc": {
+    "fips": 36,
+    "routeId": "Long Island Expy @ Douglaston Pkwy",
+    "localRoad": true
+   },
+   "views": [
+    {
+     "n": "Long Island Expy @ Douglaston Pkwy",
+     "t": "STILL_IMAGE",
+     "u": "https://nyctmc.org/api/cameras/74fcddb5-5030-4be4-864c-e315e58b86f4/image",
+     "p": "https://nyctmc.org/api/cameras/74fcddb5-5030-4be4-864c-e315e58b86f4/image",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 34392,
+   "name": "I-495 West of Marathon Pkwy",
+   "route": "I-495",
+   "owner": "NYSDOT",
+   "lon": -73.73411279605547,
+   "lat": 40.75978606624437,
+   "lastUpdated": 1793818114208,
+   "loc": {
+    "fips": 36,
+    "routeId": "I-495",
+    "linearReference": 13.85675463216812,
+    "localRoad": false,
+    "cityReference": "in New York City"
+   },
+   "views": [
+    {
+     "n": "I-495 West of Marathon Pkwy",
+     "t": "WMP",
+     "u": "https://s51.nysdot.skyvdn.com/rtplive/R10_008/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R10_008.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 21131,
+   "name": "LIE @ Marathon Pkwy",
+   "route": "LIE @ Marathon Pkwy",
+   "owner": "NYC DOT",
+   "lon": -73.73183,
+   "lat": 40.760716,
+   "lastUpdated": 1793038585996,
+   "loc": {
+    "fips": 36,
+    "routeId": "LIE @ Marathon Pkwy",
+    "localRoad": true
+   },
+   "views": [
+    {
+     "n": "LIE @ Marathon Pkwy",
+     "t": "STILL_IMAGE",
+     "u": "https://nyctmc.org/api/cameras/2b391c96-b487-4e60-81ad-784766fa48da/image",
+     "p": "https://nyctmc.org/api/cameras/2b391c96-b487-4e60-81ad-784766fa48da/image",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 34356,
+   "name": "I-495 at 254th Street",
+   "route": "I-495",
+   "owner": "NYSDOT",
+   "lon": -73.7264109631673,
+   "lat": 40.76350946631696,
+   "lastUpdated": 1793818114053,
+   "loc": {
+    "fips": 36,
+    "routeId": "I-495",
+    "linearReference": 14.338185925278326,
+    "localRoad": false,
+    "cityReference": "in New York City"
+   },
+   "views": [
+    {
+     "n": "I-495 at 254th Street",
+     "t": "WMP",
+     "u": "https://s7.nysdot.skyvdn.com/rtplive/R11_155/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R11_155.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 34403,
+   "name": "I-495 at Little Neck Pkwy",
+   "route": "I-495",
+   "owner": "NYSDOT",
+   "lon": -73.72342542581347,
+   "lat": 40.76420619442606,
+   "lastUpdated": 1793818114238,
+   "loc": {
+    "fips": 36,
+    "routeId": "I-495",
+    "linearReference": 14.502430211117042,
+    "localRoad": false,
+    "cityReference": "in New York City"
+   },
+   "views": [
+    {
+     "n": "I-495 at Little Neck Pkwy",
+     "t": "WMP",
+     "u": "https://s51.nysdot.skyvdn.com/rtplive/R10_009/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R10_009.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 34414,
+   "name": "I-495 East of Little Neck Pkwy",
+   "route": "I-495",
+   "owner": "NYSDOT",
+   "lon": -73.70635386285942,
+   "lat": 40.769459992898874,
+   "lastUpdated": 1793818114262,
+   "loc": {
+    "fips": 36,
+    "routeId": "I-495",
+    "linearReference": 15.505291524247408,
+    "localRoad": false,
+    "cityReference": "near New York City"
+   },
+   "views": [
+    {
+     "n": "I-495 East of Little Neck Pkwy",
+     "t": "WMP",
+     "u": "https://s51.nysdot.skyvdn.com/rtplive/R10_010/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R10_010.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 35383,
+   "name": "I-495 West of New Hyde Park Rd",
+   "route": "I-495",
+   "owner": "NYSDOT",
+   "lon": -73.69631493953939,
+   "lat": 40.767122544908624,
+   "lastUpdated": 1793818119308,
+   "loc": {
+    "fips": 36,
+    "routeId": "I-495",
+    "linearReference": 16.06484401012282,
+    "localRoad": false,
+    "cityReference": "1 mile east of the New York City area"
+   },
+   "views": [
+    {
+     "n": "I-495 West of New Hyde Park Rd",
+     "t": "WMP",
+     "u": "https://s52.nysdot.skyvdn.com/rtplive/R10_011/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R10_011.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 35788,
+   "name": "NSP at Lakeville Rd",
+   "route": "908G",
+   "owner": "NYSDOT",
+   "lon": -73.69016620498888,
+   "lat": 40.76537242883516,
+   "lastUpdated": 1793818121345,
+   "loc": {
+    "fips": 36,
+    "routeId": "908G",
+    "linearReference": 1.3294644692719824,
+    "localRoad": false,
+    "cityReference": "1 mile east of the New York City area"
+   },
+   "views": [
+    {
+     "n": "NSP at Lakeville Rd",
+     "t": "WMP",
+     "u": "https://s53.nysdot.skyvdn.com/rtplive/R10_058/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R10_058.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 35384,
+   "name": "I-495 at New Hyde Park Rd",
+   "route": "I-495",
+   "owner": "NYSDOT",
+   "lon": -73.68761143780482,
+   "lat": 40.770901860519054,
+   "lastUpdated": 1793818119314,
+   "loc": {
+    "fips": 36,
+    "routeId": "I-495",
+    "linearReference": 16.599279857282774,
+    "localRoad": false,
+    "cityReference": "1 mile east of the New York City area"
+   },
+   "views": [
+    {
+     "n": "I-495 at New Hyde Park Rd",
+     "t": "WMP",
+     "u": "https://s52.nysdot.skyvdn.com/rtplive/R10_012/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R10_012.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 35385,
+   "name": "I-495 at Shelter Rock Rd",
+   "route": "I-495",
+   "owner": "NYSDOT",
+   "lon": -73.67068268302029,
+   "lat": 40.77433945803914,
+   "lastUpdated": 1793818119320,
+   "loc": {
+    "fips": 36,
+    "routeId": "I-495",
+    "linearReference": 17.528687431796573,
+    "localRoad": false,
+    "cityReference": "2 miles east of the New York City area"
+   },
+   "views": [
+    {
+     "n": "I-495 at Shelter Rock Rd",
+     "t": "WMP",
+     "u": "https://s52.nysdot.skyvdn.com/rtplive/R10_013/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R10_013.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 35789,
+   "name": "NSP at Shelter Rock Rd",
+   "route": "908G",
+   "owner": "NYSDOT",
+   "lon": -73.67025014576302,
+   "lat": 40.773420357946684,
+   "lastUpdated": 1793818121351,
+   "loc": {
+    "fips": 36,
+    "routeId": "908G",
+    "linearReference": 2.549809558414031,
+    "localRoad": false,
+    "cityReference": "2 miles east of the New York City area"
+   },
+   "views": [
+    {
+     "n": "NSP at Shelter Rock Rd",
+     "t": "WMP",
+     "u": "https://s53.nysdot.skyvdn.com/rtplive/R10_059/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R10_059.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 35387,
+   "name": "I-495 at Searingtown Road",
+   "route": "I-495",
+   "owner": "NYSDOT",
+   "lon": -73.66210869879336,
+   "lat": 40.77945978181275,
+   "lastUpdated": 1793818119332,
+   "loc": {
+    "fips": 36,
+    "routeId": "I-495",
+    "linearReference": 18.11279465211449,
+    "localRoad": false,
+    "cityReference": "3 miles east of the New York City area"
+   },
+   "views": [
+    {
+     "n": "I-495 at Searingtown Road",
+     "t": "WMP",
+     "u": "https://s52.nysdot.skyvdn.com/rtplive/R10_014/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R10_014.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 35790,
+   "name": "NSP at Willis Ave",
+   "route": "908G",
+   "owner": "NYSDOT",
+   "lon": -73.65040889034718,
+   "lat": 40.781612925798626,
+   "lastUpdated": 1793818121357,
+   "loc": {
+    "fips": 36,
+    "routeId": "908G",
+    "linearReference": 3.7830634573364237,
+    "localRoad": false,
+    "cityReference": "3 miles east of the New York City area"
+   },
+   "views": [
+    {
+     "n": "NSP at Willis Ave",
+     "t": "WMP",
+     "u": "https://s53.nysdot.skyvdn.com/rtplive/R10_060/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R10_060.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 35388,
+   "name": "I-495 at Willis Ave",
+   "route": "I-495",
+   "owner": "NYSDOT",
+   "lon": -73.6493401382071,
+   "lat": 40.78475551128747,
+   "lastUpdated": 1793818119338,
+   "loc": {
+    "fips": 36,
+    "routeId": "I-495",
+    "linearReference": 18.893331526963426,
+    "localRoad": false,
+    "cityReference": "4 miles east of the New York City area"
+   },
+   "views": [
+    {
+     "n": "I-495 at Willis Ave",
+     "t": "WMP",
+     "u": "https://s52.nysdot.skyvdn.com/rtplive/R10_015/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R10_015.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 34536,
+   "name": "NSP at Roslyn Rd",
+   "route": "908G",
+   "owner": "NYSDOT",
+   "lon": -73.63964712914442,
+   "lat": 40.780896886439855,
+   "lastUpdated": 1793818114900,
+   "loc": {
+    "fips": 36,
+    "routeId": "908G",
+    "linearReference": 4.353955618216325,
+    "localRoad": false,
+    "cityReference": "4 miles east of the New York City area"
+   },
+   "views": [
+    {
+     "n": "NSP at Roslyn Rd",
+     "t": "WMP",
+     "u": "https://s51.nysdot.skyvdn.com/rtplive/R10_061/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R10_061.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 35389,
+   "name": "I-495 at Roslyn Rd",
+   "route": "I-495",
+   "owner": "NYSDOT",
+   "lon": -73.6378582804241,
+   "lat": 40.78461889038662,
+   "lastUpdated": 1793818119344,
+   "loc": {
+    "fips": 36,
+    "routeId": "I-495",
+    "linearReference": 19.496974762474398,
+    "localRoad": false,
+    "cityReference": "4 miles east of the New York City area"
+   },
+   "views": [
+    {
+     "n": "I-495 at Roslyn Rd",
+     "t": "WMP",
+     "u": "https://s52.nysdot.skyvdn.com/rtplive/R10_016/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R10_016.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 35782,
+   "name": "I-495 NSP Connecter Over Height loc",
+   "route": "I-495",
+   "owner": "NYSDOT",
+   "lon": -73.62966188655338,
+   "lat": 40.78441842168941,
+   "lastUpdated": 1793818121315,
+   "loc": {
+    "fips": 36,
+    "routeId": "I-495",
+    "linearReference": 19.928431341010793,
+    "localRoad": false,
+    "cityReference": "5 miles east of the New York City area"
+   },
+   "views": [
+    {
+     "n": "I-495 NSP Connecter Over Height loc",
+     "t": "WMP",
+     "u": "https://s53.nysdot.skyvdn.com/rtplive/R10_053/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R10_053.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 34547,
+   "name": "NSP at Exit 29A (Westbound LIE Connector)",
+   "route": "Unknown",
+   "owner": "NYSDOT",
+   "lon": -73.62716,
+   "lat": 40.780328,
+   "lastUpdated": 1793038579562,
+   "loc": {
+    "fips": 36,
+    "routeId": "Unknown",
+    "localRoad": true
+   },
+   "views": [
+    {
+     "n": "NSP at Exit 29A (Westbound LIE Connector)",
+     "t": "WMP",
+     "u": "https://s51.nysdot.skyvdn.com/rtplive/R10_062/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R10_062.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 35781,
+   "name": "I-495 NSP Connecter",
+   "route": "Unknown",
+   "owner": "NYSDOT",
+   "lon": -73.62716,
+   "lat": 40.780328,
+   "lastUpdated": 1793038580795,
+   "loc": {
+    "fips": 36,
+    "routeId": "Unknown",
+    "localRoad": true
+   },
+   "views": [
+    {
+     "n": "I-495 NSP Connecter",
+     "t": "WMP",
+     "u": "https://s53.nysdot.skyvdn.com/rtplive/R10_052/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R10_052.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 35390,
+   "name": "I-495 at Glen Cove Rd",
+   "route": "I-495",
+   "owner": "NYSDOT",
+   "lon": -73.62281540859044,
+   "lat": 40.78320324730275,
+   "lastUpdated": 1793818119350,
+   "loc": {
+    "fips": 36,
+    "routeId": "I-495",
+    "linearReference": 20.297571295578294,
+    "localRoad": false,
+    "cityReference": "5 miles east of the New York City area"
+   },
+   "views": [
+    {
+     "n": "I-495 at Glen Cove Rd",
+     "t": "WMP",
+     "u": "https://s52.nysdot.skyvdn.com/rtplive/R10_017/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R10_017.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 35391,
+   "name": "I-495 at Old Westbury Rd",
+   "route": "I-495",
+   "owner": "NYSDOT",
+   "lon": -73.61217754086059,
+   "lat": 40.781951541794044,
+   "lastUpdated": 1793818119356,
+   "loc": {
+    "fips": 36,
+    "routeId": "I-495",
+    "linearReference": 20.88354021705693,
+    "localRoad": false,
+    "cityReference": "6 miles east of the New York City area"
+   },
+   "views": [
+    {
+     "n": "I-495 at Old Westbury Rd",
+     "t": "WMP",
+     "u": "https://s52.nysdot.skyvdn.com/rtplive/R10_018/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R10_018.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 35392,
+   "name": "I-495 between Exits 40 and 39",
+   "route": "I-495",
+   "owner": "NYSDOT",
+   "lon": -73.596110355509,
+   "lat": 40.782220146047045,
+   "lastUpdated": 1793818119362,
+   "loc": {
+    "fips": 36,
+    "routeId": "I-495",
+    "linearReference": 21.796884588353933,
+    "localRoad": false,
+    "cityReference": "7 miles east of the New York City area"
+   },
+   "views": [
+    {
+     "n": "I-495 between Exits 40 and 39",
+     "t": "WMP",
+     "u": "https://s52.nysdot.skyvdn.com/rtplive/R10_019/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R10_019.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 35393,
+   "name": "I-495 at Powells Lane",
+   "route": "I-495",
+   "owner": "NYSDOT",
+   "lon": -73.5812908914977,
+   "lat": 40.78040630412637,
+   "lastUpdated": 1793818119368,
+   "loc": {
+    "fips": 36,
+    "routeId": "I-495",
+    "linearReference": 22.647573485445122,
+    "localRoad": false,
+    "cityReference": "7 miles east of the New York City area"
+   },
+   "views": [
+    {
+     "n": "I-495 at Powells Lane",
+     "t": "WMP",
+     "u": "https://s52.nysdot.skyvdn.com/rtplive/R10_020/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R10_020.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 35819,
+   "name": "NY 25 at I-495 SSR and Brush Hollow Rd.",
+   "route": "NY 25",
+   "owner": "NYSDOT",
+   "lon": -73.55739224710977,
+   "lat": 40.78112765644787,
+   "lastUpdated": 1793818121527,
+   "loc": {
+    "fips": 36,
+    "routeId": "NY 25",
+    "linearReference": 24.021843154746122,
+    "localRoad": false,
+    "cityReference": "8 miles east of the New York City area"
+   },
+   "views": [
+    {
+     "n": "NY 25 at I-495 SSR and Brush Hollow Rd.",
+     "t": "WMP",
+     "u": "https://s53.nysdot.skyvdn.com/rtplive/R10_146/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R10_146.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 35769,
+   "name": "I-495 at Jericho Tpke",
+   "route": "I-495",
+   "owner": "NYSDOT",
+   "lon": -73.55496149491537,
+   "lat": 40.78286851554131,
+   "lastUpdated": 1793818121249,
+   "loc": {
+    "fips": 36,
+    "routeId": "I-495",
+    "linearReference": 24.08808533753411,
+    "localRoad": false,
+    "cityReference": "9 miles east of the New York City area"
+   },
+   "views": [
+    {
+     "n": "I-495 at Jericho Tpke",
+     "t": "WMP",
+     "u": "https://s53.nysdot.skyvdn.com/rtplive/R10_021/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R10_021.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 35770,
+   "name": "I-495 West of NY 106/107",
+   "route": "I-495",
+   "owner": "NYSDOT",
+   "lon": -73.53599243421006,
+   "lat": 40.784735462939345,
+   "lastUpdated": 1793818121255,
+   "loc": {
+    "fips": 36,
+    "routeId": "I-495",
+    "linearReference": 25.09336692867134,
+    "localRoad": false,
+    "cityReference": "10 miles east of the New York City area"
+   },
+   "views": [
+    {
+     "n": "I-495 West of NY 106/107",
+     "t": "WMP",
+     "u": "https://s53.nysdot.skyvdn.com/rtplive/R10_022/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R10_022.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 35491,
+   "name": "OVD - Southbound NY106/107 to Westbound NSP",
+   "route": "908G",
+   "owner": "NYSDOT",
+   "lon": -73.53376834701872,
+   "lat": 40.7825416530388,
+   "lastUpdated": 1793818119916,
+   "loc": {
+    "fips": 36,
+    "routeId": "908G",
+    "linearReference": 11.803185928601266,
+    "localRoad": false,
+    "cityReference": "11 miles east of the New York City area"
+   },
+   "views": [
+    {
+     "n": "OVD - Southbound NY106/107 to Westbound NSP",
+     "t": "WMP",
+     "u": "https://s52.nysdot.skyvdn.com/rtplive/R10_311/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R10_311.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 35643,
+   "name": "OVD - Southbound NY106/107 to Eastbound NSP",
+   "route": "908G",
+   "owner": "NYSDOT",
+   "lon": -73.53376834701872,
+   "lat": 40.7825416530388,
+   "lastUpdated": 1793818120714,
+   "loc": {
+    "fips": 36,
+    "routeId": "908G",
+    "linearReference": 11.803185928601266,
+    "localRoad": false,
+    "cityReference": "11 miles east of the New York City area"
+   },
+   "views": [
+    {
+     "n": "OVD - Southbound NY106/107 to Eastbound NSP",
+     "t": "WMP",
+     "u": "https://s52.nysdot.skyvdn.com/rtplive/R10_312/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R10_312.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 34375,
+   "name": "OVD - Northbound NY106/107 to EastboundB NSP",
+   "route": "908G",
+   "owner": "NYSDOT",
+   "lon": -73.53120615287573,
+   "lat": 40.78371633219087,
+   "lastUpdated": 1793818114143,
+   "loc": {
+    "fips": 36,
+    "routeId": "908G",
+    "linearReference": 11.960241179483496,
+    "localRoad": false,
+    "cityReference": "11 miles east of the New York City area"
+   },
+   "views": [
+    {
+     "n": "OVD - Northbound NY106/107 to EastboundB NSP",
+     "t": "WMP",
+     "u": "https://s7.nysdot.skyvdn.com/rtplive/R10_310/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R10_310.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 35407,
+   "name": "NSP at Rt 106/107",
+   "route": "908G",
+   "owner": "NYSDOT",
+   "lon": -73.53120297901205,
+   "lat": 40.78371749451588,
+   "lastUpdated": 1793818119450,
+   "loc": {
+    "fips": 36,
+    "routeId": "908G",
+    "linearReference": 11.96042564337595,
+    "localRoad": false,
+    "cityReference": "11 miles east of the New York City area"
+   },
+   "views": [
+    {
+     "n": "NSP at Rt 106/107",
+     "t": "WMP",
+     "u": "https://s52.nysdot.skyvdn.com/rtplive/R10_073/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R10_073.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 35433,
+   "name": "OVD - NB NY106/107 to WB NSP (C3C4)",
+   "route": "908G",
+   "owner": "NYSDOT",
+   "lon": -73.53120297901205,
+   "lat": 40.78371749451588,
+   "lastUpdated": 1793818119602,
+   "loc": {
+    "fips": 36,
+    "routeId": "908G",
+    "linearReference": 11.96042564337595,
+    "localRoad": false,
+    "cityReference": "11 miles east of the New York City area"
+   },
+   "views": [
+    {
+     "n": "OVD - NB NY106/107 to WB NSP (C3C4)",
+     "t": "WMP",
+     "u": "https://s52.nysdot.skyvdn.com/rtplive/R10_136/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R10_136.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 35771,
+   "name": "I-495 at NSP Connector Exit 42",
+   "route": "I-495",
+   "owner": "NYSDOT",
+   "lon": -73.5273617423956,
+   "lat": 40.78680231967918,
+   "lastUpdated": 1793818121261,
+   "loc": {
+    "fips": 36,
+    "routeId": "I-495",
+    "linearReference": 25.5681986483676,
+    "localRoad": false,
+    "cityReference": "10 miles east of the New York City area"
+   },
+   "views": [
+    {
+     "n": "I-495 at NSP Connector Exit 42",
+     "t": "WMP",
+     "u": "https://s53.nysdot.skyvdn.com/rtplive/R10_023/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R10_023.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 34612,
+   "name": "OVD LIE Westbound to NSP West",
+   "route": "908G",
+   "owner": "NYSDOT",
+   "lon": -73.51895174749022,
+   "lat": 40.790138014904755,
+   "lastUpdated": 1793818115266,
+   "loc": {
+    "fips": 36,
+    "routeId": "908G",
+    "linearReference": 12.76630500527391,
+    "localRoad": false,
+    "cityReference": "12 miles east of the New York City area"
+   },
+   "views": [
+    {
+     "n": "OVD LIE Westbound to NSP West",
+     "t": "WMP",
+     "u": "https://s7.nysdot.skyvdn.com/rtplive/R10_344/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R10_344.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 35409,
+   "name": "NSP West of South Oyster Bay Rd.",
+   "route": "908G",
+   "owner": "NYSDOT",
+   "lon": -73.51798166983241,
+   "lat": 40.79065907141807,
+   "lastUpdated": 1793818119462,
+   "loc": {
+    "fips": 36,
+    "routeId": "908G",
+    "linearReference": 12.828643219191097,
+    "localRoad": false,
+    "cityReference": "12 miles east of the New York City area"
+   },
+   "views": [
+    {
+     "n": "NSP West of South Oyster Bay Rd.",
+     "t": "WMP",
+     "u": "https://s52.nysdot.skyvdn.com/rtplive/R10_074/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R10_074.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 35773,
+   "name": "I-495 at South Oyster Bay Road",
+   "route": "I-495",
+   "owner": "NYSDOT",
+   "lon": -73.50608425432156,
+   "lat": 40.796466255831625,
+   "lastUpdated": 1793818121273,
+   "loc": {
+    "fips": 36,
+    "routeId": "I-495",
+    "linearReference": 26.875337076475923,
+    "localRoad": false,
+    "cityReference": "12 miles east of the New York City area"
+   },
+   "views": [
+    {
+     "n": "I-495 at South Oyster Bay Road",
+     "t": "WMP",
+     "u": "https://s53.nysdot.skyvdn.com/rtplive/R10_024/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R10_024.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 35410,
+   "name": "NSP at East of LIE Connector",
+   "route": "908G",
+   "owner": "NYSDOT",
+   "lon": -73.50377224076456,
+   "lat": 40.793003185589505,
+   "lastUpdated": 1793818119468,
+   "loc": {
+    "fips": 36,
+    "routeId": "908G",
+    "linearReference": 13.601343699486101,
+    "localRoad": false,
+    "cityReference": "13 miles east of the New York City area"
+   },
+   "views": [
+    {
+     "n": "NSP at East of LIE Connector",
+     "t": "WMP",
+     "u": "https://s52.nysdot.skyvdn.com/rtplive/R10_075/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R10_075.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 35774,
+   "name": "I-495 at Route 135",
+   "route": "I-495",
+   "owner": "NYSDOT",
+   "lon": -73.48858794516327,
+   "lat": 40.79935393619343,
+   "lastUpdated": 1793818121279,
+   "loc": {
+    "fips": 36,
+    "routeId": "I-495",
+    "linearReference": 27.82024789627244,
+    "localRoad": false,
+    "cityReference": "13 miles east of the New York City area"
+   },
+   "views": [
+    {
+     "n": "I-495 at Route 135",
+     "t": "WMP",
+     "u": "https://s53.nysdot.skyvdn.com/rtplive/R10_025/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R10_025.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 35411,
+   "name": "NSP at Rt 135(Seaford Oyster Bay Expwy)",
+   "route": "NY 135",
+   "owner": "NYSDOT",
+   "lon": -73.48703454847703,
+   "lat": 40.79469232431017,
+   "lastUpdated": 1793818119474,
+   "loc": {
+    "fips": 36,
+    "routeId": "NY 135",
+    "linearReference": 9.317675540995431,
+    "localRoad": false
+   },
+   "views": [
+    {
+     "n": "NSP at Rt 135(Seaford Oyster Bay Expwy)",
+     "t": "WMP",
+     "u": "https://s52.nysdot.skyvdn.com/rtplive/R10_076/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R10_076.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 35432,
+   "name": "Over Height NSP at 135",
+   "route": "NY 135",
+   "owner": "NYSDOT",
+   "lon": -73.48703404485987,
+   "lat": 40.79469083914589,
+   "lastUpdated": 1793818119596,
+   "loc": {
+    "fips": 36,
+    "routeId": "NY 135",
+    "linearReference": 9.31756958842873,
+    "localRoad": false
+   },
+   "views": [
+    {
+     "n": "Over Height NSP at 135",
+     "t": "WMP",
+     "u": "https://s52.nysdot.skyvdn.com/rtplive/R10_135/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R10_135.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 34690,
+   "name": "SSP EB at Exit 17 (Downstream)",
+   "route": "NY 135",
+   "owner": "NYSDOT",
+   "lon": -73.48702867145431,
+   "lat": 40.794674993002126,
+   "lastUpdated": 1793818115616,
+   "loc": {
+    "fips": 36,
+    "routeId": "NY 135",
+    "linearReference": 9.316439114411597,
+    "localRoad": false
+   },
+   "views": [
+    {
+     "n": "SSP EB at Exit 17 (Downstream)",
+     "t": "WMP",
+     "u": "https://s7.nysdot.skyvdn.com/rtplive/R10_422/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R10_422.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 34691,
+   "name": "SSP EB at Exit 17 (Upstream)",
+   "route": "NY 135",
+   "owner": "NYSDOT",
+   "lon": -73.48702867145431,
+   "lat": 40.794674993002126,
+   "lastUpdated": 1793818115622,
+   "loc": {
+    "fips": 36,
+    "routeId": "NY 135",
+    "linearReference": 9.316439114411597,
+    "localRoad": false
+   },
+   "views": [
+    {
+     "n": "SSP EB at Exit 17 (Upstream)",
+     "t": "WMP",
+     "u": "https://s7.nysdot.skyvdn.com/rtplive/R10_423/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R10_423.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 35775,
+   "name": "I-495 at Manetto Hill Rd (Exit 45)",
+   "route": "I-495",
+   "owner": "NYSDOT",
+   "lon": -73.47657840860468,
+   "lat": 40.79795902462778,
+   "lastUpdated": 1793818121284,
+   "loc": {
+    "fips": 36,
+    "routeId": "I-495",
+    "linearReference": 28.45898318990157,
+    "localRoad": false,
+    "cityReference": "13 miles east of the New York City area"
+   },
+   "views": [
+    {
+     "n": "I-495 at Manetto Hill Rd (Exit 45)",
+     "t": "WMP",
+     "u": "https://s53.nysdot.skyvdn.com/rtplive/R10_026/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R10_026.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 35776,
+   "name": "I-495 at Plainview Rd.",
+   "route": "I-495",
+   "owner": "NYSDOT",
+   "lon": -73.46096275785229,
+   "lat": 40.79208520748006,
+   "lastUpdated": 1793818121290,
+   "loc": {
+    "fips": 36,
+    "routeId": "I-495",
+    "linearReference": 29.37583426995336,
+    "localRoad": false,
+    "cityReference": "14 miles east of the New York City area"
+   },
+   "views": [
+    {
+     "n": "I-495 at Plainview Rd.",
+     "t": "WMP",
+     "u": "https://s53.nysdot.skyvdn.com/rtplive/R10_027/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R10_027.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 35777,
+   "name": "I-495 East of Round Swamp Rd",
+   "route": "I-495",
+   "owner": "NYSDOT",
+   "lon": -73.43669937905568,
+   "lat": 40.78315647665067,
+   "lastUpdated": 1793818121296,
+   "loc": {
+    "fips": 36,
+    "routeId": "I-495",
+    "linearReference": 30.801498533825487,
+    "localRoad": false,
+    "cityReference": "16 miles east of the New York City area"
+   },
+   "views": [
+    {
+     "n": "I-495 East of Round Swamp Rd",
+     "t": "WMP",
+     "u": "https://s53.nysdot.skyvdn.com/rtplive/R10_028/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R10_028.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 35778,
+   "name": "I-495 at NY 110",
+   "route": "I-495",
+   "owner": "NYSDOT",
+   "lon": -73.41883095094252,
+   "lat": 40.780727040458615,
+   "lastUpdated": 1793038580791,
+   "loc": {
+    "fips": 36,
+    "routeId": "I-495",
+    "linearReference": 31.759833937484444,
+    "localRoad": false,
+    "cityReference": "17 miles east of the New York City area"
+   },
+   "views": [
+    {
+     "n": "I-495 at NY 110",
+     "t": "WMP",
+     "u": "https://s53.nysdot.skyvdn.com/rtplive/R10_029/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R10_029.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 35482,
+   "name": "NY 110 Northbound at Nikon Driveway",
+   "route": "NY 110",
+   "owner": "NYSDOT",
+   "lon": -73.41689209026987,
+   "lat": 40.784913529630785,
+   "lastUpdated": 1793818119862,
+   "loc": {
+    "fips": 36,
+    "routeId": "NY 110",
+    "linearReference": 8.081255520772489,
+    "localRoad": false
+   },
+   "views": [
+    {
+     "n": "NY 110 Northbound at Nikon Driveway",
+     "t": "WMP",
+     "u": "https://s52.nysdot.skyvdn.com/rtplive/R10_283/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R10_283.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 35779,
+   "name": "I-495 at Half Hollow Hills Road West",
+   "route": "I-495",
+   "owner": "NYSDOT",
+   "lon": -73.39552060323865,
+   "lat": 40.78479799538257,
+   "lastUpdated": 1793818121302,
+   "loc": {
+    "fips": 36,
+    "routeId": "I-495",
+    "linearReference": 33.0176089078983,
+    "localRoad": false,
+    "cityReference": "18 miles east of the New York City area"
+   },
+   "views": [
+    {
+     "n": "I-495 at Half Hollow Hills Road West",
+     "t": "WMP",
+     "u": "https://s53.nysdot.skyvdn.com/rtplive/R10_030/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R10_030.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 34425,
+   "name": "I-495 at Bagatelle Rd",
+   "route": "I-495",
+   "owner": "NYSDOT",
+   "lon": -73.36307157406009,
+   "lat": 40.79138682294899,
+   "lastUpdated": 1793818114292,
+   "loc": {
+    "fips": 36,
+    "routeId": "I-495",
+    "linearReference": 34.78267185700128,
+    "localRoad": false,
+    "cityReference": "20 miles east of the New York City area"
+   },
+   "views": [
+    {
+     "n": "I-495 at Bagatelle Rd",
+     "t": "WMP",
+     "u": "https://s51.nysdot.skyvdn.com/rtplive/R10_031/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R10_031.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 34436,
+   "name": "I-495 at Deer Park Ave",
+   "route": "I-495",
+   "owner": "NYSDOT",
+   "lon": -73.33343184140254,
+   "lat": 40.80091904446055,
+   "lastUpdated": 1793818114358,
+   "loc": {
+    "fips": 36,
+    "routeId": "I-495",
+    "linearReference": 36.478894033850025,
+    "localRoad": false,
+    "cityReference": "21 miles east of the New York City area"
+   },
+   "views": [
+    {
+     "n": "I-495 at Deer Park Ave",
+     "t": "WMP",
+     "u": "https://s51.nysdot.skyvdn.com/rtplive/R10_032/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R10_032.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 35081,
+   "name": "LIE Welcome Center Kitchen",
+   "route": "906A",
+   "owner": "NYSDOT",
+   "lon": -73.31653703410113,
+   "lat": 40.80242335973071,
+   "lastUpdated": 1793818117686,
+   "loc": {
+    "fips": 36,
+    "routeId": "906A",
+    "linearReference": 22.846533457090363,
+    "localRoad": false
+   },
+   "views": [
+    {
+     "n": "LIE Welcome Center Kitchen",
+     "t": "WMP",
+     "u": "https://s9.nysdot.skyvdn.com/rtplive/R10_1000/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R10_1000.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 35082,
+   "name": "LIE Welcome Center Dining",
+   "route": "906A",
+   "owner": "NYSDOT",
+   "lon": -73.31653703410113,
+   "lat": 40.80242335973071,
+   "lastUpdated": 1793818117692,
+   "loc": {
+    "fips": 36,
+    "routeId": "906A",
+    "linearReference": 22.846533457090363,
+    "localRoad": false
+   },
+   "views": [
+    {
+     "n": "LIE Welcome Center Dining",
+     "t": "WMP",
+     "u": "https://s9.nysdot.skyvdn.com/rtplive/R10_1001/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R10_1001.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 35083,
+   "name": "LIE Welcome Center Porch Exit",
+   "route": "906A",
+   "owner": "NYSDOT",
+   "lon": -73.31653703410113,
+   "lat": 40.80242335973071,
+   "lastUpdated": 1793818117698,
+   "loc": {
+    "fips": 36,
+    "routeId": "906A",
+    "linearReference": 22.846533457090363,
+    "localRoad": false
+   },
+   "views": [
+    {
+     "n": "LIE Welcome Center Porch Exit",
+     "t": "WMP",
+     "u": "https://s9.nysdot.skyvdn.com/rtplive/R10_1002/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R10_1002.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 35084,
+   "name": "LIE Welcome Center Storage Room",
+   "route": "906A",
+   "owner": "NYSDOT",
+   "lon": -73.31653703410113,
+   "lat": 40.80242335973071,
+   "lastUpdated": 1793818117704,
+   "loc": {
+    "fips": 36,
+    "routeId": "906A",
+    "linearReference": 22.846533457090363,
+    "localRoad": false
+   },
+   "views": [
+    {
+     "n": "LIE Welcome Center Storage Room",
+     "t": "WMP",
+     "u": "https://s9.nysdot.skyvdn.com/rtplive/R10_1003/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R10_1003.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 35085,
+   "name": "LIE Welcome Center Kitchen Entrance",
+   "route": "906A",
+   "owner": "NYSDOT",
+   "lon": -73.31653703410113,
+   "lat": 40.80242335973071,
+   "lastUpdated": 1793818117710,
+   "loc": {
+    "fips": 36,
+    "routeId": "906A",
+    "linearReference": 22.846533457090363,
+    "localRoad": false
+   },
+   "views": [
+    {
+     "n": "LIE Welcome Center Kitchen Entrance",
+     "t": "WMP",
+     "u": "https://s9.nysdot.skyvdn.com/rtplive/R10_1004/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R10_1004.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 35086,
+   "name": "LIE Welcome Center Entrance",
+   "route": "906A",
+   "owner": "NYSDOT",
+   "lon": -73.31653703410113,
+   "lat": 40.80242335973071,
+   "lastUpdated": 1793818117716,
+   "loc": {
+    "fips": 36,
+    "routeId": "906A",
+    "linearReference": 22.846533457090363,
+    "localRoad": false
+   },
+   "views": [
+    {
+     "n": "LIE Welcome Center Entrance",
+     "t": "WMP",
+     "u": "https://s9.nysdot.skyvdn.com/rtplive/R10_1005/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R10_1005.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 35088,
+   "name": "LIE Welcome Center Emergency Exit",
+   "route": "906A",
+   "owner": "NYSDOT",
+   "lon": -73.31653703410113,
+   "lat": 40.80242335973071,
+   "lastUpdated": 1793818117722,
+   "loc": {
+    "fips": 36,
+    "routeId": "906A",
+    "linearReference": 22.846533457090363,
+    "localRoad": false
+   },
+   "views": [
+    {
+     "n": "LIE Welcome Center Emergency Exit",
+     "t": "WMP",
+     "u": "https://s9.nysdot.skyvdn.com/rtplive/R10_1006/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R10_1006.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 35089,
+   "name": "LIE Welcome Center Store",
+   "route": "906A",
+   "owner": "NYSDOT",
+   "lon": -73.31653703410113,
+   "lat": 40.80242335973071,
+   "lastUpdated": 1793818117734,
+   "loc": {
+    "fips": 36,
+    "routeId": "906A",
+    "linearReference": 22.846533457090363,
+    "localRoad": false
+   },
+   "views": [
+    {
+     "n": "LIE Welcome Center Store",
+     "t": "WMP",
+     "u": "https://s9.nysdot.skyvdn.com/rtplive/R10_1007/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R10_1007.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 35090,
+   "name": "LIE Welcome Center Cafe",
+   "route": "906A",
+   "owner": "NYSDOT",
+   "lon": -73.31653703410113,
+   "lat": 40.80242335973071,
+   "lastUpdated": 1793818117740,
+   "loc": {
+    "fips": 36,
+    "routeId": "906A",
+    "linearReference": 22.846533457090363,
+    "localRoad": false
+   },
+   "views": [
+    {
+     "n": "LIE Welcome Center Cafe",
+     "t": "WMP",
+     "u": "https://s9.nysdot.skyvdn.com/rtplive/R10_1008/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R10_1008.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 35091,
+   "name": "LIE Welcome Center Pipe Room",
+   "route": "906A",
+   "owner": "NYSDOT",
+   "lon": -73.31653703410113,
+   "lat": 40.80242335973071,
+   "lastUpdated": 1793818117746,
+   "loc": {
+    "fips": 36,
+    "routeId": "906A",
+    "linearReference": 22.846533457090363,
+    "localRoad": false
+   },
+   "views": [
+    {
+     "n": "LIE Welcome Center Pipe Room",
+     "t": "WMP",
+     "u": "https://s9.nysdot.skyvdn.com/rtplive/R10_1009/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R10_1009.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 35092,
+   "name": "LIE Welcome Center Dining Area Two",
+   "route": "906A",
+   "owner": "NYSDOT",
+   "lon": -73.31653703410113,
+   "lat": 40.80242335973071,
+   "lastUpdated": 1793818117752,
+   "loc": {
+    "fips": 36,
+    "routeId": "906A",
+    "linearReference": 22.846533457090363,
+    "localRoad": false
+   },
+   "views": [
+    {
+     "n": "LIE Welcome Center Dining Area Two",
+     "t": "WMP",
+     "u": "https://s9.nysdot.skyvdn.com/rtplive/R10_1011/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R10_1011.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 35093,
+   "name": "LIE Welcome Center Store Main Entrance",
+   "route": "906A",
+   "owner": "NYSDOT",
+   "lon": -73.31653703410113,
+   "lat": 40.80242335973071,
+   "lastUpdated": 1793818117758,
+   "loc": {
+    "fips": 36,
+    "routeId": "906A",
+    "linearReference": 22.846533457090363,
+    "localRoad": false
+   },
+   "views": [
+    {
+     "n": "LIE Welcome Center Store Main Entrance",
+     "t": "WMP",
+     "u": "https://s9.nysdot.skyvdn.com/rtplive/R10_1012/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R10_1012.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 35094,
+   "name": "LIE Welcome Center Hallway Exit",
+   "route": "906A",
+   "owner": "NYSDOT",
+   "lon": -73.31653703410113,
+   "lat": 40.80242335973071,
+   "lastUpdated": 1793818117764,
+   "loc": {
+    "fips": 36,
+    "routeId": "906A",
+    "linearReference": 22.846533457090363,
+    "localRoad": false
+   },
+   "views": [
+    {
+     "n": "LIE Welcome Center Hallway Exit",
+     "t": "WMP",
+     "u": "https://s9.nysdot.skyvdn.com/rtplive/R10_1013/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R10_1013.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 35095,
+   "name": "LIE Welcome Center Main Entrance",
+   "route": "906A",
+   "owner": "NYSDOT",
+   "lon": -73.31653703410113,
+   "lat": 40.80242335973071,
+   "lastUpdated": 1793818117770,
+   "loc": {
+    "fips": 36,
+    "routeId": "906A",
+    "linearReference": 22.846533457090363,
+    "localRoad": false
+   },
+   "views": [
+    {
+     "n": "LIE Welcome Center Main Entrance",
+     "t": "WMP",
+     "u": "https://s9.nysdot.skyvdn.com/rtplive/R10_1014/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R10_1014.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 35097,
+   "name": "LIE Welcome Center Outdoor Entrance",
+   "route": "906A",
+   "owner": "NYSDOT",
+   "lon": -73.31653703410113,
+   "lat": 40.80242335973071,
+   "lastUpdated": 1793818117776,
+   "loc": {
+    "fips": 36,
+    "routeId": "906A",
+    "linearReference": 22.846533457090363,
+    "localRoad": false
+   },
+   "views": [
+    {
+     "n": "LIE Welcome Center Outdoor Entrance",
+     "t": "WMP",
+     "u": "https://s9.nysdot.skyvdn.com/rtplive/R10_1015/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R10_1015.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 35098,
+   "name": "LIE Welcome Center Outdoor Ocean Display",
+   "route": "906A",
+   "owner": "NYSDOT",
+   "lon": -73.31653703410113,
+   "lat": 40.80242335973071,
+   "lastUpdated": 1793818117790,
+   "loc": {
+    "fips": 36,
+    "routeId": "906A",
+    "linearReference": 22.846533457090363,
+    "localRoad": false
+   },
+   "views": [
+    {
+     "n": "LIE Welcome Center Outdoor Ocean Display",
+     "t": "WMP",
+     "u": "https://s9.nysdot.skyvdn.com/rtplive/R10_1016/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R10_1016.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 35099,
+   "name": "LIE Welcome Center Outdoor Ocean Display Two",
+   "route": "906A",
+   "owner": "NYSDOT",
+   "lon": -73.31653703410113,
+   "lat": 40.80242335973071,
+   "lastUpdated": 1793818117796,
+   "loc": {
+    "fips": 36,
+    "routeId": "906A",
+    "linearReference": 22.846533457090363,
+    "localRoad": false
+   },
+   "views": [
+    {
+     "n": "LIE Welcome Center Outdoor Ocean Display Two",
+     "t": "WMP",
+     "u": "https://s9.nysdot.skyvdn.com/rtplive/R10_1017/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R10_1017.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 35100,
+   "name": "LIE Welcome Center Outdoor Main Entrance",
+   "route": "906A",
+   "owner": "NYSDOT",
+   "lon": -73.31653703410113,
+   "lat": 40.80242335973071,
+   "lastUpdated": 1793818117802,
+   "loc": {
+    "fips": 36,
+    "routeId": "906A",
+    "linearReference": 22.846533457090363,
+    "localRoad": false
+   },
+   "views": [
+    {
+     "n": "LIE Welcome Center Outdoor Main Entrance",
+     "t": "WMP",
+     "u": "https://s9.nysdot.skyvdn.com/rtplive/R10_1018/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R10_1018.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 35101,
+   "name": "LIE Welcome Center LIE East Bound",
+   "route": "906A",
+   "owner": "NYSDOT",
+   "lon": -73.31653703410113,
+   "lat": 40.80242335973071,
+   "lastUpdated": 1793818117808,
+   "loc": {
+    "fips": 36,
+    "routeId": "906A",
+    "linearReference": 22.846533457090363,
+    "localRoad": false
+   },
+   "views": [
+    {
+     "n": "LIE Welcome Center LIE East Bound",
+     "t": "WMP",
+     "u": "https://s9.nysdot.skyvdn.com/rtplive/R10_1019/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R10_1019.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 35102,
+   "name": "LIE Welcome Center Outdoor Parking Lot",
+   "route": "906A",
+   "owner": "NYSDOT",
+   "lon": -73.31653703410113,
+   "lat": 40.80242335973071,
+   "lastUpdated": 1793818117814,
+   "loc": {
+    "fips": 36,
+    "routeId": "906A",
+    "linearReference": 22.846533457090363,
+    "localRoad": false
+   },
+   "views": [
+    {
+     "n": "LIE Welcome Center Outdoor Parking Lot",
+     "t": "WMP",
+     "u": "https://s9.nysdot.skyvdn.com/rtplive/R10_1020/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R10_1020.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 35103,
+   "name": "LIE Welcome Center Outdoor Backside",
+   "route": "906A",
+   "owner": "NYSDOT",
+   "lon": -73.31653703410113,
+   "lat": 40.80242335973071,
+   "lastUpdated": 1793818117820,
+   "loc": {
+    "fips": 36,
+    "routeId": "906A",
+    "linearReference": 22.846533457090363,
+    "localRoad": false
+   },
+   "views": [
+    {
+     "n": "LIE Welcome Center Outdoor Backside",
+     "t": "WMP",
+     "u": "https://s9.nysdot.skyvdn.com/rtplive/R10_1021/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R10_1021.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 35104,
+   "name": "LIE Welcome Center Main Entrance 2",
+   "route": "906A",
+   "owner": "NYSDOT",
+   "lon": -73.31653703410113,
+   "lat": 40.80242335973071,
+   "lastUpdated": 1793818117826,
+   "loc": {
+    "fips": 36,
+    "routeId": "906A",
+    "linearReference": 22.846533457090363,
+    "localRoad": false
+   },
+   "views": [
+    {
+     "n": "LIE Welcome Center Main Entrance 2",
+     "t": "WMP",
+     "u": "https://s9.nysdot.skyvdn.com/rtplive/R10_1022/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R10_1022.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 35105,
+   "name": "LIE Welcome Center Outdoor LIE Entrance",
+   "route": "906A",
+   "owner": "NYSDOT",
+   "lon": -73.31653703410113,
+   "lat": 40.80242335973071,
+   "lastUpdated": 1793818117832,
+   "loc": {
+    "fips": 36,
+    "routeId": "906A",
+    "linearReference": 22.846533457090363,
+    "localRoad": false
+   },
+   "views": [
+    {
+     "n": "LIE Welcome Center Outdoor LIE Entrance",
+     "t": "WMP",
+     "u": "https://s9.nysdot.skyvdn.com/rtplive/R10_1023/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R10_1023.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 35106,
+   "name": "LIE Welcome Center Main Hallway Floor Map",
+   "route": "906A",
+   "owner": "NYSDOT",
+   "lon": -73.31653703410113,
+   "lat": 40.80242335973071,
+   "lastUpdated": 1793818117838,
+   "loc": {
+    "fips": 36,
+    "routeId": "906A",
+    "linearReference": 22.846533457090363,
+    "localRoad": false
+   },
+   "views": [
+    {
+     "n": "LIE Welcome Center Main Hallway Floor Map",
+     "t": "WMP",
+     "u": "https://s9.nysdot.skyvdn.com/rtplive/R10_1024/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R10_1024.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 35108,
+   "name": "LIE Welcome Center Outdoor Watershed Bldg",
+   "route": "906A",
+   "owner": "NYSDOT",
+   "lon": -73.31653703410113,
+   "lat": 40.80242335973071,
+   "lastUpdated": 1793818117844,
+   "loc": {
+    "fips": 36,
+    "routeId": "906A",
+    "linearReference": 22.846533457090363,
+    "localRoad": false
+   },
+   "views": [
+    {
+     "n": "LIE Welcome Center Outdoor Watershed Bldg",
+     "t": "WMP",
+     "u": "https://s9.nysdot.skyvdn.com/rtplive/R10_1025/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R10_1025.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 34447,
+   "name": "I-495 at Rest Area",
+   "route": "I-495",
+   "owner": "NYSDOT",
+   "lon": -73.31510217239199,
+   "lat": 40.80340012957627,
+   "lastUpdated": 1793818114412,
+   "loc": {
+    "fips": 36,
+    "routeId": "I-495",
+    "linearReference": 37.46003601798987,
+    "localRoad": false,
+    "cityReference": "22 miles east of the New York City area"
+   },
+   "views": [
+    {
+     "n": "I-495 at Rest Area",
+     "t": "WMP",
+     "u": "https://s51.nysdot.skyvdn.com/rtplive/R10_033/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R10_033.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 34458,
+   "name": "I-495 at Commack Road",
+   "route": "I-495",
+   "owner": "NYSDOT",
+   "lon": -73.29676657633888,
+   "lat": 40.80438998438777,
+   "lastUpdated": 1793818114472,
+   "loc": {
+    "fips": 36,
+    "routeId": "I-495",
+    "linearReference": 38.423808595806655,
+    "localRoad": false,
+    "cityReference": "23 miles east of the New York City area"
+   },
+   "views": [
+    {
+     "n": "I-495 at Commack Road",
+     "t": "WMP",
+     "u": "https://s51.nysdot.skyvdn.com/rtplive/R10_034/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R10_034.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 35446,
+   "name": "SAG North of I-495 at Exit S1",
+   "route": "908K",
+   "owner": "NYSDOT",
+   "lon": -73.28262122305584,
+   "lat": 40.80827205991586,
+   "lastUpdated": 1793818119668,
+   "loc": {
+    "fips": 36,
+    "routeId": "908K",
+    "linearReference": 4.551685450526199,
+    "localRoad": false
+   },
+   "views": [
+    {
+     "n": "SAG North of I-495 at Exit S1",
+     "t": "WMP",
+     "u": "https://s52.nysdot.skyvdn.com/rtplive/R10_168/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R10_168.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 34687,
+   "name": "OVD-LIE WB to Sagtikos Parkway NB",
+   "route": "Unknown",
+   "owner": "NYSDOT",
+   "lon": -73.27895,
+   "lat": 40.806778,
+   "lastUpdated": 1793038578213,
+   "loc": {
+    "fips": 36,
+    "routeId": "Unknown",
+    "localRoad": true
+   },
+   "views": [
+    {
+     "n": "OVD-LIE WB to Sagtikos Parkway NB",
+     "t": "WMP",
+     "u": "https://s7.nysdot.skyvdn.com/rtplive/R10_420/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R10_420.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 35447,
+   "name": "SAG South of I-495 at Exit S2",
+   "route": "908K",
+   "owner": "NYSDOT",
+   "lon": -73.27873293228802,
+   "lat": 40.79750192208332,
+   "lastUpdated": 1793818119674,
+   "loc": {
+    "fips": 36,
+    "routeId": "908K",
+    "linearReference": 3.7769754667143727,
+    "localRoad": false
+   },
+   "views": [
+    {
+     "n": "SAG South of I-495 at Exit S2",
+     "t": "WMP",
+     "u": "https://s52.nysdot.skyvdn.com/rtplive/R10_169/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R10_169.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 34688,
+   "name": "OVD-LIE EB to Sagtikos Parkway SB",
+   "route": "908K",
+   "owner": "NYSDOT",
+   "lon": -73.27873183423397,
+   "lat": 40.797490973612,
+   "lastUpdated": 1793818115603,
+   "loc": {
+    "fips": 36,
+    "routeId": "908K",
+    "linearReference": 3.7762167499723316,
+    "localRoad": false
+   },
+   "views": [
+    {
+     "n": "OVD-LIE EB to Sagtikos Parkway SB",
+     "t": "WMP",
+     "u": "https://s7.nysdot.skyvdn.com/rtplive/R10_421/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R10_421.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 34469,
+   "name": "I-495 at Sagtikos Pkwy",
+   "route": "906B",
+   "owner": "NYSDOT",
+   "lon": -73.27756370385278,
+   "lat": 40.80511504604717,
+   "lastUpdated": 1793818114540,
+   "loc": {
+    "fips": 36,
+    "routeId": "906B",
+    "linearReference": 18.017172446604853,
+    "localRoad": false
+   },
+   "views": [
+    {
+     "n": "I-495 at Sagtikos Pkwy",
+     "t": "WMP",
+     "u": "https://s51.nysdot.skyvdn.com/rtplive/R10_035/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R10_035.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 34480,
+   "name": "I-495 at Wicks Road Eastbound CD Rd",
+   "route": "I-495",
+   "owner": "NYSDOT",
+   "lon": -73.26562356411692,
+   "lat": 40.8045426164377,
+   "lastUpdated": 1793818114595,
+   "loc": {
+    "fips": 36,
+    "routeId": "I-495",
+    "linearReference": 40.05739484038411,
+    "localRoad": false,
+    "cityReference": "25 miles east of the New York City area"
+   },
+   "views": [
+    {
+     "n": "I-495 at Wicks Road Eastbound CD Rd",
+     "t": "WMP",
+     "u": "https://s51.nysdot.skyvdn.com/rtplive/R10_036/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R10_036.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 34491,
+   "name": "I-495 at Exit 53 Ramp - Wicks Rd",
+   "route": "906B",
+   "owner": "NYSDOT",
+   "lon": -73.2603122663536,
+   "lat": 40.805057055966806,
+   "lastUpdated": 1793818114654,
+   "loc": {
+    "fips": 36,
+    "routeId": "906B",
+    "linearReference": 17.112520368494106,
+    "localRoad": false
+   },
+   "views": [
+    {
+     "n": "I-495 at Exit 53 Ramp - Wicks Rd",
+     "t": "WMP",
+     "u": "https://s51.nysdot.skyvdn.com/rtplive/R10_037/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R10_037.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 34503,
+   "name": "I-495 at Washington Ave",
+   "route": "I-495",
+   "owner": "NYSDOT",
+   "lon": -73.24880908843596,
+   "lat": 40.80539389417027,
+   "lastUpdated": 1793818114727,
+   "loc": {
+    "fips": 36,
+    "routeId": "I-495",
+    "linearReference": 40.94129093535312,
+    "localRoad": false,
+    "cityReference": "26 miles east of the New York City area"
+   },
+   "views": [
+    {
+     "n": "I-495 at Washington Ave",
+     "t": "WMP",
+     "u": "https://s51.nysdot.skyvdn.com/rtplive/R10_038/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R10_038.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 35493,
+   "name": "495 Westbound at Exit 56 Rest Area Camera 1",
+   "route": "906B",
+   "owner": "NYSDOT",
+   "lon": -73.22345856038962,
+   "lat": 40.8087513147839,
+   "lastUpdated": 1793818119928,
+   "loc": {
+    "fips": 36,
+    "routeId": "906B",
+    "linearReference": 15.161770852897183,
+    "localRoad": false
+   },
+   "views": [
+    {
+     "n": "495 Westbound at Exit 56 Rest Area Camera 1",
+     "t": "WMP",
+     "u": "https://s52.nysdot.skyvdn.com/rtplive/R10_315/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R10_315.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 35494,
+   "name": "495 Westbound at Exit 56 Rest Area Camera 2",
+   "route": "906B",
+   "owner": "NYSDOT",
+   "lon": -73.22345856038962,
+   "lat": 40.8087513147839,
+   "lastUpdated": 1793818119934,
+   "loc": {
+    "fips": 36,
+    "routeId": "906B",
+    "linearReference": 15.161770852897183,
+    "localRoad": false
+   },
+   "views": [
+    {
+     "n": "495 Westbound at Exit 56 Rest Area Camera 2",
+     "t": "WMP",
+     "u": "https://s52.nysdot.skyvdn.com/rtplive/R10_316/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R10_316.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 34514,
+   "name": "I-495 at Motor Parkway Exit 55",
+   "route": "I-495",
+   "owner": "NYSDOT",
+   "lon": -73.22331920309512,
+   "lat": 40.80816137189378,
+   "lastUpdated": 1793818114775,
+   "loc": {
+    "fips": 36,
+    "routeId": "I-495",
+    "linearReference": 42.29246474172936,
+    "localRoad": false,
+    "cityReference": "27 miles east of the New York City area"
+   },
+   "views": [
+    {
+     "n": "I-495 at Motor Parkway Exit 55",
+     "t": "WMP",
+     "u": "https://s51.nysdot.skyvdn.com/rtplive/R10_039/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R10_039.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 35670,
+   "name": "Portable Camera - PVMS AM 75C",
+   "route": "Unknown",
+   "owner": "NYSDOT",
+   "lon": -73.221827,
+   "lat": 40.812794,
+   "lastUpdated": 1793038580527,
+   "loc": {
+    "fips": 36,
+    "routeId": "Unknown",
+    "localRoad": true
+   },
+   "views": [
+    {
+     "n": "Portable Camera - PVMS AM 75C",
+     "t": "WMP",
+     "u": "https://s52.nysdot.skyvdn.com/rtplive/PVMS_AM75C/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/PVMS_AM75C.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 35671,
+   "name": "Portable Camera - PVMS AM 76C",
+   "route": "Unknown",
+   "owner": "NYSDOT",
+   "lon": -73.221827,
+   "lat": 40.812794,
+   "lastUpdated": 1793038580531,
+   "loc": {
+    "fips": 36,
+    "routeId": "Unknown",
+    "localRoad": true
+   },
+   "views": [
+    {
+     "n": "Portable Camera - PVMS AM 76C",
+     "t": "WMP",
+     "u": "https://s52.nysdot.skyvdn.com/rtplive/PVMS_AM76C/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/PVMS_AM76C.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 35673,
+   "name": "Portable Camera - PVMS ST 21LC",
+   "route": "Unknown",
+   "owner": "NYSDOT",
+   "lon": -73.221827,
+   "lat": 40.812794,
+   "lastUpdated": 1793038580536,
+   "loc": {
+    "fips": 36,
+    "routeId": "Unknown",
+    "localRoad": true
+   },
+   "views": [
+    {
+     "n": "Portable Camera - PVMS ST 21LC",
+     "t": "WMP",
+     "u": "https://s52.nysdot.skyvdn.com/rtplive/PVMS_ST21LC/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/PVMS_ST21LC.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 35674,
+   "name": "Portable Camera - PVMS ST 23LC",
+   "route": "Unknown",
+   "owner": "NYSDOT",
+   "lon": -73.221827,
+   "lat": 40.812794,
+   "lastUpdated": 1793038580541,
+   "loc": {
+    "fips": 36,
+    "routeId": "Unknown",
+    "localRoad": true
+   },
+   "views": [
+    {
+     "n": "Portable Camera - PVMS ST 23LC",
+     "t": "WMP",
+     "u": "https://s52.nysdot.skyvdn.com/rtplive/PVMS_ST23LC/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/PVMS_ST23LC.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 35676,
+   "name": "Portable Camera - PVMS VM 47LC",
+   "route": "Unknown",
+   "owner": "NYSDOT",
+   "lon": -73.221827,
+   "lat": 40.812794,
+   "lastUpdated": 1793038580604,
+   "loc": {
+    "fips": 36,
+    "routeId": "Unknown",
+    "localRoad": true
+   },
+   "views": [
+    {
+     "n": "Portable Camera - PVMS VM 47LC",
+     "t": "WMP",
+     "u": "https://s52.nysdot.skyvdn.com/rtplive/PVMS_VM47LC/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/PVMS_VM47LC.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 35677,
+   "name": "Portable Camera - PVMS VM 48LC",
+   "route": "Unknown",
+   "owner": "NYSDOT",
+   "lon": -73.221827,
+   "lat": 40.812794,
+   "lastUpdated": 1793038580555,
+   "loc": {
+    "fips": 36,
+    "routeId": "Unknown",
+    "localRoad": true
+   },
+   "views": [
+    {
+     "n": "Portable Camera - PVMS VM 48LC",
+     "t": "WMP",
+     "u": "https://s52.nysdot.skyvdn.com/rtplive/PVMS_VM48LC/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/PVMS_VM48LC.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 35678,
+   "name": "Portable Camera - PVMS W 7CS",
+   "route": "Unknown",
+   "owner": "NYSDOT",
+   "lon": -73.221827,
+   "lat": 40.812794,
+   "lastUpdated": 1793038580569,
+   "loc": {
+    "fips": 36,
+    "routeId": "Unknown",
+    "localRoad": true
+   },
+   "views": [
+    {
+     "n": "Portable Camera - PVMS W 7CS",
+     "t": "WMP",
+     "u": "https://s52.nysdot.skyvdn.com/rtplive/PVMS_W7CS/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/PVMS_W7CS.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 35679,
+   "name": "Portable Camera - PVMS W 11C",
+   "route": "Unknown",
+   "owner": "NYSDOT",
+   "lon": -73.221827,
+   "lat": 40.81279,
+   "lastUpdated": 1793038580584,
+   "loc": {
+    "fips": 36,
+    "routeId": "Unknown",
+    "localRoad": true
+   },
+   "views": [
+    {
+     "n": "Portable Camera - PVMS W 11C",
+     "t": "WMP",
+     "u": "https://s52.nysdot.skyvdn.com/rtplive/PVMS_W11C/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/PVMS_W11C.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 35680,
+   "name": "Portable Camera - PVMS W 12C",
+   "route": "Unknown",
+   "owner": "NYSDOT",
+   "lon": -73.221827,
+   "lat": 40.81279,
+   "lastUpdated": 1793038580589,
+   "loc": {
+    "fips": 36,
+    "routeId": "Unknown",
+    "localRoad": true
+   },
+   "views": [
+    {
+     "n": "Portable Camera - PVMS W 12C",
+     "t": "WMP",
+     "u": "https://s52.nysdot.skyvdn.com/rtplive/PVMS_W12C/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/PVMS_W12C.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 35681,
+   "name": "Portable Camera - PVMS AM 87LC",
+   "route": "Unknown",
+   "owner": "NYSDOT",
+   "lon": -73.221827,
+   "lat": 40.812794,
+   "lastUpdated": 1793038580593,
+   "loc": {
+    "fips": 36,
+    "routeId": "Unknown",
+    "localRoad": true
+   },
+   "views": [
+    {
+     "n": "Portable Camera - PVMS AM 87LC",
+     "t": "WMP",
+     "u": "https://s52.nysdot.skyvdn.com/rtplive/PVMS_AM87LC/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/PVMS_AM87LC.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 35682,
+   "name": "Portable Camera - PVMS AM 88LC",
+   "route": "Unknown",
+   "owner": "NYSDOT",
+   "lon": -73.221827,
+   "lat": 40.81279,
+   "lastUpdated": 1793038580613,
+   "loc": {
+    "fips": 36,
+    "routeId": "Unknown",
+    "localRoad": true
+   },
+   "views": [
+    {
+     "n": "Portable Camera - PVMS AM 88LC",
+     "t": "WMP",
+     "u": "https://s52.nysdot.skyvdn.com/rtplive/PVMS_AM88LC/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/PVMS_AM88LC.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 35698,
+   "name": "Portable Camera - PVMS ST 14LC",
+   "route": "Unknown",
+   "owner": "NYSDOT",
+   "lon": -73.221827,
+   "lat": 40.81279,
+   "lastUpdated": 1793038580636,
+   "loc": {
+    "fips": 36,
+    "routeId": "Unknown",
+    "localRoad": true
+   },
+   "views": [
+    {
+     "n": "Portable Camera - PVMS ST 14LC",
+     "t": "WMP",
+     "u": "https://s52.nysdot.skyvdn.com/rtplive/PVMS_ST14LC/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/PVMS_ST14LC.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 35699,
+   "name": "Portable Camera - PVMS VM 29LC",
+   "route": "Unknown",
+   "owner": "NYSDOT",
+   "lon": -73.221827,
+   "lat": 40.81279,
+   "lastUpdated": 1793038580641,
+   "loc": {
+    "fips": 36,
+    "routeId": "Unknown",
+    "localRoad": true
+   },
+   "views": [
+    {
+     "n": "Portable Camera - PVMS VM 29LC",
+     "t": "WMP",
+     "u": "https://s52.nysdot.skyvdn.com/rtplive/PVMS_VM29LC/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/PVMS_VM29LC.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 34525,
+   "name": "I-495 at Lincoln Blvd",
+   "route": "I-495",
+   "owner": "NYSDOT",
+   "lon": -73.20505638133997,
+   "lat": 40.809052644972894,
+   "lastUpdated": 1793818114840,
+   "loc": {
+    "fips": 36,
+    "routeId": "I-495",
+    "linearReference": 43.25356327104586,
+    "localRoad": false,
+    "cityReference": "28 miles east of the New York City area"
+   },
+   "views": [
+    {
+     "n": "I-495 at Lincoln Blvd",
+     "t": "WMP",
+     "u": "https://s51.nysdot.skyvdn.com/rtplive/R10_040/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R10_040.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 35394,
+   "name": "I-495 at Veterans Memorial Hwy(Exit 57)",
+   "route": "I-495",
+   "owner": "NYSDOT",
+   "lon": -73.18642764539923,
+   "lat": 40.808881154097186,
+   "lastUpdated": 1793818119374,
+   "loc": {
+    "fips": 36,
+    "routeId": "I-495",
+    "linearReference": 44.230150337851846,
+    "localRoad": false,
+    "cityReference": "29 miles east of the New York City area"
+   },
+   "views": [
+    {
+     "n": "I-495 at Veterans Memorial Hwy(Exit 57)",
+     "t": "WMP",
+     "u": "https://s52.nysdot.skyvdn.com/rtplive/R10_041/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R10_041.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 34370,
+   "name": "495 Eastbound at Nichols Road",
+   "route": "I-495",
+   "owner": "NYSDOT",
+   "lon": -73.16053653032307,
+   "lat": 40.80904542347638,
+   "lastUpdated": 1793818114119,
+   "loc": {
+    "fips": 36,
+    "routeId": "I-495",
+    "linearReference": 45.58843744986826,
+    "localRoad": false,
+    "cityReference": "30 miles east of the New York City area"
+   },
+   "views": [
+    {
+     "n": "495 Eastbound at Nichols Road",
+     "t": "WMP",
+     "u": "https://s7.nysdot.skyvdn.com/rtplive/R10_305/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R10_305.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 35395,
+   "name": "I-495 at Terry Road (Exits 59-58)",
+   "route": "I-495",
+   "owner": "NYSDOT",
+   "lon": -73.13752065240104,
+   "lat": 40.81168872237631,
+   "lastUpdated": 1793818119380,
+   "loc": {
+    "fips": 36,
+    "routeId": "I-495",
+    "linearReference": 46.80880756203774,
+    "localRoad": false,
+    "cityReference": "32 miles east of the New York City area"
+   },
+   "views": [
+    {
+     "n": "I-495 at Terry Road (Exits 59-58)",
+     "t": "WMP",
+     "u": "https://s52.nysdot.skyvdn.com/rtplive/R10_042/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R10_042.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 35396,
+   "name": "I-495 at Hawkins Ave",
+   "route": "I-495",
+   "owner": "NYSDOT",
+   "lon": -73.10832609313907,
+   "lat": 40.81339323407276,
+   "lastUpdated": 1793818119385,
+   "loc": {
+    "fips": 36,
+    "routeId": "I-495",
+    "linearReference": 48.344598448636184,
+    "localRoad": false,
+    "cityReference": "33 miles east of the New York City area"
+   },
+   "views": [
+    {
+     "n": "I-495 at Hawkins Ave",
+     "t": "WMP",
+     "u": "https://s52.nysdot.skyvdn.com/rtplive/R10_043/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R10_043.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 35398,
+   "name": "I-495 at Patchogue-Holbrook Rd",
+   "route": "I-495",
+   "owner": "NYSDOT",
+   "lon": -73.08412671798956,
+   "lat": 40.81560589819966,
+   "lastUpdated": 1793818119397,
+   "loc": {
+    "fips": 36,
+    "routeId": "I-495",
+    "linearReference": 49.62241754276682,
+    "localRoad": false,
+    "cityReference": "34 miles east of the New York City area"
+   },
+   "views": [
+    {
+     "n": "I-495 at Patchogue-Holbrook Rd",
+     "t": "WMP",
+     "u": "https://s52.nysdot.skyvdn.com/rtplive/R10_044/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R10_044.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 35399,
+   "name": "I-495 at Holbrook Rd",
+   "route": "I-495",
+   "owner": "NYSDOT",
+   "lon": -73.07768035723292,
+   "lat": 40.816239202612095,
+   "lastUpdated": 1793818119403,
+   "loc": {
+    "fips": 36,
+    "routeId": "I-495",
+    "linearReference": 49.963164991818026,
+    "localRoad": false,
+    "cityReference": "35 miles east of the New York City area"
+   },
+   "views": [
+    {
+     "n": "I-495 at Holbrook Rd",
+     "t": "WMP",
+     "u": "https://s52.nysdot.skyvdn.com/rtplive/R10_045/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R10_045.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 35400,
+   "name": "I-495 at Nicolls Rd",
+   "route": "I-495",
+   "owner": "NYSDOT",
+   "lon": -73.0536079008061,
+   "lat": 40.82005379796234,
+   "lastUpdated": 1793818119409,
+   "loc": {
+    "fips": 36,
+    "routeId": "I-495",
+    "linearReference": 51.25225769161207,
+    "localRoad": false,
+    "cityReference": "36 miles east of the New York City area"
+   },
+   "views": [
+    {
+     "n": "I-495 at Nicolls Rd",
+     "t": "WMP",
+     "u": "https://s52.nysdot.skyvdn.com/rtplive/R10_046/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R10_046.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 35401,
+   "name": "I-495 at Waverly Ave",
+   "route": "I-495",
+   "owner": "NYSDOT",
+   "lon": -73.04592883780307,
+   "lat": 40.8211718477421,
+   "lastUpdated": 1793818119415,
+   "loc": {
+    "fips": 36,
+    "routeId": "I-495",
+    "linearReference": 51.66219329016412,
+    "localRoad": false,
+    "cityReference": "37 miles east of the New York City area"
+   },
+   "views": [
+    {
+     "n": "I-495 at Waverly Ave",
+     "t": "WMP",
+     "u": "https://s52.nysdot.skyvdn.com/rtplive/R10_047/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R10_047.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 35402,
+   "name": "I-495 at Blue Point Rd",
+   "route": "I-495",
+   "owner": "NYSDOT",
+   "lon": -73.03490468059167,
+   "lat": 40.82213331369087,
+   "lastUpdated": 1793818119421,
+   "loc": {
+    "fips": 36,
+    "routeId": "I-495",
+    "linearReference": 52.24384029798998,
+    "localRoad": false,
+    "cityReference": "37 miles east of the New York City area"
+   },
+   "views": [
+    {
+     "n": "I-495 at Blue Point Rd",
+     "t": "WMP",
+     "u": "https://s52.nysdot.skyvdn.com/rtplive/R10_048/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R10_048.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 35403,
+   "name": "I-495 at North Ocean Ave (Exit 63)",
+   "route": "I-495",
+   "owner": "NYSDOT",
+   "lon": -73.0199550940604,
+   "lat": 40.823321461177855,
+   "lastUpdated": 1793818119427,
+   "loc": {
+    "fips": 36,
+    "routeId": "I-495",
+    "linearReference": 53.03178596706837,
+    "localRoad": false,
+    "cityReference": "38 miles east of the New York City area"
+   },
+   "views": [
+    {
+     "n": "I-495 at North Ocean Ave (Exit 63)",
+     "t": "WMP",
+     "u": "https://s52.nysdot.skyvdn.com/rtplive/R10_049/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R10_049.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 35404,
+   "name": "I-495 at NY 112 (Exit 64)",
+   "route": "I-495",
+   "owner": "NYSDOT",
+   "lon": -72.99695031424203,
+   "lat": 40.82366325214287,
+   "lastUpdated": 1793818119433,
+   "loc": {
+    "fips": 36,
+    "routeId": "I-495",
+    "linearReference": 54.23798872627017,
+    "localRoad": false,
+    "cityReference": "39 miles east of the New York City area"
+   },
+   "views": [
+    {
+     "n": "I-495 at NY 112 (Exit 64)",
+     "t": "WMP",
+     "u": "https://s52.nysdot.skyvdn.com/rtplive/R10_050/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R10_050.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 35851,
+   "name": "NY 112 Northbound at Horseblock Road (CR 16)",
+   "route": "NY 112",
+   "owner": "NYSDOT",
+   "lon": -72.99502220229022,
+   "lat": 40.82722278070724,
+   "lastUpdated": 1793818121719,
+   "loc": {
+    "fips": 36,
+    "routeId": "NY 112",
+    "linearReference": 4.3367758468019275,
+    "localRoad": false
+   },
+   "views": [
+    {
+     "n": "NY 112 Northbound at Horseblock Road (CR 16)",
+     "t": "WMP",
+     "u": "https://s53.nysdot.skyvdn.com/rtplive/R10_261/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R10_261.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 34828,
+   "name": "LIE at Horse Block Rd",
+   "route": "I-495",
+   "owner": "NYSDOT",
+   "lon": -72.97490483871056,
+   "lat": 40.82206677550947,
+   "lastUpdated": 1793818116433,
+   "loc": {
+    "fips": 36,
+    "routeId": "I-495",
+    "linearReference": 55.400408241040275,
+    "localRoad": false,
+    "cityReference": "40 miles east of the New York City area"
+   },
+   "views": [
+    {
+     "n": "LIE at Horse Block Rd",
+     "t": "WMP",
+     "u": "https://s9.nysdot.skyvdn.com/rtplive/R10_355/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R10_355.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 35492,
+   "name": "495 Eastbound at Exits 65-66 Rest Area (Fixed)",
+   "route": "I-495",
+   "owner": "NYSDOT",
+   "lon": -72.95034046585154,
+   "lat": 40.826747794797065,
+   "lastUpdated": 1793818119922,
+   "loc": {
+    "fips": 36,
+    "routeId": "I-495",
+    "linearReference": 56.729546990195466,
+    "localRoad": false,
+    "cityReference": "42 miles east of the New York City area"
+   },
+   "views": [
+    {
+     "n": "495 Eastbound at Exits 65-66 Rest Area (Fixed)",
+     "t": "WMP",
+     "u": "https://s52.nysdot.skyvdn.com/rtplive/R10_314/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R10_314.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 35780,
+   "name": "I-495 Exit 65/66 Rest area",
+   "route": "I-495",
+   "owner": "NYSDOT",
+   "lon": -72.95028682187777,
+   "lat": 40.82675782281966,
+   "lastUpdated": 1793818121308,
+   "loc": {
+    "fips": 36,
+    "routeId": "I-495",
+    "linearReference": 56.73243620936389,
+    "localRoad": false,
+    "cityReference": "42 miles east of the New York City area"
+   },
+   "views": [
+    {
+     "n": "I-495 Exit 65/66 Rest area",
+     "t": "WMP",
+     "u": "https://s53.nysdot.skyvdn.com/rtplive/R10_051/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R10_051.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 34827,
+   "name": "LIE West of CR101 Sills Rd",
+   "route": "I-495",
+   "owner": "NYSDOT",
+   "lon": -72.93962759568741,
+   "lat": 40.82850291967562,
+   "lastUpdated": 1793818116414,
+   "loc": {
+    "fips": 36,
+    "routeId": "I-495",
+    "linearReference": 57.30400392658446,
+    "localRoad": false,
+    "cityReference": "42 miles east of the New York City area"
+   },
+   "views": [
+    {
+     "n": "LIE West of CR101 Sills Rd",
+     "t": "WMP",
+     "u": "https://s9.nysdot.skyvdn.com/rtplive/R10_356/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R10_356.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 35655,
+   "name": "LIE at Moriches Middle Island",
+   "route": "I-495",
+   "owner": "NYSDOT",
+   "lon": -72.90555848549754,
+   "lat": 40.835879168400034,
+   "lastUpdated": 1793818120755,
+   "loc": {
+    "fips": 36,
+    "routeId": "I-495",
+    "linearReference": 59.17070624264027,
+    "localRoad": false,
+    "cityReference": "44 miles east of the New York City area"
+   },
+   "views": [
+    {
+     "n": "LIE at Moriches Middle Island",
+     "t": "WMP",
+     "u": "https://s52.nysdot.skyvdn.com/rtplive/R10_357/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R10_357.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 34829,
+   "name": "LIE at William Floyd Pkwy",
+   "route": "I-495",
+   "owner": "NYSDOT",
+   "lon": -72.89104141985263,
+   "lat": 40.8435790598492,
+   "lastUpdated": 1793818116446,
+   "loc": {
+    "fips": 36,
+    "routeId": "I-495",
+    "linearReference": 60.09876167172022,
+    "localRoad": false,
+    "cityReference": "45 miles east of the New York City area"
+   },
+   "views": [
+    {
+     "n": "LIE at William Floyd Pkwy",
+     "t": "WMP",
+     "u": "https://s9.nysdot.skyvdn.com/rtplive/R10_358/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R10_358.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 35656,
+   "name": "LIE at Wading River Rd - Exit 69",
+   "route": "I-495",
+   "owner": "NYSDOT",
+   "lon": -72.82246598212228,
+   "lat": 40.86320574947527,
+   "lastUpdated": 1793818120761,
+   "loc": {
+    "fips": 36,
+    "routeId": "I-495",
+    "linearReference": 64.0095653444602,
+    "localRoad": false,
+    "cityReference": "49 miles east of the New York City area"
+   },
+   "views": [
+    {
+     "n": "LIE at Wading River Rd - Exit 69",
+     "t": "WMP",
+     "u": "https://s52.nysdot.skyvdn.com/rtplive/R10_359/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R10_359.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 35657,
+   "name": "LIE at Captain Daniel Roe Hwy - Exit 70",
+   "route": "I-495",
+   "owner": "NYSDOT",
+   "lon": -72.80189698921819,
+   "lat": 40.87158231115701,
+   "lastUpdated": 1793818120767,
+   "loc": {
+    "fips": 36,
+    "routeId": "I-495",
+    "linearReference": 65.23314533384917,
+    "localRoad": false,
+    "cityReference": "50 miles east of the New York City area"
+   },
+   "views": [
+    {
+     "n": "LIE at Captain Daniel Roe Hwy - Exit 70",
+     "t": "WMP",
+     "u": "https://s52.nysdot.skyvdn.com/rtplive/R10_360/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R10_360.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 35658,
+   "name": "LIE at Edwards Ave (CR94) - Exit 71",
+   "route": "I-495",
+   "owner": "NYSDOT",
+   "lon": -72.7405050502084,
+   "lat": 40.903870073077385,
+   "lastUpdated": 1793818120773,
+   "loc": {
+    "fips": 36,
+    "routeId": "I-495",
+    "linearReference": 69.2785772833288,
+    "localRoad": false,
+    "cityReference": "54 miles east of the New York City area"
+   },
+   "views": [
+    {
+     "n": "LIE at Edwards Ave (CR94) - Exit 71",
+     "t": "WMP",
+     "u": "https://s52.nysdot.skyvdn.com/rtplive/R10_361/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R10_361.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 35659,
+   "name": "LIE at NY25 Exit 72 - 1",
+   "route": "I-495",
+   "owner": "NYSDOT",
+   "lon": -72.72346809039063,
+   "lat": 40.920469985317105,
+   "lastUpdated": 1793818120779,
+   "loc": {
+    "fips": 36,
+    "routeId": "I-495",
+    "linearReference": 70.75040277283921,
+    "localRoad": false,
+    "cityReference": "56 miles east of the New York City area"
+   },
+   "views": [
+    {
+     "n": "LIE at NY25 Exit 72 - 1",
+     "t": "WMP",
+     "u": "https://s52.nysdot.skyvdn.com/rtplive/R10_362/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R10_362.flv.png",
+     "b": false
+    }
+   ]
+  },
+  {
+   "id": 35660,
+   "name": "LIE at NY25 Exit 72 - 2",
+   "route": "I-495",
+   "owner": "NYSDOT",
+   "lon": -72.72346809039063,
+   "lat": 40.920469985317105,
+   "lastUpdated": 1793818120785,
+   "loc": {
+    "fips": 36,
+    "routeId": "I-495",
+    "linearReference": 70.75040277283921,
+    "localRoad": false,
+    "cityReference": "56 miles east of the New York City area"
+   },
+   "views": [
+    {
+     "n": "LIE at NY25 Exit 72 - 2",
+     "t": "WMP",
+     "u": "https://s52.nysdot.skyvdn.com/rtplive/R10_363/playlist.m3u8",
+     "p": "https://public.carsprogram.org/cameras/NYSDOT/R10_363.flv.png",
+     "b": false
+    }
+   ]
+  }
+ ]
+}

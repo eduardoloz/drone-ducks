@@ -1,0 +1,8 @@
+# Core: speed estimation, SQLite store, web API, tests. No torch needed.
+# Pinned for Eddie's 2019 Intel MacBook (x86_64, macOS 15, Python 3.12).
+numpy==1.26.4            # torch 2.2.2 (last Intel-mac build) needs numpy<2
+opencv-python==4.11.0.86 # same build ultralytics pulls in; works with numpy 1.26
+fastapi==0.115.12
+uvicorn==0.34.2
+pytest==8.3.5
+httpx==0.28.1            # FastAPI TestClient
