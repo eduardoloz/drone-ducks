@@ -1,0 +1,27 @@
+# jetson/ track: never commit data, weights, media or environments.
+# Model weights / engines (fetched by `python -m jetson.fetch models`)
+models/
+*.onnx
+*.engine
+*.trt
+*.plan
+*.pt
+*.tflite
+# Test media (fetched by `python -m jetson.fetch media`) and demo/bench outputs
+media/
+out/
+*.mp4
+*.avi
+*.mov
+*.mkv
+*.jpg
+*.jpeg
+*.png
+*.bmp
+# Environments and caches
+.venv*/
+__pycache__/
+*.pyc
+.pytest_cache/
+# TensorRT / ONNX Runtime engine caches
+trt_cache/
