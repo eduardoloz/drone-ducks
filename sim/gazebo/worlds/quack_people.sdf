@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- ProjectQuack people world: faces for the Jetson face-detection / face-follow track.
+     Gazebo is ENU (x = east, y = north). The drone spawns at the origin facing +x (east).
+
+     Top view (metres):            N (+y)
+                                     .        casual_female (4, 2)
+        drone (0,0) facing east ->   .        standing_person (4, 0)          walker: (10, 3) <-> (5, -1)
+                                     .        female_visitor (4, -2)
+     The three static people face the spawn point. The walker walks the diagonal towards the drone
+     (face visible) and back (face away), 1 m/s, looping every ~13 s: a moving target for followers.
+
+     Models (Gazebo Fuel, fetched on first load; pre-fetch with sim/scripts/fetch_models.sh):
+       Standing person, Casual female: OpenRobotics / MakeHuman, CC0-1.0
+       FemaleVisitor: OpenRobotics, CC-BY-4.0 (credit: Open Robotics)
+       walker skin/animation: chapulina "Walking actor", CC0-1.0
+     See sim/docs/ARCHITECTURE.md ("Faces in simulation") for what face detectors make of them. -->
+<sdf version="1.9">
+  <world name="quack_people">
+    <physics type="ode">
+      <max_step_size>0.004</max_step_size>
+      <real_time_factor>1.0</real_time_factor>
+      <real_time_update_rate>250</real_time_update_rate>
+    </physics>
+    <gravity>0 0 -9.8</gravity>
+    <magnetic_field>6e-06 2.3e-05 -4.2e-05</magnetic_field>
+    <atmosphere type="adiabatic"/>
+    <scene>
+      <grid>false</grid>
+      <ambient>0.7 0.7 0.7 1</ambient>
+      <background>0.7 0.8 0.95 1</background>
+      <shadows>false</shadows>
+    </scene>
+    <!-- light from behind the drone so the faces are lit -->
+    <light name="sun" type="directional">
+      <pose>0 0 50 0 0 0</pose>
+      <cast_shadows>false</cast_shadows>
+      <intensity>1</intensity>
+      <direction>0.6 0.2 -0.75</direction>
+      <diffuse>0.95 0.95 0.95 1</diffuse>
+      <specular>0.2 0.2 0.2 1</specular>
+    </light>
+
+    <model name="ground_plane">
+      <static>true</static>
+      <link name="link">
+        <collision name="collision">
+          <geometry><plane><normal>0 0 1</normal><size>1 1</size></plane></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><plane><normal>0 0 1</normal><size>200 200</size></plane></geometry>
+          <material><ambient>0.45 0.55 0.4 1</ambient><diffuse>0.45 0.55 0.4 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- ===== static people, facing the spawn point ===== -->
+    <include>
+      <name>standing_person</name>
+      <uri>https://fuel.gazebosim.org/1.0/OpenRobotics/models/Standing person</uri>
+      <pose>4 0 0 0 0 -1.5708</pose>
+    </include>
+    <include>
+      <name>casual_female</name>
+      <uri>https://fuel.gazebosim.org/1.0/OpenRobotics/models/Casual female</uri>
+      <pose>4 2 0 0 0 -1.5708</pose>
+    </include>
+    <include>
+      <name>female_visitor</name>
+      <uri>https://fuel.gazebosim.org/1.0/OpenRobotics/models/FemaleVisitor</uri>
+      <pose>4 -2 0 0 0 -1.5708</pose>
+    </include>
+
+    <!-- ===== a walking person: diagonal towards the drone and back ===== -->
+    <actor name="walker">
+      <skin>
+        <filename>https://fuel.gazebosim.org/1.0/chapulina/models/Walking actor/2/files/meshes/walk.dae</filename>
+        <scale>1.0</scale>
+      </skin>
+      <animation name="walking">
+        <filename>https://fuel.gazebosim.org/1.0/chapulina/models/Walking actor/2/files/meshes/walk.dae</filename>
+        <scale>1.0</scale>
+        <interpolate_x>true</interpolate_x>
+      </animation>
+      <script>
+        <loop>true</loop>
+        <delay_start>0</delay_start>
+        <auto_start>true</auto_start>
+        <trajectory id="0" type="walking">
+          <!-- actor faces its local +x; yaw -2.4669 = heading from (10,3) towards (5,-1) -->
+          <waypoint><time>0</time><pose>10 3 0 0 0 -2.4669</pose></waypoint>
+          <waypoint><time>6.4</time><pose>5 -1 0 0 0 -2.4669</pose></waypoint>
+          <waypoint><time>7.0</time><pose>5 -1 0 0 0 0.6747</pose></waypoint>
+          <waypoint><time>13.4</time><pose>10 3 0 0 0 0.6747</pose></waypoint>
+          <waypoint><time>14.0</time><pose>10 3 0 0 0 -2.4669</pose></waypoint>
+        </trajectory>
+      </script>
+    </actor>
+
+    <spherical_coordinates>
+      <surface_model>EARTH_WGS84</surface_model>
+      <world_frame_orientation>ENU</world_frame_orientation>
+      <latitude_deg>47.397971057728974</latitude_deg>
+      <longitude_deg>8.546163739800146</longitude_deg>
+      <elevation>488</elevation>
+    </spherical_coordinates>
+  </world>
+</sdf>

@@ -1,0 +1,21 @@
+# sim/ local state: never commit these.
+# (gitignore has no trailing comments, so every comment sits on its own line)
+.venv/
+# TypeFly checkout made by scripts/setup_typefly.sh
+.deps/
+# PX4 rootfs (params, .ulg flight logs), tmux logs, camera snapshots
+.run/
+out/
+__pycache__/
+*.pyc
+.pytest_cache/
+*.egg-info/
+# model weights / media / datasets
+*.pt
+*.onnx
+*.engine
+*.mp4
+*.avi
+*.mov
+*.ulg
+.DS_Store

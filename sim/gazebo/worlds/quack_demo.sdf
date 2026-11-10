@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- ProjectQuack demo world: a few objects YOLO (COCO classes) knows, plus simple obstacles.
+     Gazebo is ENU (x = east, y = north). The drone spawns at the origin facing +x (east).
+     Layout (top view, metres):
+                     N (+y)
+          chair (-1, 6)            car (8, 9)
+                         .
+       wall (-5, 0)      drone (0,0) ->  person (7, 0)      pillar (4, -3)
+                         .
+       hydrant (-4, -6)   stop sign (0, -7)
+     Models are pulled from Gazebo Fuel (https://app.gazebosim.org); pre-fetch them with
+     quack/scripts/fetch_models.sh so PX4's "waiting for Gazebo world" timeout isn't hit. -->
+<sdf version="1.9">
+  <world name="quack_demo">
+    <physics type="ode">
+      <max_step_size>0.004</max_step_size>
+      <real_time_factor>1.0</real_time_factor>
+      <real_time_update_rate>250</real_time_update_rate>
+    </physics>
+    <gravity>0 0 -9.8</gravity>
+    <magnetic_field>6e-06 2.3e-05 -4.2e-05</magnetic_field>
+    <atmosphere type="adiabatic"/>
+    <scene>
+      <grid>false</grid>
+      <ambient>0.6 0.6 0.6 1</ambient>
+      <background>0.7 0.8 0.95 1</background>
+      <shadows>false</shadows>
+    </scene>
+    <light name="sun" type="directional">
+      <pose>0 0 50 0 0 0</pose>
+      <cast_shadows>false</cast_shadows>
+      <intensity>1</intensity>
+      <direction>-0.4 0.3 -0.85</direction>
+      <diffuse>0.95 0.95 0.95 1</diffuse>
+      <specular>0.2 0.2 0.2 1</specular>
+    </light>
+
+    <model name="ground_plane">
+      <static>true</static>
+      <link name="link">
+        <collision name="collision">
+          <geometry><plane><normal>0 0 1</normal><size>1 1</size></plane></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><plane><normal>0 0 1</normal><size>200 200</size></plane></geometry>
+          <material><ambient>0.45 0.55 0.4 1</ambient><diffuse>0.45 0.55 0.4 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- ===== Objects YOLO should recognise ===== -->
+    <include>
+      <name>chair</name>
+      <uri>https://fuel.gazebosim.org/1.0/OpenRobotics/models/VisitorChair</uri>
+      <pose>-1 6 0 0 0 -1.57</pose>
+    </include>
+    <include>
+      <name>person</name>
+      <uri>https://fuel.gazebosim.org/1.0/OpenRobotics/models/Standing person</uri>
+      <pose>7 0 0 0 0 -1.57</pose>
+    </include>
+    <include>
+      <name>car</name>
+      <uri>https://fuel.gazebosim.org/1.0/OpenRobotics/models/Hatchback</uri>
+      <pose>8 9 0 0 0 0.6</pose>
+    </include>
+    <include>
+      <name>fire_hydrant</name>
+      <uri>https://fuel.gazebosim.org/1.0/OpenRobotics/models/Fire hydrant</uri>
+      <pose>-4 -6 0 0 0 0</pose>
+    </include>
+    <include>
+      <name>stop_sign</name>
+      <uri>https://fuel.gazebosim.org/1.0/OpenRobotics/models/Stop Sign</uri>
+      <pose>0 -7 0 0 0 3.14</pose>
+    </include>
+
+    <!-- ===== Simple obstacles (not on the straight paths to the objects) ===== -->
+    <model name="pillar">
+      <static>true</static>
+      <pose>4 -3 1.5 0 0 0</pose>
+      <link name="link">
+        <collision name="c"><geometry><box><size>0.8 0.8 3</size></box></geometry></collision>
+        <visual name="v"><geometry><box><size>0.8 0.8 3</size></box></geometry>
+          <material><ambient>0.45 0.5 0.6 1</ambient><diffuse>0.45 0.5 0.6 1</diffuse></material></visual>
+      </link>
+    </model>
+    <model name="wall">
+      <static>true</static>
+      <pose>-5 0 1.25 0 0 0</pose>
+      <link name="link">
+        <collision name="c"><geometry><box><size>0.3 6 2.5</size></box></geometry></collision>
+        <visual name="v"><geometry><box><size>0.3 6 2.5</size></box></geometry>
+          <material><ambient>0.75 0.75 0.7 1</ambient><diffuse>0.75 0.75 0.7 1</diffuse></material></visual>
+      </link>
+    </model>
+
+    <spherical_coordinates>
+      <surface_model>EARTH_WGS84</surface_model>
+      <world_frame_orientation>ENU</world_frame_orientation>
+      <latitude_deg>47.397971057728974</latitude_deg>
+      <longitude_deg>8.546163739800146</longitude_deg>
+      <elevation>488</elevation>
+    </spherical_coordinates>
+  </world>
+</sdf>
