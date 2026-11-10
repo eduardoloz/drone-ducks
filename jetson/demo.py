@@ -124,8 +124,10 @@ def run_toy(args, cfg) -> int:
 
 
 def run_source(args, cfg) -> int:
-    det = cli.make_detector(args)
+    # Open the source before loading the detector: a bad --source should fail fast
+    # with "camera error" even when the model hasn't been fetched yet.
     src = open_source(args.source, realtime=args.realtime)
+    det = cli.make_detector(args)
     pipe = FollowPipeline(det, FaceFollowController(cfg), sink=DryRunSink(log_every_s=args.log_every))
     fps_hint = 30.0
     reader = None
