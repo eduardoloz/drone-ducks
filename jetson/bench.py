@@ -94,7 +94,7 @@ def bench_one(spec: str, image, width: int, frames: int, warmup: int) -> Optiona
     frame = cv2.resize(image, (width, int(round(h * width / w))), interpolation=cv2.INTER_AREA)
     try:
         det = make(spec, width)
-    except BackendUnavailable as e:
+    except (BackendUnavailable, ValueError) as e:  # missing library/model, or a typo in the name
         return {"spec": spec, "width": width, "error": str(e)}
     for _ in range(warmup):
         det.detect(frame)
