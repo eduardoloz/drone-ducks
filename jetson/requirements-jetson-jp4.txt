@@ -1,0 +1,10 @@
+# ORIGINAL Jetson Nano on JetPack 4.6.x (Ubuntu 18.04, glibc 2.27). System Python 3.6 is too old,
+# so use Ubuntu's python3.8 package:
+#   sudo apt install python3.8 python3.8-venv python3.8-dev
+#   python3.8 -m venv ~/quack-venv && . ~/quack-venv/bin/activate && pip install -U pip
+#   pip install -r jetson/requirements-jetson-jp4.txt
+numpy<1.25                          # 1.24.4 has cp38 aarch64 wheels
+opencv-python-headless>=4.8,<4.12   # manylinux2014 aarch64 wheel; NO GStreamer -> CSI via tcp:// (see README)
+mavsdk==4.0.6                       # last native MAVSDK with manylinux2014 aarch64 wheels (4.1.0 needs glibc 2.28)
+pytest<8.4
+# GPU: use the Ultralytics JetPack 4 container (Python 3.8, TensorRT 8.2, onnxruntime-gpu 1.8) instead.

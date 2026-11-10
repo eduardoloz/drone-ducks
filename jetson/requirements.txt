@@ -1,0 +1,7 @@
+# Laptop / CI (macOS or Linux x86_64), Python >= 3.8:
+#   uv venv --python 3.12 jetson/.venv && uv pip install --python jetson/.venv/bin/python -r jetson/requirements.txt
+numpy<2                     # parity with the Jetson stacks (and torch 2.2.2 on Intel Macs)
+opencv-python>=4.8,<4.12    # FaceDetectorYN + YuNet 2023mar need >= 4.8; 4.12+ wants numpy>=2 on py>=3.9
+onnxruntime                 # `onnx` backend on CPU
+mavsdk>=4.0.6,<5            # native MAVSDK for the bridge (never connects unless --fly / linkcheck)
+pytest

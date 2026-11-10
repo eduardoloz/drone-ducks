@@ -1,0 +1,11 @@
+# Jetson Orin Nano (Super) on JetPack 6.2.x, Python 3.10.
+# Make the venv WITH system packages so JetPack's OpenCV (GStreamer for csi://) and TensorRT are visible:
+#   python3 -m venv --system-site-packages ~/quack-venv && . ~/quack-venv/bin/activate
+#   pip install -r jetson/requirements-jetson-jp6.txt
+# Do NOT `pip install opencv-python` here: it would shadow JetPack's GStreamer-enabled cv2.
+numpy<2
+mavsdk>=4.0.6,<5
+pytest
+# Optional GPU path (TensorRT execution provider) -- NVIDIA's Jetson index, check it is up first:
+#   pip install onnxruntime-gpu --index-url https://pypi.jetson-ai-lab.io/jp6/cu126/+simple/
+# Optional native TensorRT backend:  pip install pycuda
