@@ -1,6 +1,6 @@
 {
  "schema_version": 1,
- "generated_at": "2026-11-10T21:59:24+00:00",
+ "generated_at": "2026-11-10T22:36:53+00:00",
  "corridor": "I-495 Long Island Expressway, Queens-Midtown Tunnel (Queens) to Riverhead (Suffolk)",
  "sources": {
   "camera_list": "https://api-511x-nysdot.carsprogram.org/cameras/map-features (loaded by https://511ny.org map)",
@@ -224,7 +224,7 @@
    "county": "Queens",
    "kind": "mainline",
    "exit": "15",
-   "direction_hint": null,
+   "direction_hint": "EB",
    "ptz": "unknown",
    "feed": {
     "type": "jpeg",
@@ -469,7 +469,7 @@
    "county": "Queens",
    "kind": "mainline",
    "exit": "16",
-   "direction_hint": null,
+   "direction_hint": "EB",
    "ptz": "unknown",
    "feed": {
     "type": "jpeg",
@@ -616,7 +616,7 @@
    "county": "Queens",
    "kind": "mainline",
    "exit": "18",
-   "direction_hint": null,
+   "direction_hint": "EB",
    "ptz": "unknown",
    "feed": {
     "type": "jpeg",
@@ -836,7 +836,7 @@
    "county": "Queens",
    "kind": "mainline",
    "exit": "19",
-   "direction_hint": null,
+   "direction_hint": "WB",
    "ptz": "unknown",
    "feed": {
     "type": "jpeg",
@@ -999,7 +999,7 @@
    "county": "Queens",
    "kind": "mainline",
    "exit": "22A",
-   "direction_hint": null,
+   "direction_hint": "EB",
    "ptz": "unknown",
    "feed": {
     "type": "jpeg",
@@ -1390,7 +1390,7 @@
    "county": "Queens",
    "kind": "mainline",
    "exit": "25",
-   "direction_hint": null,
+   "direction_hint": "WB",
    "ptz": "unknown",
    "feed": {
     "type": "jpeg",
@@ -1613,7 +1613,7 @@
    "county": "Queens",
    "kind": "mainline",
    "exit": "27",
-   "direction_hint": null,
+   "direction_hint": "WB",
    "ptz": "unknown",
    "feed": {
     "type": "jpeg",
@@ -1725,7 +1725,7 @@
    "county": "Queens",
    "kind": "mainline",
    "exit": "28",
-   "direction_hint": null,
+   "direction_hint": "EB",
    "ptz": "unknown",
    "feed": {
     "type": "jpeg",
@@ -1780,7 +1780,7 @@
    "county": "Queens",
    "kind": "mainline",
    "exit": "29",
-   "direction_hint": null,
+   "direction_hint": "WB",
    "ptz": "unknown",
    "feed": {
     "type": "jpeg",
@@ -3379,7 +3379,7 @@
    "county": "Suffolk",
    "kind": "cross_route",
    "exit": null,
-   "direction_hint": null,
+   "direction_hint": "WB",
    "ptz": "likely",
    "feed": {
     "type": "hls",
@@ -3435,7 +3435,7 @@
    "county": "Suffolk",
    "kind": "cross_route",
    "exit": null,
-   "direction_hint": null,
+   "direction_hint": "EB",
    "ptz": "likely",
    "feed": {
     "type": "hls",

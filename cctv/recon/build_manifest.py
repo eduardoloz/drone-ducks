@@ -102,9 +102,9 @@ def parse_exit(name: str) -> str | None:
 
 def parse_direction(name: str) -> str | None:
     n = name or ""
-    if re.search(r"(-EB\b|_EB_|\bE/B\b|eastbound|east bound)", n, re.I):
+    if re.search(r"((?:^|[-_\s])EB(?:$|[-_\s])|\bE/B\b|eastbound|east bound)", n, re.I):
         return "EB"
-    if re.search(r"(-WB\b|_WB_|\bW/B\b|westbound|west bound)", n, re.I):
+    if re.search(r"((?:^|[-_\s])WB(?:$|[-_\s])|\bW/B\b|westbound|west bound)", n, re.I):
         return "WB"
     return None
 

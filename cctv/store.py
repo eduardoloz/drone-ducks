@@ -115,6 +115,6 @@ def purge_track_points_older_than(con: sqlite3.Connection, days: int) -> int:
     """Retention: per-frame positions are only kept for a short time."""
     cur = con.execute(
         """DELETE FROM track_points WHERE vehicle_id IN (
-             SELECT v.id FROM vehicles v WHERE v.ts_utc < datetime('now', ?))""", (f"-{days} days",))
+             SELECT v.id FROM vehicles v WHERE julianday(v.ts_utc) < julianday('now', ?))""", (f"-{days} days",))
     con.commit()
     return cur.rowcount

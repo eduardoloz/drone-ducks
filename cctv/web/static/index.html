@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>LIE speed analytics</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 105%27%3E%3Cpath d=%27M6,9 Q50,0 94,9 L94,42 Q94,84 50,101 Q6,84 6,42 Z%27 fill=%27%23003f87%27/%3E%3Cpath d=%27M6,9 Q50,0 94,9 L94,29 L6,29 Z%27 fill=%27%23c8102e%27/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Overpass:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <header class="sign">
+    <svg class="shield" viewBox="0 0 100 105" role="img" aria-label="Interstate 495">
+      <defs>
+        <clipPath id="sh"><path d="M6,9 Q50,0 94,9 L94,42 Q94,84 50,101 Q6,84 6,42 Z"/></clipPath>
+      </defs>
+      <path d="M6,9 Q50,0 94,9 L94,42 Q94,84 50,101 Q6,84 6,42 Z" fill="#fff"/>
+      <g clip-path="url(#sh)" transform="translate(50 52) scale(0.88) translate(-50 -52)">
+        <rect x="0" y="0" width="100" height="105" fill="#003f87"/>
+        <rect x="0" y="0" width="100" height="29" fill="#c8102e"/>
+      </g>
+      <text x="50" y="76" text-anchor="middle" font-family="Overpass, Arial, sans-serif" font-weight="800" font-size="34" fill="#fff">495</text>
+    </svg>
+    <div>
+      <h1>Long Island Expressway</h1>
+      <p class="sub">Traffic speed analytics from public NYSDOT cameras (student prototype)</p>
+    </div>
+    <nav aria-label="Main">
+      <a href="/#map" data-view="map">Map</a>
+      <a href="/#events" data-view="events">Speed estimates</a>
+      <a href="/calibrate">Calibrate a camera</a>
+      <a href="/about">About and ethics</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="app" id="view-map">
+      <div id="map" role="region" aria-label="Map of LIE cameras"></div>
+      <aside id="panel" aria-live="polite">
+        <p class="muted">Loading cameras…</p>
+      </aside>
+    </section>
+
+    <section id="view-events" class="prose" hidden>
+      <h2>Speed estimates</h2>
+      <p>Every row is one anonymous vehicle track. Estimates carry a 1-sigma uncertainty; a vehicle is flagged only
+        when its estimate minus the margin (the larger of 2 sigma and 3 mph) is still above the posted limit.</p>
+      <p><label><input type="checkbox" id="over-only"> Show flagged estimates only</label></p>
+      <div id="events-table"><p class="muted">Loading…</p></div>
+    </section>
+  </main>
+
+  <footer class="disclaimer">
+    <span>Speeds are estimates with stated uncertainty, for traffic analytics only. They are not evidence of any
+      violation, and no vehicle or person is identified.</span>
+    <span>Video: NYSDOT / 511NY public cameras. Map: © OpenStreetMap contributors.</span>
+    <a href="/about">How this works</a>
+  </footer>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="/static/app.js"></script>
+</body>
+</html>
