@@ -70,16 +70,37 @@ def _cxcywh(b: Box) -> Tuple[float, float, float, float]:
     return ((b[0] + b[2]) / 2.0, (b[1] + b[3]) / 2.0, b[2] - b[0], b[3] - b[1])
 
 
+def affinity(pred: Box, det: Box, iou_threshold: float, center_gate: float) -> float:
+    """How well a detection fits a track's predicted box; 0 = no match.
+
+    Normally IoU. But a 10-pixel face that moved 4 pixels barely overlaps its old box, so if the
+    IoU is too low we fall back to centre distance: a detection whose centre is within
+    `center_gate` face-sizes of the prediction still matches, scored below any real IoU match.
+    """
+    ov = iou(pred, det)
+    if ov >= iou_threshold:
+        return ov
+    if center_gate <= 0:
+        return 0.0
+    size = max(pred[2] - pred[0], pred[3] - pred[1], det[2] - det[0], det[3] - det[1], 1e-6)
+    dx = (pred[0] + pred[2] - det[0] - det[2]) / 2.0
+    dy = (pred[1] + pred[3] - det[1] - det[3]) / 2.0
+    ratio = (dx * dx + dy * dy) ** 0.5 / (center_gate * size)
+    area_p, area_d = box_area(pred), box_area(det)
+    similar_size = min(area_p, area_d) / max(area_p, area_d, 1e-9) > 0.25
+    return iou_threshold * (1.0 - ratio) if ratio < 1.0 and similar_size else 0.0
+
+
 def _greedy_match(tracks: Sequence[Track], dets: Sequence[Face], stamp: float,
-                  threshold: float) -> List[Tuple[int, int]]:
-    """Return (track_index, det_index) pairs, best IoU first, each index used once."""
+                  threshold: float, center_gate: float = 0.0) -> List[Tuple[int, int]]:
+    """Return (track_index, det_index) pairs, best affinity first, each index used once."""
     pairs = []
     for ti, t in enumerate(tracks):
         pb = t.predicted_box(stamp)
         for di, d in enumerate(dets):
-            overlap = iou(pb, d.box)
-            if overlap >= threshold:
-                pairs.append((overlap, ti, di))
+            a = affinity(pb, d.box, threshold, center_gate)
+            if a > 0:
+                pairs.append((a, ti, di))
     pairs.sort(reverse=True)
     used_t, used_d, out = set(), set(), []
     for _, ti, di in pairs:
@@ -93,7 +114,8 @@ def _greedy_match(tracks: Sequence[Track], dets: Sequence[Face], stamp: float,
 class IouTracker:
     def __init__(self, iou_threshold: float = 0.3, low_iou_threshold: float = 0.5,
                  high_score: float = 0.6, low_score: float = 0.3, min_hits: int = 2,
-                 max_age_s: float = 1.0, smoothing: float = 0.6, max_tracks: int = 32) -> None:
+                 max_age_s: float = 1.0, smoothing: float = 0.6, max_tracks: int = 32,
+                 center_gate: float = 1.0) -> None:
         if not 0.0 < smoothing <= 1.0:
             raise ValueError("smoothing is the weight of the new detection, in (0, 1]")
         if low_score > high_score:
@@ -106,6 +128,7 @@ class IouTracker:
         self.max_age_s = max_age_s
         self.smoothing = smoothing
         self.max_tracks = max_tracks
+        self.center_gate = center_gate  # in face sizes; 0 disables the small-face fallback
         self.tracks: List[Track] = []
         self._next_id = 1
 
@@ -148,7 +171,7 @@ class IouTracker:
 
         # Pass 1: high-score detections.
         matched_t, used_high = set(), set()
-        for ti, di in _greedy_match(self.tracks, high, stamp, self.iou_threshold):
+        for ti, di in _greedy_match(self.tracks, high, stamp, self.iou_threshold, self.center_gate):
             self._absorb(self.tracks[ti], high[di], stamp)
             matched_t.add(ti)
             used_high.add(di)

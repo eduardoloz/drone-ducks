@@ -104,6 +104,30 @@ def test_prediction_follows_velocity_for_matching():
     assert [tk.track_id for tk in tr.tracks] == [1]
 
 
+def test_tiny_noisy_face_keeps_one_identity():
+    """A ~9 px face (a person ~9 m away at 640 px) jittering by 1 px and drifting 3 px/frame
+    barely overlaps itself frame to frame; the centre-distance fallback keeps one track."""
+    rng = random.Random(5)
+    tr = IouTracker(center_gate=1.0)
+    for i in range(60):
+        cx = 200 + 3.0 * i + rng.gauss(0, 1.0)
+        tr.update([face(cx, 240 + rng.gauss(0, 1.0), 9 + rng.gauss(0, 0.5))], stamp=i / 15)
+    assert [t.track_id for t in tr.tracks] == [1]
+    tr_no_gate = IouTracker(center_gate=0.0, smoothing=1.0)
+    rng = random.Random(5)
+    for i in range(60):
+        cx = 200 + 6.0 * i + rng.gauss(0, 1.0)
+        tr_no_gate.update([face(cx, 240, 9)], stamp=i / 15)
+    assert tr_no_gate.tracks[-1].track_id > 1        # pure IoU fragments into many tracks
+
+
+def test_centre_gate_does_not_merge_far_apart_faces():
+    tr = IouTracker(center_gate=1.0)
+    for i in range(5):
+        tr.update([face(100, 100, 20), face(160, 100, 20)], stamp=i * 0.05)
+    assert sorted(t.track_id for t in tr.tracks) == [1, 2]
+
+
 def test_bad_tracker_args():
     with pytest.raises(ValueError):
         IouTracker(smoothing=0.0)
