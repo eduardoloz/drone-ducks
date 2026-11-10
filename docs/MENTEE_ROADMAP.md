@@ -20,6 +20,18 @@ Everyone does Week 0 onboarding. Each mentee owns one track and helps on a secon
  website (map, events)          Jetson bring-up (hardware)       TypeFly: "find the chair"
 ```
 
+## Where things stand (2026-11-10, end of round 1)
+
+All three tracks are merged into `eduardo`, and every test suite passes from a clean checkout. Each folder's README has its quickstart.
+
+| Track | Works today (verified on Eddie's Intel Mac) | Not yet |
+|---|---|---|
+| **A. CCTV** | 129-camera LIE manifest. The LIE cameras on opencctv.org come from NYSDOT/511NY as 15 fps HLS video. About 40–45 Nassau/Suffolk cameras look good enough for per-vehicle speeds. One camera (R10_041) is calibrated end to end: 54 of 62 vehicles got speeds, median 57 mph, σ ≈ 1.7 mph. Site on `:8010`. 42 tests | Ground-truth speeds, more calibrated cameras, live ingest (needs 511NY developer access), night accuracy |
+| **B. Sim** | `quackdrone` drone-control core that works without TypeFly, with speed/altitude/fence limits and a velocity watchdog. Standalone launch scripts. `quack_people` world (YuNet finds faces at 1.5–6 m). The camera bridge serves MJPEG at `/video`. The canned-plan "find the chair" works end to end but stops 2.8 m short. 4 SITL flight + 5 failsafe tests pass. 57 unit tests | An LLM-planned run, Apple Silicon/Linux bring-up, follow-person |
+| **C. Jetson** | "What we need" doc (BOM, range maths, safety, legal). Six detector backends; YuNet is the default at ~5 / 11 / 59 ms per frame at 320 / 640 / 1280 px on the Mac CPU. Tracker, face-follow controller, MAVSDK bridge (dry run unless `--fly`), and demo/follow/bench/doctor CLIs. 151 tests | Anything on a real Jetson, a live SITL loop |
+
+**Integration target for M2:** the Jetson follower reads the sim camera's `/video` stream (the walking person in `quack_people`) and sends velocity commands through `quackdrone`'s `Drone.set_velocity_body`. That reuses the sim's watchdog instead of building a second MAVSDK layer.
+
 ## Who does what (proposed; confirm at Friday's meeting)
 
 | Mentee | Primary track | Why | Secondary |
@@ -68,13 +80,19 @@ Folder `cctv/`, branch `eduardo-cctv-footage`. Design: `cctv/docs/ARCHITECTURE.m
 
 | | Task | Suggested owner | Done when |
 |---|---|---|---|
-| M1 | Run the pipeline on a recorded LIE clip; hand-calibrate one camera from the lane dashes (10 ft dash, 30 ft gap) | Stephen | Speed histogram for one clip looks plausible, with the median near the actual traffic speed |
-| M1 | Website skeleton: map of LIE cameras and an events table read from the SQLite DB | Donald | Page loads at `localhost:8010` with real data |
-| M2 | Continuous ingest from several cameras, with camera-moved (PTZ) detection | Stephen | Runs unattended for 1 h |
-| M2 | Validation drive: a passenger logs phone GPS while the car passes a calibrated camera at a steady, legal speed | Stephen + Donald | Error table comparing estimate vs GPS |
+| M1 | Quickstart from `cctv/README.md`: record 60 s from R10_041 (`python -m cctv.ingest`), run `python -m cctv.pipeline`, and view the result on `:8010` | Stephen | Your own run shows up on the site |
+| M1 | Calibrate a **second** camera (R10_011, R10_014, R10_017, R10_019 or R10_044): `/calibrate` page, then `python -m cctv.calibrate fit`, then `python -m cctv.error_budget` | Stephen | Reprojection error and error budget pasted in the PR |
+| M1 | Get the site running and add a per-camera stats view: speed distribution by hour, % over the limit | Donald | Page shows real data from your DB |
+| M2 | Ground truth. Compare the Queens cameras with NYC DOT's published link speeds (dataset `i4gi-tjb9`). Also do a validation drive: a passenger logs phone GPS while the car passes a calibrated camera at a steady, legal speed | Stephen + Donald | Error table, estimate vs truth |
+| M2 | Several calibrations per camera, one per pan-tilt-zoom preset. The operator turned R10_041 around within an hour of calibration | Stephen | The camera-moved check selects the matching calibration |
+| M2 | Live ingest workers for 4–5 cameras, **only after the 511NY developer request is approved** | Stephen | Runs unattended for 1 h |
 | M3 | Accuracy write-up and demo video | Track | Numbers with error bars in the README |
 
-**Rules:** no licence-plate reading and no identifying people or vehicles. Speeds are estimates, not enforcement. Follow the camera feeds' terms of use. Validation drives are always legal speed, and the *passenger* handles the phone.
+**Rules:**
+- No licence-plate reading and no identifying people or vehicles.
+- Speeds are estimates, not enforcement.
+- Follow the camera feeds' terms of use. NYC DOT cameras need a signed agreement, so we don't use them.
+- Validation drives are always at legal speed, and the *passenger* handles the phone.
 
 ## Track B: drone simulation
 
@@ -84,12 +102,14 @@ Folder `sim/`, branch `eduardo-drone-sim`. Design: `sim/docs/ARCHITECTURE.md`.
 
 | | Task | Suggested owner | Done when |
 |---|---|---|---|
-| M1 | Sim runs on your own laptop; the basic-moves test passes | Junwei | Screen recording |
-| M1 | "Find the chair and fly to it" through the skill layer, no LLM | Junwei | Drone stops within ~1 m of the chair |
+| M1 | Quickstart from `sim/README.md` on your own laptop: `scripts/start_sim.sh`, then `scripts/py.sh examples/01_takeoff_square_land.py`, then `scripts/stop_sim.sh`. Note your OS, chip and how long each step took | Junwei (everyone on B) | The square flight lands where it took off, and your notes are in the PR |
+| M1 | Chair demo with the canned plan: `scripts/setup_typefly.sh`, then `scripts/py.sh typefly/e2e_check.py --no-llm`. It stops 2.8 m short today; get it within 1 m | Junwei | Within 1 m, recorded |
 | M2 | Same demo via the LLM, with an API spending cap | Junwei | Demo video |
-| M2 | Failsafe tests: setpoint loss, geofence breach, our script crashing mid-flight | Max or Stephen | Each behaves as documented in the failsafe matrix |
-| M2 | Person in the world + follow-person using Track C's controller | Junwei + Track C | Drone keeps the walking person centred |
+| M2 | Run the SITL failsafe suite on your machine and add RC-loss / `COM_OBL_RC_ACT` cases | Max or Stephen | New cases pass and the failsafe matrix is updated |
+| M2 | **Follow-person in sim** (with Track C): the follower reads `/video` from the `quack_people` world and commands `Drone.set_velocity_body` | Junwei + Track C | Drone keeps the walking person centred |
 | M3 | Demo video | Track | |
+
+**Heads-up:** native `mavsdk` 4.x needs macOS 15+ (and JetPack 5+ on a Jetson). On older Macs, writing a `mavsdk_grpc` backend for `quackdrone` is a good first task.
 
 **Learn:** PX4 architecture, NED, async Python with MAVSDK, SDF worlds, QGroundControl. Optional: a PID-detuning demo in QGroundControl to *see* what PX4's loops do.
 
@@ -101,19 +121,38 @@ Folder `jetson/`, branch `eduardo-jetson-face`. Research: `jetson/docs/WHAT_WE_N
 
 | | Task | Suggested owner | Done when |
 |---|---|---|---|
-| M1 | Face detection on your webcam (laptop-runnable backend), plus an FPS benchmark | Max | Numbers in the README, labelled with hardware |
-| M1 | Face-follow controller dry run on the webcam: the HUD shows the commands it *would* send | Max | Moving your face left makes it say "yaw left" |
-| M2 | Controller → SITL through the MAVSDK bridge (with Track B) | Max + Junwei | Sim drone yaws to keep the sim person centred |
-| M2 | Hardware decision and order: Jetson model, camera, power, mount | Eddie | Parts ordered |
-| M3 | Jetson bring-up when hardware arrives: fast backend, props-off bench test | Max | Jetson FPS in the README |
+| M1 | Quickstart from `jetson/README.md`: `python -m jetson.fetch models`, then `python -m jetson.demo --source 0 --show` on your webcam, then `python -m jetson.bench` | Max | Your FPS numbers in the PR, labelled with your hardware |
+| M1 | Calibrate `--face-width` at 3 m and 5 m with a tape measure, so the distance estimates are right | Max | Table of measured vs estimated distance |
+| M1 | Add velocity feed-forward to the controller. Proportional control alone trails a walking person: 6.1 m behind instead of the 4 m target at 0.8 m/s | Max | The closed-loop test shows the gap closing |
+| M2 | Follow-person in SITL (with Track B), through `quackdrone` rather than a second MAVSDK layer | Max + Junwei | Sim drone keeps the person centred |
+| M2 | Hardware: SBU EH&S pre-approval, then order the parts (see `jetson/docs/WHAT_WE_NEED.md`) | Eddie | Parts ordered |
+| M3 | Jetson bring-up when the hardware arrives, following `jetson/docs/BRINGUP_CHECKLIST.md`, ending with a props-off bench test | Max | Jetson FPS in the README |
 
 ## Open decisions for Eddie
 
-1. **Track assignments**: confirm on Friday and ask Max and Donald what they want.
-2. **Hardware and budget**: the drone (Holybro X500 V2 + Pixhawk 6C matches the sim airframe), the Jetson (see Track C's doc), and who pays.
-3. **Compute for CCTV at scale**: more than one or two live cameras needs a GPU box. Get the server owners' OK before using a lab server for a mentee project.
-4. **LLM budget** for TypeFly demos: an API key with a hard spending cap.
-5. **When `eduardo` gets pushed** and later merged into `main`.
+1. **Track assignments**: confirm on Friday, ask Max and Donald what they want, and confirm whether Ricky (`rickyliu3095-cell`) is Junwei.
+2. **SBU rules before buying or flying.** `jetson/docs/WHAT_WE_NEED.md` cites SBU's Drone Safety Policy (EH&S, Dec 2024):
+   - Buying or flying a drone for university work needs **EH&S pre-approval**.
+   - Project flights need a **Part 107** remote pilot. Who gets certified?
+   - The SBU R&D Park has an FAA-recognised flying field (FRIA).
+3. **Hardware and budget.**
+   - Jetson: start on an original Jetson Nano if we already own one. Otherwise buy an **Orin Nano Super** ($399, often backordered; about $503 for the whole Orin kit).
+   - Drone: Holybro X500 V2 + Pixhawk 6C, which matches the sim airframe.
+   - Camera: buy a module that explicitly says **IMX219**. New RPi Camera v2 units use a sensor with no Jetson driver.
+   - Remote ID: buy a module on the **FAA-accepted list**. Holybro's isn't accepted for home-built drones.
+   - Who pays?
+4. **511NY developer access** (free request form) before any continuous CCTV ingest. Also ask NYSDOT whether ~26 Mbit/s of continuous video pulls is OK.
+5. **Before pushing `eduardo` (drone-ducks is a public repo):** is it OK to keep three small NYSDOT camera stills in git (a 52 KB empty-road reference frame and two doc images), plus the raw 511NY camera-list snapshot? 511NY's terms allow redistribution with attribution, a last-updated time and their disclaimer.
+6. **Real-drone PX4 parameters:**
+   - `COM_RC_OVERRIDE=3`. With the default, moving the RC sticks does *not* take control back from Offboard.
+   - `MAV_1_CONFIG=102` so the Jetson can talk MAVLink on TELEM2.
+   - An RTL altitude far below the 60 m default.
+   - A choice for `COM_OBL_RC_ACT`.
+7. **TypeFly:** keep our patch on a pinned upstream clone, or offer the PX4 platform to upstream TypeFly?
+8. **Detector licences:** YuNet is MIT, SCRFD is research-only and YOLO-face is AGPL. Are the last two OK for internal experiments only?
+9. **LLM budget** for TypeFly demos: an API key with a hard spending cap.
+10. **GPU for CCTV at scale:** one T4 handles about 85 cameras at 7.5 fps, roughly $250/month if it only runs in daylight. Lab servers need their owners' OK.
+11. **When `eduardo` gets pushed** and later merged into `main`.
 
 ## How we work
 
