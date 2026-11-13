@@ -132,3 +132,14 @@ def test_committed_link_snapshot_has_queens_cameras():
     snap = json.loads(nl.LINKS_SNAPSHOT.read_text())
     cams = {(c["camera_id"], c["direction"]) for c in snap["camera_links"]}
     assert ("R11_140", "EB") in cams and ("R11_141", "WB") in cams
+
+
+def test_bad_status_rows_are_skipped_and_quality_flags_them():
+    t0 = datetime(2026, 11, 13, 17, 0, 0, tzinfo=timezone.utc)
+    t1 = datetime(2026, 11, 13, 17, 2, 0, tzinfo=timezone.utc)
+    rows = _rows() + [{"link_id": "1", "speed": "114.3", "status": "-101", "data_as_of": "2026-11-13T12:01:00.000"}]
+    r = nl.link_speed_near(rows, "1", t0, t1)
+    assert r["skipped_bad_status"] == 1 and r["mean_mph"] == pytest.approx(50.0)
+    assert nl.link_speed_near(rows, "1", t0, t1, ok_status=None)["n_rows"] == 3
+    q = nl.link_quality(rows)[0]
+    assert q["rows"] == 5 and q["status_counts"] == {"0": 4, "-101": 1} and q["implausible_rows"] == 1

@@ -19,6 +19,11 @@ What can and cannot be compared (read before quoting a number):
   Free-flow periods are where agreement is a meaningful test.
 * ``data_as_of`` is a floating timestamp with no zone. We assume New York
   local time (``--data-tz``); check it against the live site if in doubt.
+* Link quality varies a lot (measured 2026-11-12, 02:00-05:00, light traffic): the
+  WB Little Neck Pkwy link read a plausible 54.7 mph median, but EB 84th-108th St
+  read 20.8 mph (overnight work zone, or a bad link?) and WB 108th-84th St rows all
+  had status -101 with 0-114 mph. Rows with status other than "0" are skipped
+  by default; run ``quality`` before trusting a link.
 * The API is sometimes stale (response header ``X-SODA2-Data-Out-Of-Date``).
   Rows further than ``--max-gap-min`` from the clip are not used.
 
@@ -26,6 +31,7 @@ Commands (run from the repo root)::
 
     python -m cctv.groundtruth.nyc_links links                 # LIE links + nearby cameras (writes a snapshot)
     python -m cctv.groundtruth.nyc_links fetch --start 2026-11-13T12:00 --end 2026-11-13T14:00
+    python -m cctv.groundtruth.nyc_links quality               # is each link plausible (night free flow, status)?
     python -m cctv.groundtruth.nyc_links compare               # our runs vs link speeds -> table
 """
 
@@ -199,22 +205,31 @@ def parse_data_as_of(s: str, data_tz: ZoneInfo = NY_TZ) -> datetime:
     return (dt if dt.tzinfo else dt.replace(tzinfo=data_tz)).astimezone(timezone.utc)
 
 
+OK_STATUS = ("0",)   # observed: status "-101" rows carry 0-114 mph noise at 3 am; meaning undocumented
+
+
 def link_speed_near(rows: list[dict[str, Any]], link_id: str, t0: datetime, t1: datetime,
-                    max_gap_min: float = 10.0, data_tz: ZoneInfo = NY_TZ) -> dict[str, Any] | None:
+                    max_gap_min: float = 10.0, data_tz: ZoneInfo = NY_TZ,
+                    ok_status: tuple[str, ...] | None = OK_STATUS) -> dict[str, Any] | None:
     """Link speed for a clip spanning [t0, t1] (UTC): rows inside the clip window +- max_gap_min.
 
     Returns the mean of those rows, the row nearest the clip midpoint, and how far
-    that row is from the midpoint. None when no row is close enough.
+    that row is from the midpoint. None when no usable row is close enough. Rows
+    whose ``status`` is not in ``ok_status`` are skipped and counted.
     """
     mid = t0 + (t1 - t0) / 2
     lo, hi = t0 - timedelta(minutes=max_gap_min), t1 + timedelta(minutes=max_gap_min)
-    sel = []
+    sel, skipped = [], 0
     for r in rows:
         if str(r.get("link_id")) != str(link_id) or r.get("speed") in (None, ""):
             continue
         ts = parse_data_as_of(r["data_as_of"], data_tz)
-        if lo <= ts <= hi:
-            sel.append((ts, float(r["speed"]), r.get("status")))
+        if not lo <= ts <= hi:
+            continue
+        if ok_status is not None and str(r.get("status")) not in ok_status:
+            skipped += 1
+            continue
+        sel.append((ts, float(r["speed"]), r.get("status")))
     if not sel:
         return None
     nearest = min(sel, key=lambda s: abs((s[0] - mid).total_seconds()))
@@ -222,7 +237,26 @@ def link_speed_near(rows: list[dict[str, Any]], link_id: str, t0: datetime, t1: 
             "min_mph": float(min(s[1] for s in sel)), "max_mph": float(max(s[1] for s in sel)),
             "nearest_mph": nearest[1], "nearest_status": nearest[2],
             "nearest_offset_s": round((nearest[0] - mid).total_seconds()),
-            "nearest_as_of_utc": nearest[0].isoformat(timespec="seconds")}
+            "nearest_as_of_utc": nearest[0].isoformat(timespec="seconds"), "skipped_bad_status": skipped}
+
+
+def link_quality(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """Per-link sanity summary of fetched rows: is this link usable as ground truth at all?"""
+    by: dict[str, list[dict[str, Any]]] = {}
+    for r in rows:
+        by.setdefault(f"{r['link_id']} {r.get('link_name', '')}".strip(), []).append(r)
+    out = []
+    for name, rs in sorted(by.items()):
+        sp = np.array([float(r["speed"]) for r in rs if r.get("speed") not in (None, "")])
+        status: dict[str, int] = {}
+        for r in rs:
+            status[str(r.get("status"))] = status.get(str(r.get("status")), 0) + 1
+        out.append({"link": name, "rows": len(rs), "status_counts": status,
+                    "median_mph": round(float(np.median(sp)), 1) if len(sp) else None,
+                    "p10_mph": round(float(np.percentile(sp, 10)), 1) if len(sp) else None,
+                    "p90_mph": round(float(np.percentile(sp, 90)), 1) if len(sp) else None,
+                    "implausible_rows": int(np.sum((sp <= 0) | (sp > 90)))})
+    return out
 
 
 def our_runs(con: sqlite3.Connection, camera_ids: Iterable[str]) -> list[dict[str, Any]]:
@@ -375,6 +409,24 @@ def cmd_compare(args) -> None:
         print("(no comparable rows: is direction_labels set in the calibration? are link rows near the clip times?)")
 
 
+def cmd_quality(args) -> None:
+    rows: list[dict[str, Any]] = []
+    for f in sorted(CACHE_DIR.glob("speeds_*.json")):
+        d = json.loads(f.read_text())
+        if args.window and args.window not in f.name:
+            continue
+        rows += d["rows"]
+    seen, uniq = set(), []
+    for r in rows:   # overlapping fetches
+        k = (r["link_id"], r["data_as_of"])
+        if k not in seen:
+            seen.add(k)
+            uniq.append(r)
+    for q in link_quality(uniq):
+        print(f"{q['link']:44s} rows {q['rows']:4d}  median {q['median_mph']} mph (p10 {q['p10_mph']}, "
+              f"p90 {q['p90_mph']})  status {q['status_counts']}  implausible {q['implausible_rows']}")
+
+
 def main(argv: list[str] | None = None) -> None:
     from cctv import store
 
@@ -387,13 +439,15 @@ def main(argv: list[str] | None = None) -> None:
     f.add_argument("--start", required=True)
     f.add_argument("--end", required=True)
     f.add_argument("--link", action="append", help="link id (repeatable); default: links with cameras on them")
+    q = sub.add_parser("quality", help="sanity summary of cached link rows (is a link usable as ground truth?)")
+    q.add_argument("--window", help="only cache files whose name contains this, e.g. 20261112T0200")
     c = sub.add_parser("compare", help="our runs vs link speeds")
     c.add_argument("--db", type=Path, default=store.DEFAULT_DB)
     c.add_argument("--max-gap-min", type=float, default=10.0)
     c.add_argument("--fetch-missing", action="store_true", help="also fetch +-30 min of link rows around each run")
     c.add_argument("--json", help="also write the table as JSON")
     args = ap.parse_args(argv)
-    {"links": cmd_links, "fetch": cmd_fetch, "compare": cmd_compare}[args.cmd](args)
+    {"links": cmd_links, "fetch": cmd_fetch, "quality": cmd_quality, "compare": cmd_compare}[args.cmd](args)
 
 
 if __name__ == "__main__":
