@@ -18,7 +18,12 @@ Rules (all here, all unit-tested in tests/test_lock.py):
      controller gets a *virtual face box* = learned geometry applied to the body box, so its
      distance estimate (which assumes a face width) keeps working unchanged.
   4. While following the body, a face that appears inside that body becomes the target face again
-     (re-acquired). Faces outside the target body are ignored: a bystander never steals the lock.
+     (re-acquired), but only once it is *confirmed*: linked to the body and freshly detected in
+     `confirm_hits` consecutive frames, or once with score >= `confirm_score` (the same rule as
+     jetson.relock.RelockGate). Until then the body keeps steering and the candidate is treated as
+     a bystander. Why: in SITL (sim/docs/runs/r3-turnaway-body.csv.gz) YuNet fired on the back of
+     the walker's head at 5-6 m and each one-to-few-frame hit was taken as re-acquisition.
+     Faces outside the target body are ignored: a bystander never steals the lock.
   5. Body following is capped at `max_body_only_s` without seeing the face. Body tracks can swap
      identity when two people cross; the cap bounds how long a swap could be followed. Then LOST.
   6. Face and body both gone -> nothing (the controller hovers, then times out). For
@@ -151,8 +156,14 @@ def _whole(body: Box, frame_h: int, margin: float = 2.0) -> bool:
 class LockKeeper:
     def __init__(self, selector: Optional[TargetSelector] = None, max_body_only_s: float = 15.0,
                  learn_rate: float = 0.2, min_link_score: float = 0.15,
-                 reacquire_holdoff_s: Optional[float] = None) -> None:
+                 reacquire_holdoff_s: Optional[float] = None, confirm_hits: int = 3,
+                 confirm_score: Optional[float] = 0.9) -> None:
+        if confirm_hits < 1:
+            raise ValueError("confirm_hits must be >= 1")
         self.selector = selector or TargetSelector()
+        # Body -> face hand-back confirmation (rule 4). confirm_hits=1, confirm_score=None = round 2.
+        self.confirm_hits = confirm_hits
+        self.confirm_score = confirm_score
         self.reacquire_holdoff_s = reacquire_holdoff_s
         self.max_body_only_s = max_body_only_s
         self.learn_rate = learn_rate
@@ -165,6 +176,9 @@ class LockKeeper:
         self.face_last_seen: Optional[float] = None
         self._was_body = False
         self._lost_at: Optional[float] = None   # when face and body were both lost
+        self._cand_id: Optional[int] = None     # face track waiting for hand-back confirmation
+        self._cand_streak = 0
+        self.handback_blocked = 0               # frames a candidate face was held back (logs/tests)
 
     @property
     def face_id(self) -> Optional[int]:
@@ -176,6 +190,16 @@ class LockKeeper:
         else:
             self.selector.target_id = track.track_id
 
+    def _confirm(self, cand: Track) -> bool:
+        """Rule 4: count consecutive fresh frames of the same candidate face inside the body."""
+        if cand.misses > 0:
+            self._cand_streak = 0
+            return False
+        self._cand_streak = self._cand_streak + 1 if cand.track_id == self._cand_id else 1
+        self._cand_id = cand.track_id
+        return self._cand_streak >= self.confirm_hits or (
+            self.confirm_score is not None and cand.score >= self.confirm_score)
+
     def update(self, faces: Sequence[Track], bodies: Sequence[Track], frame_w: int, frame_h: int,
                stamp: float) -> LockState:
         faces_by_id = {t.track_id: t for t in faces}
@@ -186,15 +210,33 @@ class LockKeeper:
         if self.body_id is not None and body is None:
             self.body_id = None  # body track died
 
-        # Face gone: try to re-acquire it through the body before anything else.
+        # Face gone: try to re-acquire it through the body before anything else. A face inside the
+        # target body only takes over once confirmed (rule 4); so does the old face track coming
+        # back to life after the body has been steering (it may have latched onto a false face).
         reacquired = False
+        held = False   # the face track is alive but its hand-back is not confirmed yet
+        candidate: Optional[Track] = None
         if face is None and body is not None:
             for fid, bid in links.items():
                 if bid == body.track_id:
-                    face = faces_by_id[fid]
-                    self._adopt_face(face)
-                    reacquired = self._was_body
+                    candidate = faces_by_id[fid]
                     break
+        elif face is not None and self._was_body and face.misses == 0:
+            candidate = face
+        if candidate is not None:
+            if self._confirm(candidate):
+                if face is None:
+                    face = candidate
+                    self._adopt_face(face)
+                reacquired = self._was_body
+            else:
+                self.handback_blocked += 1
+                held = face is not None
+        elif face is not None and self._was_body and face.track_id == self._cand_id:
+            held = True   # coasting on an unconfirmed hit: still not the target
+            self._cand_streak = 0
+        if reacquired or (candidate is None and not held):
+            self._cand_id, self._cand_streak = None, 0
 
         # Never had a face (or lost face and body): acquire by face only (rule 1).
         if face is None and body is None:
@@ -209,7 +251,7 @@ class LockKeeper:
             if face is not None:
                 self._lost_at = None
 
-        face_fresh = face is not None and face.misses == 0
+        face_fresh = face is not None and face.misses == 0 and not held
         if face_fresh:
             self.face_last_seen = face.last_seen
             bid = links.get(face.track_id)
@@ -233,7 +275,7 @@ class LockKeeper:
                 and stamp - self.face_last_seen > self.max_body_only_s:
             self.body_id = None  # rule 5: give up on the body
             body = None
-        if face is not None:  # face only coasting and no fresh body: let the controller age it out
+        if face is not None and not held:  # face only coasting, no fresh body: controller ages it out
             return LockState(face, body, face.box, face.last_seen, "face")
         if body is not None:  # body coasting too
             box = self.geometry.virtual_face(body.box, _whole(body.box, frame_h))

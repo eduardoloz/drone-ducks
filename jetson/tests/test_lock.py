@@ -340,3 +340,86 @@ def test_hud_blurs_every_face_while_following_the_body():
     x1, y1, x2, y2 = (int(v) for v in BYSTANDER_FACE)
     # blurred region: far less high-frequency detail than the random-noise original
     assert out[y1 + 5:y2 - 5, x1 + 5:x2 - 5].std() < 0.5 * img[y1 + 5:y2 - 5, x1 + 5:x2 - 5].std()
+
+
+# ----------------------------------------------------------------------------- round 4: hand-back confirmation
+def _low(tid, box, misses=0, last_seen=0.0, score=0.6):
+    return Track(tid, box, score, first_seen=0.0, last_seen=last_seen, misses=misses, confirmed=True)
+
+
+def _into_body_following():
+    k = LockKeeper()
+    k.update([trk(1, FACE)], [trk(10, BODY)], W, H, 0.0)
+    assert k.update([], [trk(10, BODY, last_seen=0.1)], W, H, 0.1).source == "body"
+    return k
+
+
+def test_low_score_face_in_body_needs_three_consecutive_frames():
+    # SITL r3-turnaway-body: YuNet fires on the back of the walker's head for a few frames at a time.
+    k = _into_body_following()
+    for i, t in enumerate((0.2, 0.3)):
+        st = k.update([_low(7, FACE, last_seen=t)], [trk(10, BODY, last_seen=t)], W, H, t)
+        assert st.source == "body" and st.face is None and k.face_id == 1, i
+    st = k.update([_low(7, FACE, last_seen=0.4)], [trk(10, BODY, last_seen=0.4)], W, H, 0.4)
+    assert st.source == "face" and st.face.track_id == 7 and st.reacquired and k.face_id == 7
+    assert k.handback_blocked == 2
+
+
+def test_handback_streak_restarts_after_a_miss():
+    k = _into_body_following()
+    k.update([_low(7, FACE, last_seen=0.2)], [trk(10, BODY, last_seen=0.2)], W, H, 0.2)
+    k.update([_low(7, FACE, last_seen=0.3)], [trk(10, BODY, last_seen=0.3)], W, H, 0.3)
+    st = k.update([_low(7, FACE, misses=1, last_seen=0.3)], [trk(10, BODY, last_seen=0.4)], W, H, 0.4)
+    assert st.source == "body"
+    for t in (0.5, 0.6):
+        assert k.update([_low(7, FACE, last_seen=t)], [trk(10, BODY, last_seen=t)], W, H, t).source == "body"
+    assert k.update([_low(7, FACE, last_seen=0.7)], [trk(10, BODY, last_seen=0.7)], W, H, 0.7).source == "face"
+
+
+def test_high_score_face_in_body_hands_back_at_once():
+    k = _into_body_following()
+    st = k.update([_low(7, FACE, last_seen=0.2, score=0.95)], [trk(10, BODY, last_seen=0.2)], W, H, 0.2)
+    assert st.source == "face" and st.reacquired
+
+
+def test_old_face_track_resuming_after_body_steering_is_also_confirmed():
+    # The coasting target face track can latch onto a back-of-head detection: no free pass.
+    k = LockKeeper()
+    k.update([trk(1, FACE)], [trk(10, BODY)], W, H, 0.0)
+    assert k.update([_low(1, FACE, misses=1)], [trk(10, BODY, last_seen=0.1)], W, H, 0.1).source == "body"
+    for t in (0.2, 0.3):
+        st = k.update([_low(1, FACE, last_seen=t)], [trk(10, BODY, last_seen=t)], W, H, t)
+        assert st.source == "body", t
+    # held candidate never steers, even when the body is not fresh this frame
+    st = k.update([_low(1, FACE, misses=1, last_seen=0.3)], [trk(10, BODY, misses=1, last_seen=0.3)], W, H, 0.35)
+    assert st.source != "face"
+    for t in (0.4, 0.5):
+        k.update([_low(1, FACE, last_seen=t)], [trk(10, BODY, last_seen=t)], W, H, t)
+    st = k.update([_low(1, FACE, last_seen=0.6)], [trk(10, BODY, last_seen=0.6)], W, H, 0.6)
+    assert st.source == "face" and st.reacquired
+
+
+def test_round2_handback_restored_with_confirm_hits_1():
+    k = LockKeeper(confirm_hits=1, confirm_score=None)
+    k.update([trk(1, FACE)], [trk(10, BODY)], W, H, 0.0)
+    k.update([], [trk(10, BODY, last_seen=0.1)], W, H, 0.1)
+    st = k.update([_low(7, FACE, last_seen=0.2)], [trk(10, BODY, last_seen=0.2)], W, H, 0.2)
+    assert st.source == "face" and st.reacquired
+
+
+def test_confirm_hits_must_be_positive():
+    with pytest.raises(ValueError):
+        LockKeeper(confirm_hits=0)
+
+
+SITL_TURNAWAY = os.path.join(os.path.dirname(__file__), "..", "..", "sim", "docs", "runs", "r3-turnaway-body.csv.gz")
+
+
+@pytest.mark.skipif(not os.path.exists(SITL_TURNAWAY), reason="sim run log not in this checkout")
+def test_sitl_turnaway_replay_cuts_back_of_head_handbacks():
+    from jetson.lockeval import handback_replay
+    before = handback_replay(SITL_TURNAWAY, confirm_hits=1, confirm_score=None)
+    after = handback_replay(SITL_TURNAWAY)
+    assert after["false_face"] <= 0.5 * before["false_face"]
+    assert after["false_handbacks"] <= 0.5 * before["false_handbacks"]
+    assert after["genuine_face"] >= 0.9 * before["genuine_face"]

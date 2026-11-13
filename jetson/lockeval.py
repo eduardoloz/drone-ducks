@@ -352,6 +352,50 @@ def clip_eval(path: str, mask_from: int = 30, mask_to: int = 100, max_frames: in
     return results
 
 
+def handback_replay(csv_path: str, confirm_hits: int = 3, confirm_score: Optional[float] = 0.9,
+                    face_score: float = 0.65, fps_hint: float = 13.0) -> Dict[str, float]:
+    """Replay the face-detection pattern of a sim follow log through IouTracker + LockKeeper.
+
+    sim/docs/runs/r3-turnaway-body.csv.gz has, per frame, how many faces YuNet found (`faces`), whether
+    a body was found (`bodies`) and where the walker was facing (`walker_facing_deg`, 0 = towards
+    the drone, +-180 = away). A face while the walker faces away (|facing| > 90) is a false face on
+    the back of the head. Geometry is fixed (one face box inside one body box), detections score
+    `face_score` (unknown in the log), so this measures only the *timing* rule: how many frames the
+    lock would steer by a back-of-head face, and how much a genuine hand-back is delayed.
+    Returns frame counts: false_face (steering by a back-of-head face), genuine_face, handbacks,
+    false_handbacks (body -> face switches while facing away).
+    """
+    import csv
+    import gzip
+
+    from .lock import LockKeeper
+    from .tracker import IouTracker
+
+    opener = gzip.open if csv_path.endswith(".gz") else open
+    with opener(csv_path, "rt") as fh:
+        rows = list(csv.DictReader(fh))
+    face_box, body_box = (232.0, 105.0, 268.0, 150.0), (200.0, 100.0, 300.0, 400.0)
+    ft = IouTracker()
+    bt = IouTracker(high_score=0.5, low_score=0.2, max_age_s=1.0, center_gate=0.0)
+    keeper = LockKeeper(confirm_hits=confirm_hits, confirm_score=confirm_score)
+    out = {"frames": 0, "false_face": 0, "genuine_face": 0, "handbacks": 0, "false_handbacks": 0}
+    prev = ""
+    for r in rows:
+        t = float(r["t"])
+        faces = [Face(*face_box, face_score)] if int(r["faces"] or 0) > 0 else []
+        bodies = [Face(*body_box, 0.8)] if int(r.get("bodies") or 0) > 0 else []
+        st = keeper.update(ft.update(faces, t), bt.update(bodies, t), 640, 480, t)
+        away = r["walker_facing_deg"] not in ("", None) and abs(float(r["walker_facing_deg"])) > 90.0
+        out["frames"] += 1
+        if st.source == "face":
+            out["false_face" if away else "genuine_face"] += 1
+            if prev == "body":
+                out["handbacks"] += 1
+                out["false_handbacks"] += int(away)
+        prev = st.source
+    return out
+
+
 def main(argv: Optional[Sequence[str]] = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     ap.add_argument("--scenario", choices=SCENARIOS, action="append", help="default: all")
