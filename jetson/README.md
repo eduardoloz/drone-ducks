@@ -16,7 +16,7 @@ uv pip install --python jetson/.venv/bin/python -r jetson/requirements.txt
 source jetson/.venv/bin/activate
 python -m jetson.fetch models          # YuNet face (MIT) + YOLOX-nano person (Apache-2.0) -> jetson/models/ (gitignored)
 python -m jetson.fetch media           # NASA public-domain photos + test video -> jetson/media/ (gitignored)
-python -m pytest jetson/tests -q       # 218 tests, ~25 s (15 skip without fetched models/media)
+python -m pytest jetson/tests -q       # 219 tests, ~25 s (15 skip without fetched models/media)
 
 python -m jetson.demo --source toy --out jetson/out/toy.mp4          # closed loop in a toy world
 python -m jetson.demo --source jetson/media/crew_pan.mp4 --out jetson/out/demo.mp4
