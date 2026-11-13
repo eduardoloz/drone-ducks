@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- ProjectQuack people world, TURNAWAY walker variant (body-lock test; otherwise identical to
+     quack_people.sdf): faces for the Jetson face-detection / face-follow track.
+     Gazebo is ENU (x = east, y = north). The drone spawns at the origin facing +x (east).
+
+     Top view (metres):            N (+y)
+                                     .        casual_female (4, 2)
+        drone (0,0) facing east ->   .        standing_person (4, 0)          
+                                     .        female_visitor (4, -2)
+     walker: lane x = -5, y = -12 -> 11 (west of the drone), see the actor comment below.
+     The three static people face the spawn point (examples/04_face_check.py).
+
+     Models (Gazebo Fuel, fetched on first load; pre-fetch with sim/scripts/fetch_models.sh):
+       Standing person, Casual female: OpenRobotics / MakeHuman, CC0-1.0
+       FemaleVisitor: OpenRobotics, CC-BY-4.0 (credit: Open Robotics)
+       walker skin/animation: chapulina "Walking actor", CC0-1.0
+     See sim/docs/ARCHITECTURE.md ("Faces in simulation") for what face detectors make of them. -->
+<sdf version="1.9">
+  <world name="quack_people_turnaway">
+    <physics type="ode">
+      <max_step_size>0.004</max_step_size>
+      <real_time_factor>1.0</real_time_factor>
+      <real_time_update_rate>250</real_time_update_rate>
+    </physics>
+    <gravity>0 0 -9.8</gravity>
+    <magnetic_field>6e-06 2.3e-05 -4.2e-05</magnetic_field>
+    <atmosphere type="adiabatic"/>
+    <scene>
+      <grid>false</grid>
+      <ambient>0.7 0.7 0.7 1</ambient>
+      <background>0.7 0.8 0.95 1</background>
+      <shadows>false</shadows>
+    </scene>
+    <!-- light from behind the drone so the faces are lit -->
+    <light name="sun" type="directional">
+      <pose>0 0 50 0 0 0</pose>
+      <cast_shadows>false</cast_shadows>
+      <intensity>1</intensity>
+      <direction>0.6 0.2 -0.75</direction>
+      <diffuse>0.95 0.95 0.95 1</diffuse>
+      <specular>0.2 0.2 0.2 1</specular>
+    </light>
+
+    <model name="ground_plane">
+      <static>true</static>
+      <link name="link">
+        <collision name="collision">
+          <geometry><plane><normal>0 0 1</normal><size>1 1</size></plane></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><plane><normal>0 0 1</normal><size>200 200</size></plane></geometry>
+          <material><ambient>0.45 0.55 0.4 1</ambient><diffuse>0.45 0.55 0.4 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- ===== static people, facing the spawn point ===== -->
+    <include>
+      <name>standing_person</name>
+      <uri>https://fuel.gazebosim.org/1.0/OpenRobotics/models/Standing person</uri>
+      <pose>4 0 0 0 0 -1.5708</pose>
+    </include>
+    <include>
+      <name>casual_female</name>
+      <uri>https://fuel.gazebosim.org/1.0/OpenRobotics/models/Casual female</uri>
+      <pose>4 2 0 0 0 -1.5708</pose>
+    </include>
+    <include>
+      <name>female_visitor</name>
+      <uri>https://fuel.gazebosim.org/1.0/OpenRobotics/models/FemaleVisitor</uri>
+      <pose>4 -2 0 0 0 -1.5708</pose>
+    </include>
+
+    <!-- ===== a walking person for face+body follow (sim/examples/follow_person.py --person yolox) =====
+         Lane x = -5. Walks north at 0.4 m/s facing the drone (0-25 s), turns round and walks AWAY
+         from the drone for 12 s (25-39 s: ~14 s with no face, longer than the follower's 5 s lost
+         timeout), faces it again and walks north (39-69 s), then turns and walks back at 1.4 m/s.
+         Loop 83.3 s. Mirrored in quackdrone/integrations/walker.py (TURNAWAY): keep in sync
+         (tests/unit/test_walker.py). -->
+    <actor name="walker">
+      <skin>
+        <filename>https://fuel.gazebosim.org/1.0/chapulina/models/Walking actor/2/files/meshes/walk.dae</filename>
+        <scale>1.0</scale>
+      </skin>
+      <animation name="walking">
+        <filename>https://fuel.gazebosim.org/1.0/chapulina/models/Walking actor/2/files/meshes/walk.dae</filename>
+        <scale>1.0</scale>
+        <interpolate_x>true</interpolate_x>
+      </animation>
+      <script>
+        <loop>true</loop>
+        <delay_start>0</delay_start>
+        <auto_start>true</auto_start>
+        <trajectory id="0" type="walking">
+          <!-- actor faces its local +x; yaw = heading of the next leg. z = 1.0: the walk.dae origin is at
+               the hips (with z = 0, as in round 1, the walker was sunk half into the ground) -->
+          <waypoint><time>0.0</time><pose>-5.0 -12.0 1.0 0 0 1.5708</pose></waypoint>
+          <waypoint><time>25.0</time><pose>-5.0 -2.0 1.0 0 0 1.5708</pose></waypoint>
+          <waypoint><time>26.0</time><pose>-5.0 -2.0 1.0 0 0 -1.5708</pose></waypoint>
+          <waypoint><time>38.0</time><pose>-5.0 -6.8 1.0 0 0 -1.5708</pose></waypoint>
+          <waypoint><time>39.0</time><pose>-5.0 -6.8 1.0 0 0 1.5708</pose></waypoint>
+          <waypoint><time>69.0</time><pose>-5.0 5.2 1.0 0 0 1.5708</pose></waypoint>
+          <waypoint><time>70.0</time><pose>-5.0 5.2 1.0 0 0 -1.5708</pose></waypoint>
+          <waypoint><time>82.3</time><pose>-5.0 -12.0 1.0 0 0 -1.5708</pose></waypoint>
+          <waypoint><time>83.3</time><pose>-5.0 -12.0 1.0 0 0 1.5708</pose></waypoint>
+        </trajectory>
+      </script>
+    </actor>
+
+    <spherical_coordinates>
+      <surface_model>EARTH_WGS84</surface_model>
+      <world_frame_orientation>ENU</world_frame_orientation>
+      <latitude_deg>47.397971057728974</latitude_deg>
+      <longitude_deg>8.546163739800146</longitude_deg>
+      <elevation>488</elevation>
+    </spherical_coordinates>
+  </world>
+</sdf>

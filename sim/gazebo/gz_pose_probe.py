@@ -46,7 +46,7 @@ class Handler(BaseHTTPRequestHandler):
 
     def do_GET(self):
         with LOCK:
-            snap = {"sim_time": STATE["sim_time"], "poses": dict(STATE["poses"]),
+            snap = {"world": STATE.get("world"), "sim_time": STATE["sim_time"], "poses": dict(STATE["poses"]),
                     "age_ms": (time.time() - STATE["t"]) * 1e3 if STATE["t"] else None, "msgs": STATE["msgs"]}
         if self.path.startswith("/poses"):
             self._json(snap)
@@ -84,6 +84,7 @@ def main() -> None:
         with LOCK:
             STATE["sim_time"] = msg.sim.sec + msg.sim.nsec * 1e-9
 
+    STATE["world"] = args.world
     node = Node()
     for topic, typ, cb in ((f"/world/{args.world}/pose/info", Pose_V, on_poses),
                            (f"/world/{args.world}/dynamic_pose/info", Pose_V, on_poses),
