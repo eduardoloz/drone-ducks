@@ -2,6 +2,7 @@
 # Start the simulator in tmux and wait until it is ready to fly:
 #   quack-sim   PX4 SITL (+ Gazebo when SIM=gz)          attach: tmux attach -t quack-sim  (pxh> shell)
 #   quack-cam   camera bridge -> http://127.0.0.1:5601    (SIM=gz only; CAMERA=0 to skip)
+#   quack-poses Gazebo ground-truth poses -> http://127.0.0.1:5602/poses (SIM=gz only; POSES=0 to skip)
 #
 #   sim/scripts/start_sim.sh                       # Gazebo, quack_demo world, headless
 #   WORLD=quack_people sim/scripts/start_sim.sh    # people for face-detection tests
@@ -30,6 +31,10 @@ if [ "$SIM" = "gz" ] && [ "${CAMERA:-1}" = "1" ]; then
   echo "[2/2] camera bridge"
   tmux new-session -d -s quack-cam "bash '$S/run_camera_bridge.sh' ${BRIDGE_ARGS:-} 2>&1 | tee '$LOG_DIR/cam.log'"
   wait_for 60 "camera frames on http://127.0.0.1:5601/health" curl -sf -m 2 http://127.0.0.1:5601/health || true
+  # ground-truth poses for follow_person.py logging (cheap; POSES=0 to skip)
+  if [ "${POSES:-1}" = "1" ]; then
+    tmux new-session -d -s quack-poses "bash '$S/run_pose_probe.sh' --world '${WORLD:-quack_demo}' 2>&1 | tee '$LOG_DIR/poses.log'"
+  fi
 else
   echo "[2/2] camera bridge skipped"
 fi

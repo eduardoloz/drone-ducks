@@ -78,4 +78,4 @@ load_params() {
 }
 
 # Our tmux sessions. stop_sim.sh kills exactly these.
-QUACK_SESSIONS="quack-webui quack-vision quack-cam quack-sim"
+QUACK_SESSIONS="quack-webui quack-vision quack-poses quack-cam quack-sim"
