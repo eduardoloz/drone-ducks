@@ -106,6 +106,8 @@ class ControlOutput:
     distance_m: Optional[float] = None
     lost_for_s: Optional[float] = None
     head_yaw_deg: Optional[float] = None  # smoothed head yaw the lateral term used (None = unknown)
+    range_m: Optional[float] = None       # raw box-width (optical-axis depth) estimate; distance_m is
+                                          # the horizontal distance when altitude is known
 
 
 @dataclass
@@ -120,6 +122,15 @@ class FollowConfig:
     target_distance_m: float = 4.0
     min_distance_m: float = 2.5      # closer than this: never fly forward
     target_cy: float = 0.5
+
+    # Altitude-aware distance (round 4). The box width gives range along the camera axis; from
+    # above that is longer than the ground distance (3 m altitude: +0.36 m at 2.5 m in SITL). With
+    # an altitude (telemetry passed to step(), else assumed_altitude_m) the controller holds the
+    # *horizontal* distance (geometry.horizontal_distance). No altitude -> unchanged (slant).
+    assumed_altitude_m: Optional[float] = None  # used only when step() gets no altitude
+    cam_pitch_deg: float = 0.0       # camera tilted down by this much (fallback ray geometry only)
+    target_height_m: float = 1.6     # height of the face centre above the ground
+    horizontal_distance: bool = True  # False: always use the raw range (pre-round-4)
 
     # Proportional gains.
     k_yaw: float = 1.2               # deg/s of yaw rate per deg of bearing error
@@ -264,7 +275,8 @@ class FaceFollowController:
 
         obs:        the followed face (or None when nothing is tracked)
         now:        current time on the same clock as obs.stamp (time.monotonic())
-        altitude_m: height above home if known; only used when enable_vertical is True
+        altitude_m: height above home if known: vertical limits (enable_vertical) and the
+                    horizontal-distance conversion (else config.assumed_altitude_m)
         """
         c = self.config
         if self._first_now is None:
@@ -284,7 +296,8 @@ class FaceFollowController:
         self._last_seen = obs.stamp
         bearing = geometry.bearing_deg(obs.cx, c.hfov_deg)
         elevation = geometry.bearing_deg(obs.cy, c.vfov) - geometry.bearing_deg(c.target_cy, c.vfov)
-        distance = geometry.distance_from_width(obs.w, c.hfov_deg, c.face_width_m)
+        rng = geometry.distance_from_width(obs.w, c.hfov_deg, c.face_width_m)
+        distance = self.ground_distance(rng, obs.cx, obs.cy, altitude_m)
         notes = []
 
         yaw = clamp(c.k_yaw * soft_deadband(bearing, c.yaw_deadband_deg),
@@ -333,7 +346,16 @@ class FaceFollowController:
         if c.k_head_lateral > 0 and head is not None:
             reason += f", head {head:+.0f} deg"
         return ControlOutput(self._cmd, TRACKING, reason, bearing_deg=bearing, elevation_deg=elevation,
-                             distance_m=distance, lost_for_s=0.0, head_yaw_deg=head)
+                             distance_m=distance, lost_for_s=0.0, head_yaw_deg=head, range_m=rng)
+
+    def ground_distance(self, range_m: float, cx: float, cy: float, altitude_m: Optional[float]) -> float:
+        """Distance the controller regulates: horizontal if an altitude is known, else range_m."""
+        c = self.config
+        if not c.horizontal_distance:
+            return range_m
+        alt = altitude_m if altitude_m is not None and math.isfinite(altitude_m) else c.assumed_altitude_m
+        return geometry.horizontal_distance(range_m, cx, cy, c.hfov_deg, c.vfov, alt, c.cam_pitch_deg,
+                                            c.target_height_m)
 
     def _lost_for(self, now: float) -> Optional[float]:
         return None if self._last_seen is None else max(0.0, now - self._last_seen)

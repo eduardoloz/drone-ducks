@@ -115,3 +115,26 @@ def test_render_draws_a_face_where_projected():
     x1, y1, x2, y2 = (int(v) for v in world.face_box())
     face_patch = img[y1:y2, x1:x2].reshape(-1, 3).mean(axis=0)
     assert face_patch[2] > 150                        # skin-ish (red channel high) where the face is
+
+
+@pytest.mark.parametrize("alt,pitch,target", [(3.0, 20.0, 4.0), (5.0, 30.0, 5.0)])
+def test_altitude_aware_distance_holds_the_ground_distance(alt, pitch, target):
+    from jetson.controller import FaceFollowController, FollowConfig
+    res = {}
+    for pa in (False, True):
+        w = ToyWorld(altitude=alt, cam_pitch_deg=pitch, person_n=target + 3)
+        c = FaceFollowController(FollowConfig(target_distance_m=target, cam_pitch_deg=pitch, distance_deadband_m=0.05))
+        h = run_closed_loop(w, c, 30, pass_altitude=pa)
+        res[pa] = sum(x["distance"] for x in h[-60:]) / 60
+    assert abs(res[True] - target) < 0.1           # holds the commanded ground distance
+    assert res[False] < target - 0.15              # slant range: stops too close
+
+
+def test_assumed_altitude_used_when_no_telemetry():
+    from jetson.controller import FaceFollowController, FollowConfig, TargetObservation
+    obs = TargetObservation(0.5, 0.5, 0.05, 0.06, stamp=0.0)
+    raw = FaceFollowController(FollowConfig()).step(obs, 0.0)
+    assumed = FaceFollowController(FollowConfig(assumed_altitude_m=3.0)).step(obs, 0.0)
+    tele = FaceFollowController(FollowConfig(assumed_altitude_m=10.0)).step(obs, 0.0, altitude_m=3.0)
+    assert raw.distance_m == raw.range_m
+    assert assumed.distance_m < raw.distance_m and assumed.distance_m == pytest.approx(tele.distance_m)
