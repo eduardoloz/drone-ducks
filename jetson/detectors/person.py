@@ -20,6 +20,8 @@ Backends (licences checked 2026-11-12, see docs/WHAT_WE_NEED.md section "Person 
                                                                           engine via scripts/export_trt.py
   hog     OpenCV's built-in HOG+SVM people   OpenCV: Apache-2.0           any CPU, no download; slow and
           detector (Dalal-Triggs)                                         upright-full-body only. CI fallback
+  tensorrt  YOLOX-nano engine built on the   as yolox                     Jetson GPU; UNVERIFIED (no hardware)
+          Jetson by scripts/export_trt.py
 
 Considered and NOT used by default: Ultralytics YOLOv8n/YOLO11n (AGPL-3.0: any program that uses
 them over a network or ships them must be AGPL too, or buy a licence), NVIDIA TAO PeopleNet via
@@ -209,7 +211,33 @@ class HogPersonDetector(PersonDetector):
                 "licence": "Apache-2.0 (OpenCV)"}
 
 
-PERSON_BACKENDS = {"yolox": YoloxPersonDetector, "hog": HogPersonDetector}
+def _tensorrt_person(engine: str = "", score_threshold: float = 0.2, nms_threshold: float = 0.45, **_):
+    """YOLOX-nano as a native TensorRT engine (Jetson only, UNVERIFIED without hardware).
+
+    Build it on the Jetson:  python jetson/scripts/export_trt.py yolox
+    Easier alternative with the same speed: --person yolox --person-engine onnxruntime --device tensorrt
+    """
+    from .trt import TensorRTFaceDetector
+
+    class TensorRTPersonDetector(TensorRTFaceDetector, PersonDetector):
+        name = "tensorrt-person"
+
+        def detect(self, frame: np.ndarray) -> List[Face]:
+            iw, ih = self.size
+            blob, r = letterbox(frame, (ih, iw))
+            raw = self._infer(blob)[self.outputs[0]["name"]]
+            return decode_yolox(raw, r, (ih, iw), score_threshold, nms_threshold, frame_shape=frame.shape[:2])
+
+        def info(self) -> Dict[str, object]:
+            d = super().info()
+            d.update(backend=self.name, licence="Apache-2.0")
+            return d
+
+    return TensorRTPersonDetector(engine=engine or model_path(YOLOX_ENGINE))
+
+
+YOLOX_ENGINE = "yolox_nano_416_fp16.engine"
+PERSON_BACKENDS = {"yolox": YoloxPersonDetector, "hog": HogPersonDetector, "tensorrt": _tensorrt_person}
 
 
 def create_person_detector(name: str, **kwargs) -> PersonDetector:

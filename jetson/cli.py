@@ -24,9 +24,10 @@ def add_detector_args(ap: argparse.ArgumentParser, extra_backends=()) -> None:
     g.add_argument("--input-width", type=int, default=640,
                    help="resize frames to this width before detection (speed vs range!)")
     g.add_argument("--score", type=float, default=None, help="detection score threshold")
-    g.add_argument("--person", default="none", choices=("none", "yolox", "hog"),
+    g.add_argument("--person", default="none", choices=("none", "yolox", "hog", "tensorrt"),
                    help="also detect bodies and keep the lock when the face turns away "
-                        "(yolox: Apache-2.0 YOLOX-nano, needs `jetson.fetch models`; hog: OpenCV, slow)")
+                        "(yolox: Apache-2.0 YOLOX-nano, needs `jetson.fetch models`; hog: OpenCV, slow; "
+                        "tensorrt: engine from scripts/export_trt.py, Jetson only)")
     g.add_argument("--person-engine", default="opencv", choices=("opencv", "onnxruntime"),
                    help="yolox runtime (onnxruntime + --device cuda|tensorrt on a Jetson)")
     g.add_argument("--person-every", type=int, default=1, metavar="N",
