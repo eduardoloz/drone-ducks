@@ -147,6 +147,8 @@ class Calibration:
     created_utc: str = ""
     method: str = ""
     notes: str = ""
+    view_id: str | None = None                # PTZ preset this calibration belongs to (see views.py)
+    direction_labels: dict[str, str] | None = None  # {"+": "EB", "-": "WB"}: compass meaning of +X / -X travel
 
     @classmethod
     def fit(cls, camera_id: str, image_size, img_pts, road_pts, **kw) -> "Calibration":
@@ -184,7 +186,8 @@ class Calibration:
     def load(cls, path: Path | str) -> "Calibration":
         d = json.loads(Path(path).read_text())
         d["image_size"] = tuple(d["image_size"])
-        return cls(**d)
+        known = set(cls.__dataclass_fields__)
+        return cls(**{k: v for k, v in d.items() if k in known})  # ignore keys from newer versions
 
 
 def points_in_polygon(pts: np.ndarray, poly: np.ndarray) -> np.ndarray:

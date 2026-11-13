@@ -34,7 +34,8 @@ CREATE TABLE IF NOT EXISTS runs (
   source TEXT, processed_utc TEXT, clip_start_utc TEXT, clip_start_note TEXT,
   duration_s REAL, frames INTEGER, fps REAL, model TEXT, tracker TEXT, ms_per_frame REAL,
   calibration_utc TEXT, calibration_rmse_m REAL, scale_uncertainty REAL,
-  camera_moved INTEGER, motion_json TEXT, reference_frame TEXT, notes TEXT
+  camera_moved INTEGER, motion_json TEXT, reference_frame TEXT, notes TEXT,
+  view_id TEXT                 -- PTZ preset the clip matched (NULL: unknown view / not checked)
 );
 CREATE TABLE IF NOT EXISTS vehicles (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -66,7 +67,21 @@ def connect(path: Path | str = DEFAULT_DB) -> sqlite3.Connection:
     con.row_factory = sqlite3.Row
     con.execute("PRAGMA foreign_keys = ON")
     con.executescript(SCHEMA)
+    _migrate(con)
     return con
+
+
+# Columns added after round 1; old databases get them via ALTER TABLE.
+_ADDED_COLUMNS = {"runs": [("view_id", "TEXT")]}
+
+
+def _migrate(con: sqlite3.Connection) -> None:
+    for table, cols in _ADDED_COLUMNS.items():
+        have = {r[1] for r in con.execute(f"PRAGMA table_info({table})")}
+        for name, typ in cols:
+            if name not in have:
+                con.execute(f"ALTER TABLE {table} ADD COLUMN {name} {typ}")
+    con.commit()
 
 
 def upsert_cameras(con: sqlite3.Connection, cameras: Iterable[dict[str, Any]]) -> int:

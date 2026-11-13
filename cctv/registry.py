@@ -34,5 +34,15 @@ def get_camera(camera_id: str, path: Path | str = MANIFEST_PATH) -> dict[str, An
     raise KeyError(f"camera {camera_id!r} not in manifest {path}")
 
 
-def calibration_path(camera_id: str) -> Path:
+def calibration_path(camera_id: str, view_id: str | None = None) -> Path:
+    """Calibration JSON of one view, or of the camera's primary (first calibrated) view.
+
+    Falls back to the round-1 flat path ``<CAM>.json`` (which may not exist) so
+    callers can keep using ``Path.exists()``.
+    """
+    from cctv.views import get_view, primary_view
+
+    view = get_view(camera_id, view_id) if view_id else primary_view(camera_id)
+    if view is not None and view.calibration_path is not None:
+        return view.calibration_path
     return CALIBRATION_DIR / f"{camera_id}.json"

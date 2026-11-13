@@ -28,7 +28,8 @@ import numpy as np
 
 from cctv.geometry import (DASH_FT, FT, GAP_FT, LANE_FT, Calibration, apply_homography,
                            fit_homography, reprojection_errors)
-from cctv.registry import CALIBRATION_DIR
+from cctv.registry import CALIBRATION_DIR, calibration_path
+from cctv.views import camera_dir, list_views, match_view, set_view_label, validate_view_id
 
 DEFAULT_SYSTEMATIC_SCALE = 0.025  # paint tolerance: 40 ft dash cycle +-1 ft is ~2.5%
 
@@ -124,8 +125,18 @@ def bootstrap_scale_uncertainty(img: np.ndarray, road: np.ndarray, H: np.ndarray
     return float(np.std(lengths) / 30.0) if len(lengths) > 10 else float("nan")
 
 
+def _view_paths(camera: str, view: str | None) -> tuple[Path, Path]:
+    """(points.json, calibration .json) for a view, or the round-1 flat files when no view is given."""
+    if view:
+        d = camera_dir(camera)
+        validate_view_id(view)
+        return d / f"{view}.points.json", d / f"{view}.json"
+    return CALIBRATION_DIR / f"{camera}.points.json", CALIBRATION_DIR / f"{camera}.json"
+
+
 def cmd_fit(args) -> None:
-    spec_path = args.points or CALIBRATION_DIR / f"{args.camera}.points.json"
+    pts_default, out_default = _view_paths(args.camera, args.view)
+    spec_path = args.points or pts_default
     spec = json.loads(Path(spec_path).read_text())
     H, offsets, road = fit_points(spec)
     img = np.asarray([p["img"] for p in spec["points"]], float)
@@ -139,8 +150,9 @@ def cmd_fit(args) -> None:
         method=f"lane-dash homography; phase offsets {offsets} "
                f"({'from transverse joints' if spec.get('transverse_lines') else 'min reprojection error: shear unconstrained'})",
         notes=f"bootstrap scale sigma {boot:.4f}; systematic paint tolerance {DEFAULT_SYSTEMATIC_SCALE}; "
-              + spec.get("notes", ""))
-    out = args.out or CALIBRATION_DIR / f"{spec['camera_id']}.json"
+              + spec.get("notes", ""),
+        view_id=args.view, direction_labels=spec.get("direction_labels"))
+    out = args.out or out_default
     cal.save(out)
     print(f"points: {len(img)}  rmse {cal.rmse_m:.3f} m  max {cal.max_err_m:.3f} m")
     for p, e in zip(spec["points"], err):
@@ -185,7 +197,7 @@ def draw_overlay(frame, cal: Calibration, spec: dict | None = None):
 def cmd_show(args) -> None:
     import cv2
 
-    cal = Calibration.load(args.calibration or CALIBRATION_DIR / f"{args.camera}.json")
+    cal = Calibration.load(args.calibration or calibration_path(args.camera, args.view))
     frame = cv2.imread(str(args.frame))
     out = draw_overlay(frame, cal)
     if args.scale != 1:
@@ -212,6 +224,80 @@ def cmd_background(args) -> None:
     print(f"median of {len(frames)} frames -> {args.out}")
 
 
+def cmd_views(args) -> None:
+    views = list_views(args.camera)
+    if not views:
+        print(f"{args.camera}: no views (no calibration, no reference frame)")
+        return
+    for v in views:
+        s = v.summary()
+        cal = f"rmse {s['rmse_m']:.3f} m, scale ±{s['scale_uncertainty']:.1%}" if v.calibrated else "NOT calibrated"
+        print(f"{v.view_id:12s} {cal:32s} refs: {', '.join(s['references']) or '-':38s} {v.label}"
+              + ("  [flat round-1 files]" if v.legacy else ""))
+
+
+def cmd_add_view(args) -> None:
+    """Register a (new) PTZ preset: store a reference frame for it, built from a clip or copied from an image."""
+    import cv2
+
+    validate_view_id(args.view)
+    d = camera_dir(args.camera)
+    d.mkdir(parents=True, exist_ok=True)
+    name = f"{args.view}.ref.jpg" if not args.tag else f"{args.view}.ref-{args.tag}.jpg"
+    out = d / name
+    if out.exists() and not args.force:
+        raise SystemExit(f"{out} exists (use --force to replace it)")
+    if args.clip:
+        from cctv.pipeline import clip_median_frame
+        img = clip_median_frame(args.clip, every=args.every)
+    else:
+        img = cv2.imread(str(args.image))
+    if img is None:
+        raise SystemExit("could not read the clip/image")
+    cv2.imwrite(str(out), img, [cv2.IMWRITE_JPEG_QUALITY, 85])
+    if args.label:
+        set_view_label(args.camera, args.view, args.label)
+    print(f"wrote {out} ({out.stat().st_size // 1024} KB). Now click points for it and run: "
+          f"python -m cctv.calibrate fit --camera {args.camera} --view {args.view}")
+
+
+def cmd_match(args) -> None:
+    from cctv.pipeline import clip_median_frame
+
+    frame = clip_median_frame(args.clip)
+    if frame is None:
+        raise SystemExit(f"could not read {args.clip}")
+    m = match_view(args.camera, frame)
+    for c in m.candidates:
+        print(f"  {c['view_id']:12s} {c['reference']:28s} matches {c['n_matches']:4d}  inliers {c['inlier_ratio']:.2f}  "
+              f"shift {c['shift_px']:6.1f}px  zoom x{c['scale']:.3f}  -> {c['reason']}")
+    print(f"{m.status.upper()}: {m.reason}")
+
+
+def cmd_migrate(args) -> None:
+    """Move the round-1 flat files <CAM>.json/.points.json/.ref.jpg into <CAM>/<VIEW>.*"""
+    validate_view_id(args.view)
+    d = camera_dir(args.camera)
+    d.mkdir(parents=True, exist_ok=True)
+    moved = []
+    for suffix in (".json", ".points.json", ".ref.jpg"):
+        src, dst = CALIBRATION_DIR / f"{args.camera}{suffix}", d / f"{args.view}{suffix}"
+        if not src.exists():
+            continue
+        if dst.exists():
+            raise SystemExit(f"{dst} already exists; not overwriting")
+        src.rename(dst)
+        moved.append(dst.name)
+    cal_p = d / f"{args.view}.json"
+    if cal_p.exists():
+        cal = Calibration.load(cal_p)
+        cal.view_id = args.view
+        cal.save(cal_p)
+    if args.label:
+        set_view_label(args.camera, args.view, args.label)
+    print(f"moved {moved or 'nothing'} into {d}/")
+
+
 def main(argv: list[str] | None = None) -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     sub = ap.add_subparsers(dest="cmd", required=True)
@@ -219,8 +305,11 @@ def main(argv: list[str] | None = None) -> None:
     f.add_argument("--camera", required=True)
     f.add_argument("--points", type=Path)
     f.add_argument("--out", type=Path)
+    f.add_argument("--view", help="PTZ preset id: reads <CAM>/<VIEW>.points.json, writes <CAM>/<VIEW>.json "
+                                  "(omit for the round-1 flat files <CAM>.points.json -> <CAM>.json)")
     s = sub.add_parser("show")
     s.add_argument("--camera", required=True)
+    s.add_argument("--view")
     s.add_argument("--calibration", type=Path)
     s.add_argument("--frame", type=Path, required=True)
     s.add_argument("--out", type=Path, required=True)
@@ -229,8 +318,28 @@ def main(argv: list[str] | None = None) -> None:
     b.add_argument("--clip", type=Path, required=True)
     b.add_argument("--out", type=Path, required=True)
     b.add_argument("--every", type=int, default=15)
+    v = sub.add_parser("views", help="list a camera's known views (PTZ presets)")
+    v.add_argument("--camera", required=True)
+    a = sub.add_parser("add-view", help="register a PTZ preset by saving its reference frame")
+    a.add_argument("--camera", required=True)
+    a.add_argument("--view", required=True)
+    src = a.add_mutually_exclusive_group(required=True)
+    src.add_argument("--clip", type=Path, help="median frame of this clip becomes the reference")
+    src.add_argument("--image", type=Path, help="use this image as the reference")
+    a.add_argument("--tag", help="extra reference for the same view, e.g. 'night' -> <VIEW>.ref-night.jpg")
+    a.add_argument("--label", help="human description, stored in <CAM>/views.json")
+    a.add_argument("--every", type=int, default=30)
+    a.add_argument("--force", action="store_true")
+    m = sub.add_parser("match", help="which known view does this clip show?")
+    m.add_argument("--camera", required=True)
+    m.add_argument("--clip", type=Path, required=True)
+    g = sub.add_parser("migrate", help="move round-1 flat calibration files into <CAM>/<VIEW>.*")
+    g.add_argument("--camera", required=True)
+    g.add_argument("--view", required=True)
+    g.add_argument("--label")
     args = ap.parse_args(argv)
-    {"fit": cmd_fit, "show": cmd_show, "background": cmd_background}[args.cmd](args)
+    {"fit": cmd_fit, "show": cmd_show, "background": cmd_background, "views": cmd_views,
+     "add-view": cmd_add_view, "match": cmd_match, "migrate": cmd_migrate}[args.cmd](args)
 
 
 if __name__ == "__main__":

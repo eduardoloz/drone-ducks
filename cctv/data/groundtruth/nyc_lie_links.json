@@ -1,0 +1,165 @@
+{
+ "dataset": "i4gi-tjb9",
+ "fetched_utc": "2026-11-13T04:55:13+00:00",
+ "note": "LIE links seen in the last hours; geometry for camera matching. Source: NYC Open Data, NYC DOT.",
+ "links": [
+  {
+   "link_id": "4362342",
+   "link_name": "LIE E 84TH ST - 108TH ST",
+   "borough": "Queens",
+   "link_points": "40.72966,-73.87775 40.730165,-73.87643 40.7304,-73.87567 40.73241,-73.86913001 40.734285,-73.86321001 40.735045,-73.86054 40.73563,-73.85867 40.736584,-73.85531 40.736944,-73.85327001 40.737285,-73.85184001",
+   "last_seen": "2026-11-12T15:47:06.000"
+  },
+  {
+   "link_id": "4616364",
+   "link_name": "LIE W 108TH ST - 84TH ST",
+   "borough": "Queens",
+   "link_points": "40.73744001,-73.85188001  40.737015,-73.85373001  40.73673,-73.85543001  40.736526,-73.85631001  40.735335,-73.86033  40.73384,-73.86514001  40.732064,-73.87065001  40.731755,-73.87178  40.730294,-73.87656001  40.72977,-73.87796",
+   "last_seen": "2026-11-12T15:42:13.000"
+  },
+  {
+   "link_id": "4362249",
+   "link_name": "LIE WB LITTLE NECK PKWY - NB CIP",
+   "borough": "Queens",
+   "link_points": "40.7442206,-73.771661 40.7454306,-73.76907 40.745701,-73.76831 40.7465005,-73.7654 40.7476404,-73.76128 40.7480905,-73.76008 40.7488704,-73.75842 40.7492,-73.757551 40.74947,-73.75658 40.75032,-73.75319 40.7506906,-73.75108 40.7508404,-73.75023 40.75104,-",
+   "last_seen": "2026-11-12T15:47:03.000"
+  },
+  {
+   "link_id": "4362251",
+   "link_name": "LIE WB LITTLE NECK PKWY - NB CVE",
+   "borough": "Queens",
+   "link_points": "40.7537504,-73.744391 40.75605,-73.740851 40.7576705,-73.738391 40.7591904,-73.735841 40.7596604,-73.734851 40.75999,-73.73388 40.7607206,-73.73196 40.76113,-73.731051 40.76178,-73.72999 40.76274,-73.72851 40.7633104,-73.727421 40.7638,-73.72609 40.76408,",
+   "last_seen": "2026-11-12T15:47:06.000"
+  }
+ ],
+ "camera_links": [
+  {
+   "camera_id": "R11_269",
+   "link_id": "4362249",
+   "link_name": "LIE WB LITTLE NECK PKWY - NB CIP",
+   "direction": "WB",
+   "distance_m": 14.3,
+   "fraction_along": 0.091
+  },
+  {
+   "camera_id": "R10_005",
+   "link_id": "4362249",
+   "link_name": "LIE WB LITTLE NECK PKWY - NB CIP",
+   "direction": "WB",
+   "distance_m": 15.8,
+   "fraction_along": 0.375
+  },
+  {
+   "camera_id": "R11_287",
+   "link_id": "4362249",
+   "link_name": "LIE WB LITTLE NECK PKWY - NB CIP",
+   "direction": "WB",
+   "distance_m": 14.6,
+   "fraction_along": 0.471
+  },
+  {
+   "camera_id": "R11_154",
+   "link_id": "4362249",
+   "link_name": "LIE WB LITTLE NECK PKWY - NB CIP",
+   "direction": "WB",
+   "distance_m": 14.6,
+   "fraction_along": 0.64
+  },
+  {
+   "camera_id": "R10_006",
+   "link_id": "4362249",
+   "link_name": "LIE WB LITTLE NECK PKWY - NB CIP",
+   "direction": "WB",
+   "distance_m": 20.2,
+   "fraction_along": 0.999
+  },
+  {
+   "camera_id": "R11_255",
+   "link_id": "4362249",
+   "link_name": "LIE WB LITTLE NECK PKWY - NB CIP",
+   "direction": "WB",
+   "distance_m": 20.1,
+   "fraction_along": 0.999
+  },
+  {
+   "camera_id": "R11_254",
+   "link_id": "4362251",
+   "link_name": "LIE WB LITTLE NECK PKWY - NB CVE",
+   "direction": "WB",
+   "distance_m": 13.4,
+   "fraction_along": 0.085
+  },
+  {
+   "camera_id": "R10_007",
+   "link_id": "4362251",
+   "link_name": "LIE WB LITTLE NECK PKWY - NB CVE",
+   "direction": "WB",
+   "distance_m": 13.4,
+   "fraction_along": 0.085
+  },
+  {
+   "camera_id": "R10_008",
+   "link_id": "4362251",
+   "link_name": "LIE WB LITTLE NECK PKWY - NB CVE",
+   "direction": "WB",
+   "distance_m": 12.7,
+   "fraction_along": 0.576
+  },
+  {
+   "camera_id": "R11_155",
+   "link_id": "4362251",
+   "link_name": "LIE WB LITTLE NECK PKWY - NB CVE",
+   "direction": "WB",
+   "distance_m": 17.3,
+   "fraction_along": 0.98
+  },
+  {
+   "camera_id": "R11_140",
+   "link_id": "4362342",
+   "link_name": "LIE E 84TH ST - 108TH ST",
+   "direction": "EB",
+   "distance_m": 3.1,
+   "fraction_along": 0.007
+  },
+  {
+   "camera_id": "R11_141",
+   "link_id": "4362342",
+   "link_name": "LIE E 84TH ST - 108TH ST",
+   "direction": "EB",
+   "distance_m": 4.1,
+   "fraction_along": 0.373
+  },
+  {
+   "camera_id": "R11_142",
+   "link_id": "4362342",
+   "link_name": "LIE E 84TH ST - 108TH ST",
+   "direction": "EB",
+   "distance_m": 1.4,
+   "fraction_along": 0.748
+  },
+  {
+   "camera_id": "R11_142",
+   "link_id": "4616364",
+   "link_name": "LIE W 108TH ST - 84TH ST",
+   "direction": "WB",
+   "distance_m": 22.0,
+   "fraction_along": 0.252
+  },
+  {
+   "camera_id": "R11_141",
+   "link_id": "4616364",
+   "link_name": "LIE W 108TH ST - 84TH ST",
+   "direction": "WB",
+   "distance_m": 11.1,
+   "fraction_along": 0.624
+  },
+  {
+   "camera_id": "R11_140",
+   "link_id": "4616364",
+   "link_name": "LIE W 108TH ST - 84TH ST",
+   "direction": "WB",
+   "distance_m": 15.6,
+   "fraction_along": 0.989
+  }
+ ]
+}

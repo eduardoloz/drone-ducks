@@ -17,13 +17,16 @@ outside it. Video: NYSDOT / 511NY.*
 |---|---|
 | `docs/SOURCES.md` | Where the feeds come from (opencctv.org → 511NY/NYSDOT), terms, the measured fps and timing of 19 cameras, how many cameras can do speeds |
 | `docs/ARCHITECTURE.md` | Website architecture: diagram, data model, ports, scaling, cost, error budget, validation plan, ethics, milestones |
+| `docs/VALIDATION_DRIVE.md` | How to drive past a camera with GPS (safely, legally) and measure our speed error |
 | `data/cameras_lie.json` | **The camera manifest**: 129 cameras from the Queens-Midtown Tunnel to Riverhead |
 | `data/feed_measurements.json` | Measured feed characteristics (resolution, fps, timestamp jitter, repeated frames) |
-| `data/calibration/R10_041.*` | One calibrated camera: clicked points, fitted homography, reference frame |
+| `data/calibration/R10_041/` | One camera, two PTZ presets: `v1` calibrated (points, homography, reference frame), `v2` known but not calibrated (night reference) |
+| `data/groundtruth/nyc_lie_links.json` | Snapshot of NYC DOT's live LIE speed links and the NYSDOT cameras on them |
 | `registry.py` | Load the manifest |
 | `geometry.py` | Pixel ↔ road-metre homography, calibration files |
 | `speed.py` | Track → speed ± σ, rejects bad tracks, conservative over-limit flag |
 | `camera_motion.py` | Detects that a pan-tilt-zoom camera was moved since calibration |
+| `views.py` | Several calibrations per camera (one per PTZ preset); picks the preset a clip shows |
 | `ingest.py` | Records short HLS clips; reads exact frame timestamps |
 | `detect_track.py` | YOLO + ByteTrack over a clip (Stephen's `ByteTrackFinal.py` idea, offline) |
 | `pipeline.py` | Clip → tracks → speeds → SQLite |
@@ -31,7 +34,10 @@ outside it. Video: NYSDOT / 511NY.*
 | `calibrate.py` | Calibration helper CLI: fit, draw a check grid, build an empty-road frame |
 | `error_budget.py` | Monte Carlo of every error source for a calibrated camera |
 | `recon/` | `build_manifest.py` (offline) and `measure_feed.py` (records 20 s per camera) |
-| `tests/` | 42 pytest tests (no network, no YOLO needed) |
+| `groundtruth/nyc_links.py` | Compares our speeds with NYC DOT's published link speeds (open data `i4gi-tjb9`) |
+| `groundtruth/gps_drive.py` | Lines a phone GPS log up with our tracks and reports the speed error |
+| `scripts/groundtruth_session.sh` | Daylight session: a few 60 s clips from one camera, then pipeline and link comparison |
+| `tests/` | 81 pytest tests (no network, no YOLO needed) |
 
 ## Quickstart
 
@@ -45,7 +51,7 @@ uv pip install --python cctv/.venv/bin/python -r cctv/requirements.txt
 source cctv/.venv/bin/activate
 
 # 2. Run the tests
-python -m pytest cctv            # 42 passed
+python -m pytest cctv            # 81 passed
 
 # 3. Start the site (it reads cctv/data/db/cctv.sqlite, which is empty on a fresh clone)
 python -m cctv.web.app           # http://127.0.0.1:8010
@@ -66,24 +72,54 @@ python -m cctv.pipeline --camera R10_041 --clip cctv/data/clips/R10_041_<timesta
 python -m cctv.web.app           # refresh the page
 ```
 
-The pipeline first checks that the camera view still matches the calibration. LIE
-cameras are pan-tilt-zoom, and **camera 041 was re-aimed within an hour of being
-calibrated** on 2026-11-10. When the view has changed, tracks are stored without speeds
-and the site says so. Re-calibrate the new view, or wait for the old preset to come back.
+The pipeline first works out which view the camera is showing. LIE cameras are
+pan-tilt-zoom, and **camera 041 was re-aimed within an hour of being calibrated** on
+2026-11-10. So each camera can hold several calibrations, one per preset ("view"). The
+pipeline compares the clip with every view's reference frame and uses the calibration
+of the one that matches. If the matching view isn't calibrated, or no view matches,
+tracks are stored for counts only, without speeds, and the site says so.
+
+```bash
+python -m cctv.calibrate views --camera R10_041                       # v1 calibrated, v2 not
+python -m cctv.calibrate match --camera R10_041 --clip cctv/data/clips/<clip>.ts
+```
+
+## Ground truth (round 2: tools built, real comparison still to run)
+
+```bash
+python -m cctv.groundtruth.nyc_links links      # NYC DOT LIE links + the NYSDOT cameras on them
+python -m cctv.groundtruth.nyc_links fetch --start 2026-11-13T12:00 --end 2026-11-13T13:00
+python -m cctv.groundtruth.nyc_links quality    # is a link plausible? (some aren't)
+python -m cctv.groundtruth.nyc_links compare    # our runs vs link speeds, same direction only
+
+# daylight, on AC power: 3 short clips from a camera on a link, then compare (stops to ask for a calibration if needed)
+cctv/scripts/groundtruth_session.sh R10_008 3
+```
+
+The validation drive is described in [docs/VALIDATION_DRIVE.md](docs/VALIDATION_DRIVE.md)
+(`python -m cctv.groundtruth.gps_drive passes | candidates | report`).
 
 ## Calibrating a camera
 
 Speeds need a map from pixels to metres on the road. We use the lane markings: dashed
 lines are 10 ft long with 30 ft gaps, and lanes are 12 ft wide.
 
+Each preset (view) of a camera lives in `cctv/data/calibration/<CAM>/` as `<VIEW>.ref.jpg`,
+`<VIEW>.points.json` and `<VIEW>.json`. Name views `v1`, `v2`, ... and describe them with `--label`.
+
 ```bash
-python -m cctv.calibrate background --clip cctv/data/clips/<CAM>_<ts>.ts --out cctv/data/calibration/<CAM>.ref.jpg
+python -m cctv.calibrate add-view --camera <CAM> --view v1 --clip cctv/data/clips/<CAM>_<ts>.ts --label "looking east, both carriageways"
 # click dash corners in the browser: http://127.0.0.1:8010/calibrate (or write the JSON by hand)
-#   -> save as cctv/data/calibration/<CAM>.points.json (copy R10_041.points.json for the format)
-python -m cctv.calibrate fit --camera <CAM>                     # writes <CAM>.json, prints errors
-python -m cctv.calibrate show --camera <CAM> --frame cctv/data/calibration/<CAM>.ref.jpg --out check.jpg
-python -m cctv.error_budget --camera <CAM>                       # how good can speeds be here?
+#   -> save as cctv/data/calibration/<CAM>/v1.points.json (copy R10_041/v1.points.json for the format)
+#   -> optional "direction_labels": {"+": "EB", "-": "WB"} (compass direction of +X travel; needed for link comparison)
+python -m cctv.calibrate fit --camera <CAM> --view v1          # writes <CAM>/v1.json, prints errors
+python -m cctv.calibrate show --camera <CAM> --view v1 --frame cctv/data/calibration/<CAM>/v1.ref.jpg --out check.jpg
+python -m cctv.error_budget --camera <CAM> --view v1             # how good can speeds be here?
 ```
+
+The round-1 flat layout (`<CAM>.points.json` → `<CAM>.json`, `<CAM>.ref.jpg`, no `--view`)
+still works as the view `default`. `python -m cctv.calibrate migrate --camera <CAM> --view v1`
+moves it into a folder.
 
 ![Calibration check grid on R10_041](docs/img/r10_041_calibration.jpg)
 
@@ -116,8 +152,18 @@ which cross the road at right angles), as in `R10_041.points.json`.
   - An undetected 8 px camera nudge would cost −3 mph.
   - Realistic mix: −0.8 ± 1.5 mph.
 
+**Round 2 (2026-11-12/13; it was night in New York, so no new footage):**
+- Per-preset calibrations work on the real R10_041 frames. The 16:39 clip and three
+  stills from 16:45–16:48 match v1. The 17:43 night clip and a 17:46 still match v2,
+  which is known but not calibrated.
+- NYC DOT link speeds: the client, the camera-link matching and the comparison table are
+  built. A night-time quality check found the 84th–108th St links implausible (20.8 mph
+  median at 3 am EB; WB mostly status −101). The Little Neck Pkwy WB link looks sane
+  (54.7 mph) and has Region 10 cameras R10_005–R10_008 on it.
+
 **Not verified yet:**
-- no ground truth (planned: a GPS-logged drive past a camera);
+- no ground truth: no Queens/Little Neck camera is calibrated, so no estimate-vs-link
+  table exists yet, and no drive has been done (tools and protocol are ready);
 - the far half of each track reads ~4% slower than the near half (braking or a bias? to be
   investigated);
 - night-time accuracy;
@@ -135,10 +181,10 @@ which cross the road at right angles), as in `R10_041.points.json`.
    - Run `python -m cctv.recon.measure_feed --sample 20` around noon, then
      `python -m cctv.recon.build_manifest`.
    - R10_355 was measured after dark and needs a redo. Which cameras changed resolution?
-3. **Compare with NYC DOT speeds.**
-   - Write `cctv/recon/nyc_speeds.py` to fetch the LIE links (84th St–108th St) from NYC
-     Open Data `i4gi-tjb9` for one afternoon.
-   - Plot them next to our medians for R11_140/R11_141 (needs a Queens calibration).
+3. **Compare with NYC DOT speeds** (the harness exists: `groundtruth/nyc_links.py`).
+   - Calibrate R10_007 or R10_008 (on the Little Neck Pkwy WB link) in daylight, with
+     `direction_labels`, using `cctv/scripts/groundtruth_session.sh R10_008 3`.
+   - Run `nyc_links compare` and paste the table, with its caveats, into this README.
 4. **Speed up tracking.**
    - Export YOLO11n to OpenVINO (`yolo export format=openvino`) and compare ms/frame and
      detections against PyTorch on the same clip.

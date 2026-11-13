@@ -133,11 +133,12 @@ def scenarios(mph: float):
 def main(argv: list[str] | None = None) -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--camera", default="R10_041")
+    ap.add_argument("--view", help="PTZ preset id (default: the camera's first calibrated view)")
     ap.add_argument("--mph", type=float, default=60.0)
     ap.add_argument("--n", type=int, default=40, help="repetitions per lane")
     ap.add_argument("--seed", type=int, default=0)
     args = ap.parse_args(argv)
-    cal = Calibration.load(calibration_path(args.camera))
+    cal = Calibration.load(calibration_path(args.camera, args.view))
     lanes = list(lane_tracks(cal, args.mph))
     print(f"camera {args.camera}: {len(lanes)} lanes in ROI, {np.mean([len(t) for t, _, _ in lanes]):.0f} frames per "
           f"track at {args.mph:.0f} mph (track length {np.mean([np.ptp(xy[:, 0]) for _, _, xy in lanes]):.0f} m)")

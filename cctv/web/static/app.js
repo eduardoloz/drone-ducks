@@ -121,11 +121,15 @@ async function selectCamera(id) {
       <dt>Feed</dt><dd>${feed}</dd>
       <dt>Speed use</dt><dd>${esc(SUITABILITY[cam.speed_suitability] || cam.speed_suitability)}</dd>
       <dt>Calibration</dt><dd>${calText}</dd>
+      ${(d.views || []).length > 1 ? `<dt>Known views</dt><dd>${d.views.map(v => `${esc(v.view_id)}${v.calibrated ? " (calibrated)" : " (not calibrated)"}`).join(", ")}
+        <span class="muted small">: pan-tilt-zoom presets; each clip is matched to one</span></dd>` : ""}
       <dt>Position</dt><dd>${fmt(cam.chainage_km, 1)} km from the Queens-Midtown Tunnel</dd>
     </dl>`;
   if (newest && newest.camera_moved) {
+    const where = newest.view_id ? `shows preset ${esc(newest.view_id)}, which is not calibrated yet`
+                                 : "matches none of the known views";
     html += `<div class="callout"><strong>The camera has been re-aimed.</strong> The newest clip
-      (${localTime(newest.clip_start_utc)}) does not match the calibrated view, so its ${newest.vehicles} tracks got no
+      (${localTime(newest.clip_start_utc)}) ${where}, so its ${newest.vehicles} tracks got no
       speeds. ${latest ? "Below: the newest clip that matched the calibration." : "Recalibrate this view to get speeds."}</div>`;
   }
   if (latest) {

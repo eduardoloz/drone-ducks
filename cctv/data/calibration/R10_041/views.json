@@ -1,0 +1,11 @@
+{
+ "camera_id": "R10_041",
+ "views": {
+  "v1": {
+   "label": "Both carriageways looking along the LIE, near (right) carriageway calibrated; seen 2026-11-10 16:39 local"
+  },
+  "v2": {
+   "label": "Re-aimed at the other carriageway (seen 2026-11-10 17:43 local, after dark); not calibrated, night reference only"
+  }
+ }
+}
