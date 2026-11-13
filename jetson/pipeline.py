@@ -7,6 +7,11 @@ docs/ARCHITECTURE.md is about.
 Optional body path: pass `person_detector=` (jetson.detectors.person) and the pipeline also tracks
 whole-person boxes and uses jetson.lock.LockKeeper, so it keeps following the target's body when
 the face turns away and re-acquires by face. Without it, behaviour is exactly the face-only path.
+
+Both paths go through jetson.relock.RelockGate: once the target has been lost (no fresh detection
+for `lost_after_s`), the controller only gets observations again after a *confirmed* re-lock
+(N consecutive detections, or one high-score one). The followed face's landmarks also give a head
+yaw estimate (jetson.headpose) that the controller can use to stay in front (k_head_lateral).
 """
 
 from __future__ import annotations
@@ -19,7 +24,9 @@ from .bridge import CommandSink, DryRunSink
 from .controller import ControlOutput, FaceFollowController, TargetObservation
 from .detectors.base import FaceDetector
 from .face import Face
+from .headpose import head_yaw_deg
 from .lock import LockKeeper
+from .relock import RelockGate
 from .sources import Frame
 from .tracker import IouTracker, TargetSelector, Track
 
@@ -38,6 +45,7 @@ class StepResult:
     body_tracks: List[Track] = field(default_factory=list)
     target_body: Optional[Track] = None
     target_source: str = "face"   # "face", "body" (steering by the body, face not visible) or ""
+    gated: bool = False           # a target was there but RelockGate withheld it (re-lock not confirmed)
 
 
 class FollowPipeline:
@@ -45,7 +53,8 @@ class FollowPipeline:
                  tracker: Optional[IouTracker] = None, selector: Optional[TargetSelector] = None,
                  sink: Optional[CommandSink] = None, person_detector=None,
                  body_tracker: Optional[IouTracker] = None, lock: Optional[LockKeeper] = None,
-                 person_every: int = 1) -> None:
+                 person_every: int = 1, relock: Optional[RelockGate] = None,
+                 relock_holdoff_s: float = 0.0) -> None:
         self.detector = detector
         self.controller = controller or FaceFollowController()
         self.tracker = tracker or IouTracker()
@@ -65,6 +74,15 @@ class FollowPipeline:
             self.lock.reacquire_holdoff_s = self.controller.config.lost_timeout_s
         self.person_every = max(1, int(person_every))  # run the person detector every Nth frame
         self._n = 0
+        # Confirmed re-lock after a loss (both paths). RelockGate(confirm_hits=1, confirm_score=None)
+        # restores the round-2 behaviour.
+        self.relock = relock if relock is not None else RelockGate()
+        # Face-only path: after losing the target, adopt no *new* face track for this long. Default 0:
+        # in face-only mode the same person turning back round is always a new track (see
+        # docs/ARCHITECTURE.md "Re-lock"), so a holdoff = lost_timeout_s would mean "never re-lock".
+        self.relock_holdoff_s = relock_holdoff_s
+        self._face_lost_at: Optional[float] = None
+        self._last_target_id: Optional[int] = None
 
     def step(self, frame: Frame, now: Optional[float] = None,
              altitude_m: Optional[float] = None) -> StepResult:
@@ -78,7 +96,7 @@ class FollowPipeline:
         target_body, source = None, "face"
         t_person = 0.0
         if self.person_detector is None:
-            target = self.selector.select(tracks, frame.width, frame.height)
+            target = self._select_face(tracks, frame)
             box = target.box if target is not None else None
             box_stamp = target.last_seen if target is not None else None
         else:
@@ -95,11 +113,24 @@ class FollowPipeline:
             box, box_stamp = st.box, st.stamp
             if source == "body":
                 target = None  # the HUD/blur treat every visible face as a bystander
+        gated = False
+        if box is not None:
+            src_track = target if source == "face" else target_body
+            key = (source, src_track.track_id if src_track is not None else None)
+            fresh = box_stamp is not None and box_stamp >= frame.stamp - 1e-9
+            score = src_track.score if src_track is not None else 0.0
+            if not self.relock.update(key, fresh, score, frame.stamp):
+                box, box_stamp, gated = None, None, True
+        else:
+            self.relock.update(None, False, 0.0, frame.stamp)
         obs = None
         if box is not None:
             # Stamp = capture time of the frame the target was last *detected* in, so a target the
             # tracker is only coasting on goes stale in the controller after max_obs_age_s.
-            obs = TargetObservation.from_box(box, frame.width, frame.height, stamp=box_stamp)
+            yaw = None
+            if source == "face" and target is not None and target.last_seen >= frame.stamp - 1e-9:
+                yaw = head_yaw_deg(target.landmarks, face_width_px=target.w)
+            obs = TargetObservation.from_box(box, frame.width, frame.height, stamp=box_stamp, head_yaw_deg=yaw)
         t2 = time.perf_counter()
         now = time.monotonic() if now is None else now
         alt = altitude_m if altitude_m is not None else self.sink.altitude_m
@@ -113,4 +144,20 @@ class FollowPipeline:
         if box is None:
             source = ""
         return StepResult(frame, faces, tracks, target, obs, out, timings, bodies, body_tracks,
-                          target_body, source)
+                          target_body, source, gated)
+
+    def _select_face(self, tracks: List[Track], frame: Frame) -> Optional[Track]:
+        """Face-only target selection, with the optional new-face holdoff after a loss."""
+        prev = self._last_target_id
+        target = self.selector.select(tracks, frame.width, frame.height)
+        if target is None:
+            if prev is not None and self._face_lost_at is None:
+                self._face_lost_at = frame.stamp
+            return None
+        if (self.relock_holdoff_s > 0 and self._face_lost_at is not None and target.track_id != prev
+                and frame.stamp - self._face_lost_at < self.relock_holdoff_s):
+            self.selector.target_id = prev  # keep waiting for the old track id; adopt nobody else
+            return None
+        self._face_lost_at = None
+        self._last_target_id = target.track_id
+        return target
