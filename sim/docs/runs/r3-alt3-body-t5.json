@@ -1,0 +1,40 @@
+{
+  "frames": 1123,
+  "duration_s": 85.69600000000001,
+  "follow_s": 83.203,
+  "pct_frames_tracking_while_following": 94.76584022038567,
+  "lost_events": 1,
+  "reacquired": 0,
+  "lost_durations_s": [],
+  "final_mode": "TIMEOUT",
+  "pct_centred_5deg": 100.0,
+  "pct_centred_10deg": 100.0,
+  "pct_in_fov": 100.0,
+  "mean_abs_bearing_deg": 0.5267043158861341,
+  "true_dist_mean_m": 5.646174471992654,
+  "true_dist_median_m": 4.317,
+  "true_dist_minmax_m": [
+    3.427,
+    16.394
+  ],
+  "target_distance_m": 5.0,
+  "est_minus_true_dist_mean_m": -0.5979224806201551,
+  "est_minus_true_dist_mae_m": 0.6719457364341085,
+  "pct_walker_facing_within_60deg": 75.39026629935721,
+  "body_frames": 403,
+  "pct_following_by_body": 37.00642791551883,
+  "finish_reason": "target lost for 5.0 s -> land -> LAND",
+  "walker_end_phase_s": 81.696,
+  "ended_early": false,
+  "config": {
+    "alt_m": 3.0,
+    "person": "yolox",
+    "person_every": 1,
+    "walker": "quack_people",
+    "target_distance_m": 5.0,
+    "lost_timeout_s": 5.0,
+    "score": 0.5,
+    "source": "sim",
+    "cam_pitch_deg": 20.0
+  }
+}
