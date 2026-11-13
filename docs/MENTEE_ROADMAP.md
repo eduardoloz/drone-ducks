@@ -1,6 +1,6 @@
 # Mentee roadmap: fall 2026 through winter break
 
-_Owner: Eddie. Last updated 2026-11-10. This is a living doc; update it at each Friday meeting._
+_Owner: Eddie. Last updated 2026-11-13 (end of round 2). This is a living doc; update it at each Friday meeting._
 
 ## The short version
 
@@ -20,17 +20,17 @@ Everyone does Week 0 onboarding. Each mentee owns one track and helps on a secon
  website (map, events)          Jetson bring-up (hardware)       TypeFly: "find the chair"
 ```
 
-## Where things stand (2026-11-10, end of round 1)
+## Where things stand (2026-11-13, end of round 2)
 
-All three tracks are merged into `eduardo`, and every test suite passes from a clean checkout. Each folder's README has its quickstart.
+All three tracks are merged into `eduardo` and every suite passes from a clean checkout: CCTV 81 tests, sim 77 unit tests, Jetson 182 passed and 16 skipped (the skips need `python -m jetson.fetch models media`). Each folder's README has its quickstart.
 
 | Track | Works today (verified on Eddie's Intel Mac) | Not yet |
 |---|---|---|
-| **A. CCTV** | 129-camera LIE manifest. The LIE cameras on opencctv.org come from NYSDOT/511NY as 15 fps HLS video. About 40–45 Nassau/Suffolk cameras look good enough for per-vehicle speeds. One camera (R10_041) is calibrated end to end: 54 of 62 vehicles got speeds, median 57 mph, σ ≈ 1.7 mph. Site on `:8010`. 42 tests | Ground-truth speeds, more calibrated cameras, live ingest (needs 511NY developer access), night accuracy |
-| **B. Sim** | `quackdrone` drone-control core that works without TypeFly, with speed/altitude/fence limits and a velocity watchdog. Standalone launch scripts. `quack_people` world (YuNet finds faces at 1.5–6 m). The camera bridge serves MJPEG at `/video`. The canned-plan "find the chair" works end to end but stops 2.8 m short. 4 SITL flight + 5 failsafe tests pass. 57 unit tests | An LLM-planned run, Apple Silicon/Linux bring-up, follow-person |
-| **C. Jetson** | "What we need" doc (BOM, range maths, safety, legal). Six detector backends; YuNet is the default at ~5 / 11 / 59 ms per frame at 320 / 640 / 1280 px on the Mac CPU. Tracker, face-follow controller, MAVSDK bridge (dry run unless `--fly`), and demo/follow/bench/doctor CLIs. 151 tests | Anything on a real Jetson, a live SITL loop |
+| **A. CCTV** | 129-camera LIE manifest; R10_041 calibrated end to end (54 of 62 vehicles got speeds, median 57 mph, σ ≈ 1.7 mph). **New in round 2:** each camera can store a separate calibration for every direction an operator points it, and the pipeline picks the one matching the clip; if no stored direction matches, it gives counts only. Harness that compares our speeds with NYC DOT's public link speeds (`cctv/groundtruth/`). Validation-drive protocol (`cctv/docs/VALIDATION_DRIVE.md`) plus a GPS-log reader | The ground-truth table itself: no camera on a usable NYC DOT link is calibrated yet. The Queens links (84th–108th St) look unreliable; **use R10_007/R10_008 on the Little Neck Pkwy westbound link instead**. Live ingest (needs 511NY access), night accuracy |
+| **B. Sim** | **Follow-person works in SITL.** Two live runs followed the walker for ~73 s each, with the face within 5° of centre the whole time, and landed by themselves when the walker turned away. Jetson pipeline → `QuackdroneSink` → `Drone.set_velocity_body` (one MAVSDK layer, with the sim's watchdog and limits). The sim now reports the walker's true position on :5602. 1 SITL follow test | Follower trails at 3.0 m instead of 4 m (needs feed-forward). Brief false locks on the back of the head at 7–10 m. Only a straight walker path works (no sideways control). Round-1 SITL/failsafe suite not re-run after the `start_sim.sh` change. LLM-planned run |
+| **C. Jetson** | Six face backends (YuNet default). **New in round 2:** it matches the followed face to that person's body with a YOLOX-nano person detector (Apache-2.0), so the lock holds when the face turns away. In the toy world, lock retention went from 16–19% to 100%, and the drone never switched to a bystander. Python 3.8 / 3.10 / 3.12 compatibility checks, TensorRT export dry run, JetPack 6 setup script and Dockerfile | Anything on a real Jetson. On a real crowded clip the body path held off the wrong person but didn't keep the lock, because the person detector scores packed groups low. **Needs a recorded walk-away clip of consenting team members** |
 
-**Integration target for M2:** the Jetson follower reads the sim camera's `/video` stream (the walking person in `quack_people`) and sends velocity commands through `quackdrone`'s `Drone.set_velocity_body`. That reuses the sim's watchdog instead of building a second MAVSDK layer.
+**Next integration step:** run the sim follower with the Jetson body path on (`--person yolox`) and fix the issues found in SITL: confirm the target before re-locking, add feed-forward (Max's M1 task), and add sideways control based on which way the head faces.
 
 ## Who does what (proposed; confirm at Friday's meeting)
 
@@ -83,8 +83,8 @@ Folder `cctv/`, branch `eduardo-cctv-footage`. Design: `cctv/docs/ARCHITECTURE.m
 | M1 | Quickstart from `cctv/README.md`: record 60 s from R10_041 (`python -m cctv.ingest`), run `python -m cctv.pipeline`, and view the result on `:8010` | Stephen | Your own run shows up on the site |
 | M1 | Calibrate a **second** camera (R10_011, R10_014, R10_017, R10_019 or R10_044): `/calibrate` page, then `python -m cctv.calibrate fit`, then `python -m cctv.error_budget` | Stephen | Reprojection error and error budget pasted in the PR |
 | M1 | Get the site running and add a per-camera stats view: speed distribution by hour, % over the limit | Donald | Page shows real data from your DB |
-| M2 | Ground truth. Compare the Queens cameras with NYC DOT's published link speeds (dataset `i4gi-tjb9`). Also do a validation drive: a passenger logs phone GPS while the car passes a calibrated camera at a steady, legal speed | Stephen + Donald | Error table, estimate vs truth |
-| M2 | Several calibrations per camera, one per pan-tilt-zoom preset. The operator turned R10_041 around within an hour of calibration | Stephen | The camera-moved check selects the matching calibration |
+| M2 | Ground truth. The harness is built (`cctv/scripts/groundtruth_session.sh R10_008 3`, daylight only). Calibrate R10_007 or R10_008 on the Little Neck Pkwy westbound link and run it against NYC DOT's link speeds (dataset `i4gi-tjb9`); the Queens links proved unreliable. Also do a validation drive: a passenger logs phone GPS while the car passes a calibrated camera at a steady, legal speed | Stephen + Donald | Error table, estimate vs truth |
+| M2 | ~~Several calibrations per camera~~ (done in round 2). Calibrate R10_041's second preset `v2` from a daylight frame, and add `direction_labels` to `v1` | Stephen | `python -m cctv.calibrate views --camera R10_041` shows both calibrated |
 | M2 | Live ingest workers for 4–5 cameras, **only after the 511NY developer request is approved** | Stephen | Runs unattended for 1 h |
 | M3 | Accuracy write-up and demo video | Track | Numbers with error bars in the README |
 
@@ -106,7 +106,7 @@ Folder `sim/`, branch `eduardo-drone-sim`. Design: `sim/docs/ARCHITECTURE.md`.
 | M1 | Chair demo with the canned plan: `scripts/setup_typefly.sh`, then `scripts/py.sh typefly/e2e_check.py --no-llm`. It stops 2.8 m short today; get it within 1 m | Junwei | Within 1 m, recorded |
 | M2 | Same demo via the LLM, with an API spending cap | Junwei | Demo video |
 | M2 | Run the SITL failsafe suite on your machine and add RC-loss / `COM_OBL_RC_ACT` cases | Max or Stephen | New cases pass and the failsafe matrix is updated |
-| M2 | **Follow-person in sim** (with Track C): the follower reads `/video` from the `quack_people` world and commands `Drone.set_velocity_body` | Junwei + Track C | Drone keeps the walking person centred |
+| M2 | **Follow-person in sim**: the baseline works (`sim/examples/follow_person.py`, results in `sim/docs/runs/`). Next: rerun it with `--person yolox`, try other altitudes and walker paths, and rerun the round-1 failsafe suite | Junwei + Track C | Numbers table updated in `sim/README.md` |
 | M3 | Demo video | Track | |
 
 **Heads-up:** native `mavsdk` 4.x needs macOS 15+ (and JetPack 5+ on a Jetson). On older Macs, writing a `mavsdk_grpc` backend for `quackdrone` is a good first task.
@@ -124,7 +124,7 @@ Folder `jetson/`, branch `eduardo-jetson-face`. Research: `jetson/docs/WHAT_WE_N
 | M1 | Quickstart from `jetson/README.md`: `python -m jetson.fetch models`, then `python -m jetson.demo --source 0 --show` on your webcam, then `python -m jetson.bench` | Max | Your FPS numbers in the PR, labelled with your hardware |
 | M1 | Calibrate `--face-width` at 3 m and 5 m with a tape measure, so the distance estimates are right | Max | Table of measured vs estimated distance |
 | M1 | Add velocity feed-forward to the controller. Proportional control alone trails a walking person: 6.1 m behind instead of the 4 m target at 0.8 m/s | Max | The closed-loop test shows the gap closing |
-| M2 | Follow-person in SITL (with Track B), through `quackdrone` rather than a second MAVSDK layer | Max + Junwei | Sim drone keeps the person centred |
+| M2 | Follow-person in SITL works through `quackdrone` (round 2). Next: with consenting team members, record a walk-away clip and measure the body-lock path on it (`python -m jetson.lockeval`) | Max + Junwei | Lock-retention numbers on a real clip |
 | M2 | Hardware: SBU EH&S pre-approval, then order the parts (see `jetson/docs/WHAT_WE_NEED.md`) | Eddie | Parts ordered |
 | M3 | Jetson bring-up when the hardware arrives, following `jetson/docs/BRINGUP_CHECKLIST.md`, ending with a props-off bench test | Max | Jetson FPS in the README |
 
@@ -153,6 +153,12 @@ Folder `jetson/`, branch `eduardo-jetson-face`. Research: `jetson/docs/WHAT_WE_N
 9. **LLM budget** for TypeFly demos: an API key with a hard spending cap.
 10. **GPU for CCTV at scale:** one T4 handles about 85 cameras at 7.5 fps, roughly $250/month if it only runs in daylight. Lab servers need their owners' OK.
 11. **When `eduardo` gets pushed** and later merged into `main`.
+12. **Round-2 calls:**
+    - Face score threshold 0.5 (brief false locks on the back of the head) or 0.6 (misses the walker beyond ~3.5 m)?
+    - Should `--person yolox` be the default, and should face-only mode also wait for the lost-target timeout before taking a new face?
+    - Is a straight walker path OK for M2?
+    - Keep the 368 KB SITL run CSV in git? (No people in it, just numbers.)
+    - Lost target currently **lands**. Return-home on real hardware climbs to 60 m unless the parameter changes (see 6).
 
 ## How we work
 
