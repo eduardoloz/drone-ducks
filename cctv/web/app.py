@@ -7,8 +7,8 @@ JSON API (all read-only except the stateless calibration fit):
     GET  /api/health
     GET  /api/cameras                     all manifest cameras + latest-run stats
     GET  /api/cameras/{id}                one camera: manifest entry, calibration, runs, stats
-    GET  /api/cameras/{id}/reference.jpg  calibration reference frame (if committed)
-    GET  /api/cameras/{id}/calibration    calibration JSON + clicked points
+    GET  /api/cameras/{id}/reference.jpg?view=   reference frame of a view (default: primary view)
+    GET  /api/cameras/{id}/calibration?view=     calibration JSON + clicked points + list of views
     GET  /api/events?camera_id=&over_only=1&limit=50
     GET  /api/stats?camera_id=            histogram, by-hour aggregates, classes
     GET  /api/runs/{run_id}/overlay       track polylines for drawing on the reference frame
@@ -32,7 +32,8 @@ from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 
 from cctv import store
-from cctv.registry import CALIBRATION_DIR, MANIFEST_PATH, load_manifest
+from cctv.registry import MANIFEST_PATH, load_manifest
+from cctv.views import get_view, list_views, primary_view
 
 STATIC = Path(__file__).resolve().parent / "static"
 LOCAL_TZ = ZoneInfo("America/New_York")
@@ -79,7 +80,15 @@ def create_app(db_path: Path | str = store.DEFAULT_DB, manifest_path: Path | str
         return s
 
     def calibrated(cid: str) -> bool:
-        return (CALIBRATION_DIR / f"{cid}.json").exists()
+        return any(v.calibrated for v in list_views(cid))
+
+    def pick_view(cid: str, view: str | None):
+        if view:
+            try:
+                return get_view(cid, view)
+            except KeyError as exc:
+                raise HTTPException(404, str(exc)) from exc
+        return primary_view(cid)
 
     # ------------------------------------------------------------------ pages
     @app.get("/", include_in_schema=False)
@@ -125,30 +134,34 @@ def create_app(db_path: Path | str = store.DEFAULT_DB, manifest_path: Path | str
             raise HTTPException(404, f"unknown camera {camera_id}")
         runs = con.execute("SELECT * FROM runs WHERE camera_id = ? ORDER BY id DESC", (camera_id,)).fetchall()
         cal = None
-        if calibrated(camera_id):
-            d = json.loads((CALIBRATION_DIR / f"{camera_id}.json").read_text())
+        pv = primary_view(camera_id)
+        if pv is not None and pv.calibrated:
+            d = json.loads(pv.calibration_path.read_text())
             cal = {k: d.get(k) for k in ("created_utc", "rmse_m", "max_err_m", "scale_uncertainty",
                                          "image_size", "roi_polygon", "method")}
+            cal["view_id"] = pv.view_id
         summaries = [run_summary(r) for r in runs]
         valid = next((s for s in summaries if not s["camera_moved"] and s["with_speed"]), None)
         return {"camera": cams[camera_id], "calibration": cal,
-                "has_reference_frame": (CALIBRATION_DIR / f"{camera_id}.ref.jpg").exists(),
+                "views": [v.summary() for v in list_views(camera_id)],
+                "has_reference_frame": bool(pv and pv.reference_paths),
                 "runs": summaries, "latest_valid": valid}
 
     @app.get("/api/cameras/{camera_id}/reference.jpg", include_in_schema=False)
-    def reference(camera_id: str) -> FileResponse:
-        p = CALIBRATION_DIR / f"{camera_id}.ref.jpg"
-        if camera_id not in cams or not p.exists():
-            raise HTTPException(404, "no reference frame for this camera")
-        return FileResponse(p, media_type="image/jpeg")
+    def reference(camera_id: str, view: str | None = None) -> FileResponse:
+        v = pick_view(camera_id, view) if camera_id in cams else None
+        if v is None or not v.reference_paths:
+            raise HTTPException(404, "no reference frame for this camera/view")
+        return FileResponse(v.reference_paths[0], media_type="image/jpeg")
 
     @app.get("/api/cameras/{camera_id}/calibration")
-    def calibration(camera_id: str) -> dict[str, Any]:
-        out: dict[str, Any] = {"camera_id": camera_id}
-        for key, name in (("calibration", f"{camera_id}.json"), ("points", f"{camera_id}.points.json")):
-            p = CALIBRATION_DIR / name
-            out[key] = json.loads(p.read_text()) if p.exists() else None
-        if out["calibration"] is None and out["points"] is None and camera_id not in cams:
+    def calibration(camera_id: str, view: str | None = None) -> dict[str, Any]:
+        v = pick_view(camera_id, view)
+        out: dict[str, Any] = {"camera_id": camera_id, "view_id": v.view_id if v else None,
+                               "views": [x.summary() for x in list_views(camera_id)]}
+        for key, p in (("calibration", v and v.calibration_path), ("points", v and v.points_path)):
+            out[key] = json.loads(p.read_text()) if p else None
+        if v is None and camera_id not in cams:
             raise HTTPException(404, f"unknown camera {camera_id}")
         return out
 
@@ -206,8 +219,12 @@ def create_app(db_path: Path | str = store.DEFAULT_DB, manifest_path: Path | str
         if run is None:
             raise HTTPException(404, f"unknown run {run_id}")
         cid = run["camera_id"]
-        cal_p = CALIBRATION_DIR / f"{cid}.json"
-        cal = json.loads(cal_p.read_text()) if cal_p.exists() else {}
+        vid = run["view_id"]
+        try:
+            view = get_view(cid, vid) if vid else primary_view(cid)
+        except KeyError:
+            view = None
+        cal = json.loads(view.calibration_path.read_text()) if view and view.calibration_path else {}
         vehicles = con.execute("SELECT * FROM vehicles WHERE run_id = ?", (run_id,)).fetchall()
         tracks = []
         for v in vehicles:
@@ -220,7 +237,8 @@ def create_app(db_path: Path | str = store.DEFAULT_DB, manifest_path: Path | str
                            "points": [[round(p["u"], 1), round(p["v"], 1), round(p["t"], 2)] for p in pts]})
         return {"run_id": run_id, "camera_id": cid, "image_size": cal.get("image_size", [640, 480]),
                 "duration_s": run["duration_s"],
-                "roi_polygon": cal.get("roi_polygon"), "reference_url": f"/api/cameras/{cid}/reference.jpg",
+                "roi_polygon": cal.get("roi_polygon"), "view_id": view.view_id if view else None,
+                "reference_url": f"/api/cameras/{cid}/reference.jpg" + (f"?view={view.view_id}" if view else ""),
                 "camera_moved": run["camera_moved"], "tracks": tracks}
 
     @app.post("/api/calibrate/fit")
