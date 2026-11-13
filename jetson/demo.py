@@ -5,7 +5,7 @@
     python -m jetson.demo --source toy --backend oracle                     # no model needed at all
     python -m jetson.demo --source 0 --show                                 # laptop webcam
     python -m jetson.demo --source http://PHONE_IP:8080/video --show        # IP Webcam app (BTMOB.py)
-    python -m jetson.demo --source sim --hfov 68.75 --show                  # Gazebo camera bridge
+    python -m jetson.demo --source sim --camera-preset sim --show                  # Gazebo camera bridge
 
 Video files are processed frame by frame on the file's own clock (so controller timing is right
 even when detection is slow); add --realtime to treat the file like a live camera that drops frames.
@@ -93,7 +93,8 @@ def run_toy(args, cfg) -> int:
             return 2
         det = cli.make_detector(args)
     pipe = FollowPipeline(det, FaceFollowController(cfg), sink=DryRunSink(log_every_s=args.log_every),
-                          person_detector=cli.make_person_detector(args), person_every=args.person_every)
+                          person_detector=cli.make_person_detector(args), person_every=args.person_every,
+                          **cli.relock_kwargs(args))
     writer = VideoSink(args.out, fps=15) if args.out else None
     steplog = cli.StepLog(args.csv)
     dt, n, detect_ms, modes, t0 = 1 / 15, 0, [], Counter(), time.perf_counter()
@@ -130,7 +131,8 @@ def run_source(args, cfg) -> int:
     src = open_source(args.source, realtime=args.realtime)
     det = cli.make_detector(args)
     pipe = FollowPipeline(det, FaceFollowController(cfg), sink=DryRunSink(log_every_s=args.log_every),
-                          person_detector=cli.make_person_detector(args), person_every=args.person_every)
+                          person_detector=cli.make_person_detector(args), person_every=args.person_every,
+                          **cli.relock_kwargs(args))
     fps_hint = 30.0
     reader = None
     if src.live:

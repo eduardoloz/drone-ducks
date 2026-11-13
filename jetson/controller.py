@@ -25,6 +25,9 @@ Sign conventions (MAVSDK VelocityBodyYawspeed, PX4 body frame FRD):
   down_m_s     + = descend (NED!)       yawspeed_deg_s + = turn clockwise seen from above (right)
 So: face right of centre -> positive yaw rate; face far away -> positive forward;
 face below the desired row -> positive down (descend), only if vertical control is enabled.
+Optional sideways terms (both 0 = off by default): k_lateral * bearing, and k_head_lateral * head
+yaw (face pointing to the camera's right -> fly right, to stay in front of the person; see
+jetson/headpose.py). Their sum is capped at max_lateral_m_s.
 
 PX4 owns the real control loops (attitude, rate, velocity). These are just setpoints.
 """
@@ -57,13 +60,16 @@ class TargetObservation:
     w: float
     h: float
     stamp: float
+    # Which way the face points (jetson.headpose, + = toward the camera's right). None = unknown
+    # (body-only steering, no landmarks, face too small). Only used if k_head_lateral > 0.
+    head_yaw_deg: Optional[float] = None
 
     @classmethod
     def from_box(cls, box: Tuple[float, float, float, float], frame_w: int, frame_h: int,
-                 stamp: float) -> "TargetObservation":
+                 stamp: float, head_yaw_deg: Optional[float] = None) -> "TargetObservation":
         x1, y1, x2, y2 = box
         return cls(cx=(x1 + x2) / 2.0 / frame_w, cy=(y1 + y2) / 2.0 / frame_h,
-                   w=(x2 - x1) / frame_w, h=(y2 - y1) / frame_h, stamp=stamp)
+                   w=(x2 - x1) / frame_w, h=(y2 - y1) / frame_h, stamp=stamp, head_yaw_deg=head_yaw_deg)
 
 
 @dataclass(frozen=True)
@@ -99,6 +105,7 @@ class ControlOutput:
     elevation_deg: Optional[float] = None
     distance_m: Optional[float] = None
     lost_for_s: Optional[float] = None
+    head_yaw_deg: Optional[float] = None  # smoothed head yaw the lateral term used (None = unknown)
 
 
 @dataclass
@@ -119,6 +126,13 @@ class FollowConfig:
     k_forward: float = 0.5           # m/s per m of distance error
     k_vertical: float = 0.03         # m/s per deg of elevation error
     k_lateral: float = 0.0           # m/s per deg of bearing error (0 = centre with yaw only)
+    # Stay in front of the person: m/s sideways per deg of (smoothed) head yaw. 0 = off (default).
+    # Face points to the camera's right -> fly right, while yaw keeps them centred (an orbit).
+    # Shares max_lateral_m_s with k_lateral. Sideways flight is blind: keep the limit small.
+    k_head_lateral: float = 0.0
+    head_yaw_deadband_deg: float = 8.0
+    head_yaw_tau_s: float = 0.5      # smoothing time constant of the head-yaw estimate
+    head_yaw_hold_s: float = 0.5     # unknown yaw this long -> estimate decays to 0 (no stale orbits)
 
     # Soft deadbands (error inside the band -> 0, outside -> error minus band; no jump at the edge).
     yaw_deadband_deg: float = 3.0
@@ -157,7 +171,8 @@ class FollowConfig:
             raise ValueError("min_distance_m must not exceed target_distance_m")
         for name in ("max_yaw_rate_deg_s", "max_forward_m_s", "max_backward_m_s", "max_vertical_m_s",
                      "max_lateral_m_s", "max_accel_m_s2", "max_yaw_accel_deg_s2", "max_obs_age_s",
-                     "lost_timeout_s", "acquire_timeout_s", "face_width_m", "max_dt_s"):
+                     "lost_timeout_s", "acquire_timeout_s", "face_width_m", "max_dt_s", "k_head_lateral",
+                     "head_yaw_deadband_deg", "head_yaw_tau_s", "head_yaw_hold_s"):
             if getattr(self, name) < 0:
                 raise ValueError(f"{name} must be >= 0")
         if self.min_altitude_m >= self.max_altitude_m:
@@ -198,6 +213,22 @@ class FaceFollowController:
         self._timed_out = False
         self._timeout_reason = ""
         self._cmd = HOVER
+        self._head_yaw: Optional[float] = None    # smoothed head yaw, deg
+        self._head_yaw_at: Optional[float] = None  # stamp of the last raw head-yaw sample
+
+    def _update_head_yaw(self, raw: Optional[float], stamp: float, dt: float) -> Optional[float]:
+        c = self.config
+        if raw is not None and math.isfinite(raw):
+            if self._head_yaw is None or c.head_yaw_tau_s <= 0:
+                self._head_yaw = raw
+            elif dt > 0:
+                a = dt / (c.head_yaw_tau_s + dt)
+                self._head_yaw += a * (raw - self._head_yaw)
+            self._head_yaw_at = stamp
+        elif self._head_yaw is not None and (self._head_yaw_at is None
+                                             or stamp - self._head_yaw_at > c.head_yaw_hold_s):
+            self._head_yaw = None
+        return self._head_yaw
 
     @property
     def last_command(self) -> VelocityCommand:
@@ -258,8 +289,11 @@ class FaceFollowController:
 
         yaw = clamp(c.k_yaw * soft_deadband(bearing, c.yaw_deadband_deg),
                     -c.max_yaw_rate_deg_s, c.max_yaw_rate_deg_s)
-        right = clamp(c.k_lateral * soft_deadband(bearing, c.yaw_deadband_deg),
-                      -c.max_lateral_m_s, c.max_lateral_m_s)
+        head = self._update_head_yaw(obs.head_yaw_deg, obs.stamp, dt)
+        right = c.k_lateral * soft_deadband(bearing, c.yaw_deadband_deg)
+        if c.k_head_lateral > 0 and head is not None:
+            right += c.k_head_lateral * soft_deadband(head, c.head_yaw_deadband_deg)
+        right = clamp(right, -c.max_lateral_m_s, c.max_lateral_m_s)
 
         forward = c.k_forward * soft_deadband(distance - c.target_distance_m, c.distance_deadband_m)
         if forward > 0:
@@ -296,8 +330,10 @@ class FaceFollowController:
         reason = f"bearing {bearing:+.1f} deg, dist {distance:.1f} m"
         if notes:
             reason += " (" + ", ".join(notes) + ")"
+        if c.k_head_lateral > 0 and head is not None:
+            reason += f", head {head:+.0f} deg"
         return ControlOutput(self._cmd, TRACKING, reason, bearing_deg=bearing, elevation_deg=elevation,
-                             distance_m=distance, lost_for_s=0.0)
+                             distance_m=distance, lost_for_s=0.0, head_yaw_deg=head)
 
     def _lost_for(self, now: float) -> Optional[float]:
         return None if self._last_seen is None else max(0.0, now - self._last_seen)
@@ -305,6 +341,7 @@ class FaceFollowController:
     def _no_target(self, now: float, why: str) -> ControlOutput:
         c = self.config
         self._cmd = HOVER  # hover immediately; PX4 limits the deceleration
+        self._head_yaw = None
         if self._last_seen is None:
             waited = now - self._first_now
             if waited >= c.acquire_timeout_s:
