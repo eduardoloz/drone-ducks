@@ -1,6 +1,6 @@
 # Architecture: onboard face-follow
 
-_2026-11-10. Companion to `WHAT_WE_NEED.md` (hardware/why) and `BRINGUP_CHECKLIST.md` (how)._
+_2026-11-10, body path added 2026-11-13. Companion to `WHAT_WE_NEED.md` (hardware/why) and `BRINGUP_CHECKLIST.md` (how)._
 
 ## 1. The picture
 
@@ -43,6 +43,8 @@ the control loops. We send setpoints, never motor commands.
 | `detectors/` | BGR image | `list[Face(x1, y1, x2, y2, score, landmarks)]` in frame pixels | model |
 | `tracker.py` `IouTracker` | faces + stamp | `list[Track(id, smoothed box, last_seen, confirmed...)]` | yes |
 | `tracker.py` `TargetSelector` | tracks | the one `Track` to follow (sticky) | yes |
+| `detectors/person.py` (optional) | BGR image | `list[Face]` used as whole-person boxes (YOLOX-nano / HOG / TensorRT) | model |
+| `lock.py` `LockKeeper` (optional) | face tracks + body tracks | `LockState(face, body, steering box, stamp, source="face"/"body"/"")` | yes |
 | `controller.py` | `TargetObservation(cx, cy, w, h normalised, stamp)` + `now` (+ altitude) | `ControlOutput(VelocityCommand, mode, reason, action)` | yes |
 | `bridge.py` | `ControlOutput` | MAVSDK `set_velocity_body` at 20 Hz / dry-run log | I/O |
 | `pipeline.py` | `Frame` | `StepResult` (all of the above + per-stage timings) | glue |
@@ -57,6 +59,56 @@ clockwise seen from above**.
 The *capture* stamp travels with the data. A `TargetObservation` carries the stamp of the last frame
 the target was actually *detected* in (not the frame we are processing now), so the controller can
 refuse to act on stale information even while the tracker coasts.
+
+### 2a. Keeping the lock when the face disappears (body path, `--person yolox`)
+
+A person who turns round or walks away shows no face. With `FollowPipeline(..., person_detector=...)`
+the pipeline also runs a person detector, tracks bodies with a second `IouTracker` (centre-gate
+fallback off: it caused an identity swap in a group shot), and lets `lock.LockKeeper` decide what
+to steer by:
+
+```
+ face tracks ─┐                    target face detected?  ── yes ─► steer by face; remember its body
+              ├─► associate() ──►        │ no                          + learn face-in-body geometry
+ body tracks ─┘  (face centre in         ▼
+                  top of body box)  target body detected? ── yes ─► steer by a *virtual face box*
+                                         │ no                       (learned geometry on the body box),
+                                         ▼                          re-acquire when a face appears
+                                    nothing: controller hovers      INSIDE that body; never another face
+                                    -> TIMEOUT; no other face is    (cap: max_body_only_s = 15 s)
+                                    adopted until lost_timeout_s
+```
+
+The virtual face box keeps the controller unchanged: its distance estimate still assumes a 0.16 m
+face, the box is just synthesised from the body (from body *height* when the whole person is in
+frame, which hardly changes as they turn; from body width when the frame cuts them off). A lock is
+only ever *started* by a face, so the drone only follows someone who showed it their face first.
+No recognition: no embeddings, nothing kept once a track ends. In body mode `StepResult.target` is
+`None` (so the HUD blurs every visible face) and `target_body` / `target_source` say what is steered by.
+
+Measured with `python -m jetson.lockeval` (closed loop, toy world, oracle detectors with misses and
+noise, 5 seeds; numbers = share of frames after first acquisition):
+
+| scenario | mode | on target | on a bystander | lost | timed out |
+|---|---|---:|---:|---:|---:|
+| walks away 8 s, back turned | face only | 19 % | 0 % | 81 % | 100 % |
+| | face + body | **100 %** | 0 % | 0 % | 0 % |
+| turns round twice, 6 s each | face only | 16 % | 0 % | 84 % | 100 % |
+| | face + body | **100 %** | 0 % | 0 % | 0 % |
+| walks away while a bystander faces the camera | face only | 19 % | **73 %** | 8 % | 0 % |
+| | face + body | **100 %** | 0 % | 0 % | 0 % |
+| face always visible (control) | both | 100 % | 0 % | 0 % | 0 % |
+
+Real detectors on `crew_pan.mp4` (YuNet + YOLOX-nano, target's face painted out for 70 frames,
+open loop, `python -m jetson.lockeval --clip ...`): face-only followed *another crew member* in 79 %
+of those frames; face+body followed nobody (hover, 90 % lost, 0 % wrong). The body path did not keep
+the lock there: the target is the front person of a tightly packed group and YOLOX's box for them
+drops below 0.2. So in dense groups it fails safe but does not help; the toy world has no occlusion
+between people, so its 100 % is an upper bound. Needs a real walk-away clip with a team member.
+
+Cost: YOLOX-nano 416 px took ~95-140 ms per frame on the shared Intel Mac CPU under heavy load (not
+a benchmark). On the Orin it should be a few ms with TensorRT FP16 (unmeasured); `--person-every N`
+runs it on every Nth frame if needed.
 
 ## 3. Controller in one paragraph
 

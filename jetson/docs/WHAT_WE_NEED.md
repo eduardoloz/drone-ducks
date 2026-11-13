@@ -206,6 +206,31 @@ github.com/dusty-nv/jetson-inference (data/networks/models.json); mediapipe.read
 arxiv.org/abs/1511.06523 (WIDER FACE); github.com/TonyCongqianWang/cv_facedetection_eval;
 hjhsu.github.io/DroneFace; arxiv.org/abs/2011.07689 (Drone LAMS). Accessed 2026-11-10.
 
+### 6a. Person (body) detector, so the lock survives a turned head
+
+Added 2026-11-13 (`detectors/person.py`, `lock.py`; see ARCHITECTURE.md section 2a). We need a small,
+permissively licensed COCO "person" detector that runs on the Orin Nano next to YuNet.
+
+| Detector | Input | Params / FLOPs | COCO val AP (all classes, project README) | Licence (code / weights) | Status here |
+|---|---|---|---|---|---|
+| **YOLOX-nano** (Megvii) | 416x416 | 0.91 M / 1.08 G | 25.8 | **Apache-2.0 / Apache-2.0** | **default** (`--person yolox`), 3.66 MB ONNX, sha256 pinned in `fetch.py`; OpenCV DNN and ONNX Runtime give identical boxes |
+| NanoDet-Plus-m (RangiLyu; also in opencv_zoo) | 416x416 | 1.17 M / 0.9 G | 30.4 | Apache-2.0 / Apache-2.0 | not wired; the obvious upgrade if YOLOX-nano misses people at range |
+| OpenCV HOG + linear SVM (Dalal-Triggs) | sliding window | - | n/a (upright pedestrians only) | Apache-2.0 (OpenCV) | `--person hog`: no download, slow, CI fallback |
+| SSD-MobileNet-v2 COCO (jetson-inference `ssd-mobilenet-v2`) | 300x300 | ~4.3 M | ~22 | Apache-2.0 (TF model zoo) / NVIDIA repackaging | not wired |
+| NVIDIA TAO PeopleNet (jetson-inference / DeepStream) | 960x544 | ResNet-18/34 | not comparable (NVIDIA data) | **NVIDIA model EULA**: research OK, not redistributable | not wired |
+| Ultralytics YOLOv8n / YOLO11n | 640 | 3.2 M / 2.6 M | 37.3 / 39.5 | **AGPL-3.0** (code and weights) or paid Enterprise licence | **not used**: anything that links it and is shared or served must be AGPL too |
+
+AP figures are as stated in each project's README (not re-measured; not re-checked this round except the
+YOLOX licence and file hash). On the person class alone, AP is higher than the all-class number.
+
+Measured (Intel Mac CPU, shared with SITL, load average ~29, **not a benchmark**): YOLOX-nano at 416 px
+~95-140 ms per frame through OpenCV DNN. On the Orin Nano, expect single-digit ms with TensorRT FP16
+(`scripts/export_trt.py yolox`) **(est., unmeasured)**. If it is too slow on a Nano, `--person-every 3`.
+
+Privacy: the body path is detection and frame-to-frame tracking only. There is no re-identification
+model, no embedding, nothing stored after a track ends, and every face that is not the followed face
+is still blurred in recordings (in body mode that means *every* visible face).
+
 ## 7. Jetson <-> Pixhawk link
 
 ```
