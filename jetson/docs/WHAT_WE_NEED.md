@@ -305,6 +305,15 @@ MAVSDK and buy nothing (3.6 is only needed for jetson-inference's prebuilt JP4 b
 
 Step-by-step setup: `docs/BRINGUP_CHECKLIST.md`.
 
+Setup automation (2026-11-13, **unverified on hardware**): `scripts/setup_jetson_jp6.sh` (bare metal,
+idempotent) and `docker/Dockerfile.jp6` (FROM `nvcr.io/nvidia/l4t-jetpack:r36.4.0`, JetPack's OpenCV via
+`nvidia-opencv`, optional onnxruntime-gpu). What *was* verified on the Mac: the whole test suite on
+Python 3.8.20, 3.10.0 (OpenCV 4.8.1 + numpy 1.22.4; JetPack 6 itself ships numpy 1.21.5, which the pip
+OpenCV 4.8 wheel can't import with) and 3.12.8; `check_compat.py` static 3.8 checks; `bash -n` on the
+setup script; `export_trt.py --dry-run` (ONNX input shapes and the trtexec command lines). Not verified:
+the apt package names inside the container, JetPack's GStreamer OpenCV, TensorRT parsing our ONNX files,
+NVIDIA's onnxruntime-gpu, pycuda, the CSI camera, any Jetson timing.
+
 ## 9. Safety
 
 **Non-negotiables**
