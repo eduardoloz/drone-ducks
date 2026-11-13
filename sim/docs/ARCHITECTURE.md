@@ -144,7 +144,7 @@ _2026-11-13, round 2. Live in Gazebo SITL on Eddie's Intel Mac (same stack as ab
 | Soft fence (`--fence`, 25 m) / altitude band / 1.5 m/s cap | velocity clamped by quackdrone `Limits` | unit |
 | PX4 leaves Offboard (geofence, battery, pilot, link) | quackdrone stops commanding; session ends; never re-engages | unit (fake) |
 | Ctrl-C / exception / script ends | sink `stop()` lands; `with Drone` lands as a backstop | unit |
-| Sideways command (`--head-lateral`, jetson `k_head_lateral`) | same clamps as forward: `max_speed_xy` caps \|forward, right\|, the soft fence removes the outward part of a sideways velocity, PX4 GF_* geofence on top | unit (`test_safety.py`, fake-backend sink), SITL (`test_soft_fence_stops_sideways_velocity`) |
+| Sideways command (`--head-lateral`, jetson `k_head_lateral`) | same clamps as forward: `max_speed_xy` caps \|forward, right\|, the soft fence removes the outward part of a sideways velocity, PX4 GF_* geofence on top | unit (`test_safety.py`, fake-backend sink), SITL test `test_soft_fence_stops_sideways_velocity` written, **not yet run** (round 4: Mac at 4 % battery) |
 
 **Sideways flight is blind.** The drone has one forward-looking camera; when `--head-lateral` moves it
 right/left to stay in front of a person, nothing sees what it moves into (walls, trees, other people).
