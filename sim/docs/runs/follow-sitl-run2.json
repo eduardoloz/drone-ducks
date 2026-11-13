@@ -1,0 +1,28 @@
+{
+  "frames": 1113,
+  "duration_s": 74.93499999999999,
+  "follow_s": 72.772,
+  "pct_frames_tracking_while_following": 86.20370370370371,
+  "lost_events": 3,
+  "reacquired": 2,
+  "lost_durations_s": [
+    2.97,
+    2.57
+  ],
+  "final_mode": "TIMEOUT",
+  "pct_centred_5deg": 100.0,
+  "pct_centred_10deg": 100.0,
+  "pct_in_fov": 100.0,
+  "mean_abs_bearing_deg": 0.7178977565457423,
+  "true_dist_mean_m": 3.6086938974578673,
+  "true_dist_median_m": 3.0317074832899142,
+  "true_dist_minmax_m": [
+    2.242659562024089,
+    14.141971324871916
+  ],
+  "target_distance_m": 4.0,
+  "est_minus_true_dist_mean_m": -0.15657385731749093,
+  "est_minus_true_dist_mae_m": 0.38694360659448,
+  "pct_walker_facing_within_60deg": 81.85185185185185,
+  "finish_reason": "target lost for 5.1 s -> land -> LAND"
+}

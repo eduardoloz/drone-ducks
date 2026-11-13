@@ -13,6 +13,7 @@ if [ -n "${ALL:-}" ]; then PX4_PAT="bin/px4"; GZ_PAT="gz sim"; fi
 
 for s in $QUACK_SESSIONS; do tmux kill-session -t "$s" 2>/dev/null || true; done
 pkill -f "gz_camera_bridge.py" 2>/dev/null || true
+pkill -f "gz_pose_probe.py" 2>/dev/null || true
 pkill -f "$PX4_PAT" 2>/dev/null || true
 pkill -f "$GZ_PAT" 2>/dev/null || true
 pkill -f "gz sim -g" 2>/dev/null || true
