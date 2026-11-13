@@ -8,6 +8,7 @@
 #   WORLD=quack_people sim/scripts/start_sim.sh    # people for face-detection tests
 #   HEADLESS=0 sim/scripts/start_sim.sh            # also open the Gazebo GUI
 #   SIM=sih sim/scripts/start_sim.sh               # no Gazebo at all (control/failsafe work)
+#   CAM_PITCH_DEG=20 WORLD=quack_people sim/scripts/start_sim.sh   # camera pitched for 3 m follow
 #
 # Then fly:  sim/scripts/py.sh sim/examples/01_takeoff_square_land.py
 # Stop:      sim/scripts/stop_sim.sh   (always use it: it also clears PX4's stale lock files)
@@ -22,7 +23,13 @@ SIM="${SIM:-gz}"
 rm -f "$LOG_DIR/sim.log" "$LOG_DIR/cam.log"
 
 echo "[1/2] PX4 SITL ($SIM${WORLD:+, world $WORLD})"
-tmux new-session -d -s quack-sim "bash '$S/run_sim.sh' 2>&1 | tee '$LOG_DIR/sim.log'"
+# Pass our settings explicitly: a tmux server that is already running (any other tmux session on
+# this machine) gives new sessions ITS environment, not ours.
+SIM_ENV=""
+for v in SIM WORLD MODEL POSE HEADLESS KEEP_PARAMS CAM_PITCH_DEG PX4_DIR RUN_DIR GZ_VERBOSE PX4_SYS_AUTOSTART; do
+  [ -n "${!v:-}" ] && SIM_ENV="$SIM_ENV $v=$(printf %q "${!v}")"
+done
+tmux new-session -d -s quack-sim "env$SIM_ENV bash '$S/run_sim.sh' 2>&1 | tee '$LOG_DIR/sim.log'"
 if ! wait_for 180 "PX4 started" grep -q "Startup script returned successfully" "$LOG_DIR/sim.log"; then
   tail -20 "$LOG_DIR/sim.log"; exit 1
 fi

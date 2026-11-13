@@ -40,3 +40,47 @@ def test_summary_counts_lost_events_and_centring():
     assert s["est_minus_true_dist_mean_m"] == pytest.approx(0.5)
     assert s["final_mode"] == "TIMEOUT"
     assert fm.summarize([], 4.0) == {"frames": 0}
+
+
+def test_script_for_uses_the_probe_world_or_override():
+    from quackdrone.integrations import walker
+    assert fm.script_for({"world": "quack_people_turnaway"}) is walker.TURNAWAY
+    assert fm.script_for({"world": "quack_demo"}) is walker.LEAD          # unknown world -> lead
+    assert fm.script_for(None, "turnaway") is walker.TURNAWAY
+    assert fm.script_for({"world": "quack_people_turnaway"}, "lead") is walker.LEAD
+    w, src = fm.walker_from_truth({"sim_time": 30.0, "poses": {}}, walker.TURNAWAY)
+    assert src == "script" and w[2] == pytest.approx(walker.S)           # walking away at t = 30
+
+
+def test_ended_early_and_body_share():
+    from quackdrone.integrations import walker
+    sc = walker.TURNAWAY
+    rows = [{"t": i * 0.1, "sim_time": 1000 * sc.period_s + 20 + i * 0.1, "mode": "TRACKING",
+             "source": "face" if i < 50 else "body"} for i in range(100)]
+    assert fm.end_phase(rows, sc) == pytest.approx(29.9)
+    assert fm.ended_early(rows, sc) is True                    # landed at 30 s, final turn at 69 s
+    late = [dict(r, sim_time=r["sim_time"] + 45) for r in rows]
+    assert fm.ended_early(late, sc) is False
+    assert fm.ended_early([{"t": 0, "mode": "IDLE"}], sc) is None
+    s = fm.summarize(rows, 4.0)
+    assert s["body_frames"] == 50 and s["pct_following_by_body"] == pytest.approx(50.0)
+    assert "body_frames" not in fm.summarize([{"t": 0, "mode": "TRACKING"}], 4.0)
+
+
+@pytest.mark.parametrize("name", ["log.csv", "log.csv.gz"])
+def test_csv_roundtrip_reproduces_summary(tmp_path, name):
+    rows = [{"t": i / 15, "mode": "TRACKING" if i % 7 else "LOST", "true_bearing_deg": math.sin(i) * 3.123456,
+             "true_dist_m": 3.0 + i / 97, "est_dist_m": 3.1 + i / 101, "walker_facing_deg": 1.23456,
+             "reason": "x, with a comma", "source": "face", "sim_time": None} for i in range(200)]
+    fields = list(rows[0])
+    path = str(tmp_path / name)
+    fm.write_csv(path, rows, fields)
+    back = fm.read_csv(path)
+    assert back[0]["sim_time"] is None and back[0]["reason"] == "x, with a comma"
+    a, b = fm.summarize(rows, 4.0), fm.summarize(back, 4.0)
+    assert a["lost_events"] == b["lost_events"] and a["frames"] == b["frames"]
+    assert b["true_dist_mean_m"] == pytest.approx(a["true_dist_mean_m"], abs=1e-3)
+    if name.endswith(".gz"):
+        first = open(path, "rb").read()
+        fm.write_csv(path, rows, fields)
+        assert open(path, "rb").read() == first                  # deterministic bytes (gzip mtime=0)
