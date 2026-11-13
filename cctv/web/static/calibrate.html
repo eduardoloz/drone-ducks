@@ -57,8 +57,8 @@
         <tbody id="pts"></tbody>
       </table>
       <div class="row"><button id="download">Download points JSON</button></div>
-      <p class="muted small">Save the download as <code>cctv/data/calibration/&lt;camera&gt;.points.json</code>, then run
-        <code>python -m cctv.calibrate fit --camera &lt;camera&gt;</code> to write the calibration the pipeline uses.
+      <p class="muted small">Save the download as <code>cctv/data/calibration/&lt;camera&gt;/&lt;view&gt;.points.json</code> (one folder per camera, one file per PTZ preset), then run
+        <code>python -m cctv.calibrate fit --camera &lt;camera&gt; --view &lt;view&gt;</code> to write the calibration the pipeline uses.
         Nothing is saved by this page.</p>
     </section>
   </main>
