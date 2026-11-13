@@ -78,7 +78,7 @@ class FollowPipeline:
         # Confirmed re-lock after a loss (both paths). RelockGate(confirm_hits=1, confirm_score=None)
         # restores the round-2 behaviour.
         cfg = self.controller.config
-        self.relock = relock if relock is not None else RelockGate()
+        self.relock = relock if relock is not None else RelockGate(lost_after_s=cfg.max_obs_age_s)
         if self.relock.max_distance_m is None and relock is None:
             self.relock.max_distance_m = cfg.target_distance_m + 1.5
         # Face-only path: after losing the target, adopt no *new* face track for this long. Default 0:

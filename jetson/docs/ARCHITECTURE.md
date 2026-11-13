@@ -115,9 +115,9 @@ runs it on every Nth frame if needed.
 SITL run 2 (`sim/docs/runs/follow-sitl-run2.csv`): after the walker turned and walked away, YuNet hits
 on the *back* of their head at 7-8.7 m (estimated 6.0-6.8 m) restarted tracking at 68.8 s and the
 drone flew toward them for 1.6 s. `RelockGate` now sits in front of the controller. Once the target
-has had no fresh detection for 0.3 s, observations are withheld (the drone hovers and the lost timer
+has had no fresh detection for 0.5 s (the controller's `max_obs_age_s`, i.e. when it goes LOST), observations are withheld (the drone hovers and the lost timer
 keeps running) until a re-lock is **confirmed**: 3 consecutive detections on one track (or one
-scoring >= 0.9), each estimated within `target_distance + 1.5 m` (5.5 m by default). An unconfirmed candidate
+scoring >= 0.9), each estimated within max(`target_distance + 1.5 m`, last followed distance + 1.5 m) (5.5 m when following at 4 m). An unconfirmed candidate
 is not the target, so the HUD and `--out` blur it like a bystander. Flags: `--relock-hits`,
 `--relock-score`, `--relock-max-distance`; `--relock-hits 1 --relock-score 0 --relock-max-distance 0`
 restores round 2.
@@ -136,6 +136,13 @@ losses (`follow-sitl-run3.json`), which were new tracks both times. With a holdo
 would have become landings, i.e. face-only would never re-lock after a loss > 1 s. The bystander risk
 that the body path's holdoff guards against is covered here by the confirmation + distance cap.
 `--relock-holdoff S` adds a face-only holdoff if Eddie wants the stricter rule (tested).
+
+Found while checking compatibility with the sim's fake-backend closed loop (`sim/tests/unit/test_jetson_follow.py`,
+face 30 deg off and 8 m away, ~8 px wide): while the drone yaws, the tracker loses that small face every ~1 s
+and spawns new tracks. Its motion model is in image space and ignores the drone's own rotation, and the
+selector stays on the coasting old track until it expires (1 s). That was already true in round 2 and the
+re-lock gate doesn't change it (the test passes 4/4), but it costs ~60 % of tracking time on far faces
+while turning. Possible fix: shift predicted boxes by the commanded yaw rate (ego-motion compensation).
 
 ### 2c. Staying in front: head yaw -> sideways (`jetson/headpose.py`, `k_head_lateral`, off by default)
 

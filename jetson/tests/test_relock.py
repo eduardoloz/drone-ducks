@@ -209,3 +209,15 @@ def test_unconfirmed_relock_candidate_is_not_the_target_so_it_gets_blurred():
     res = _run(frames)
     gated = [r for r in res[40:] if r.gated]
     assert gated and all(r.target is None and r.faces for r in gated)
+
+
+def test_gate_distance_cap_follows_a_far_target():
+    g = RelockGate(max_distance_m=5.5)
+    g.update(1, True, 0.7, 0.0, distance_m=8.0)      # following someone 8 m away
+    g.update(None, False, 0.0, 0.5)
+    assert g.distance_cap() == pytest.approx(9.5)
+    assert [g.update(2, True, 0.7, 0.6 + k / 15, distance_m=8.1) for k in range(3)] == [False, False, True]
+    g2 = RelockGate(max_distance_m=5.5)
+    g2.update(1, True, 0.7, 0.0, distance_m=3.5)      # run 2: lost at ~3.5 m -> cap stays 5.5 m
+    g2.update(None, False, 0.0, 0.5)
+    assert g2.distance_cap() == 5.5
