@@ -3,9 +3,10 @@
     python -m cctv.pipeline --camera R10_041 --clip cctv/data/clips/R10_041_20261110T213935Z.ts
 
 Steps
-1. load the camera (manifest) and its calibration (data/calibration/<id>.json)
-2. check the camera has not moved since calibration (PTZ!) using the committed
-   reference frame; if it moved, speeds are stored as rejected
+1. load the camera (manifest) and all its known views (PTZ presets, see views.py)
+2. match the clip's median frame against every view's reference frame and use
+   that view's calibration; if no calibrated view matches (camera re-aimed),
+   tracks are stored for counts only, with no speeds
 3. detect + track vehicles (or reuse a cached tracks JSONL: tracking is the slow part)
 4. per track: keep points inside the calibrated ROI, estimate speed +- sigma
 5. write run, vehicles and per-frame points to SQLite; print a summary
@@ -25,8 +26,9 @@ import numpy as np
 
 from cctv import store
 from cctv.geometry import Calibration
-from cctv.registry import CALIBRATION_DIR, DATA_DIR, calibration_path, get_camera, load_cameras
+from cctv.registry import DATA_DIR, get_camera, load_cameras
 from cctv.speed import SpeedConfig, estimate_speed, is_speeding
+from cctv.views import CameraView, ViewMatch, list_views, match_view
 
 RUNS_DIR = DATA_DIR / "runs"
 MIN_ROI_POINTS_FOR_COUNT = 5
@@ -67,49 +69,68 @@ def clip_median_frame(clip: Path, every: int = 30) -> np.ndarray | None:
     return np.median(np.stack(frames), axis=0).astype(np.uint8) if frames else None
 
 
-def reference_frame_path(camera_id: str) -> Path:
-    return CALIBRATION_DIR / f"{camera_id}.ref.jpg"
+def select_view(camera_id: str, clip: Path, calibration_file: Path | None = None,
+                only_view: str | None = None) -> tuple[Calibration | None, ViewMatch, bool | None]:
+    """Pick the calibration for this clip by matching its median frame against every known view.
 
-
-def check_camera_motion(camera_id: str, clip: Path, cal: Calibration | None) -> tuple[bool | None, dict]:
-    """Compare the calibration reference frame with this clip's median frame."""
-    import cv2
-
-    from cctv.camera_motion import DEFAULT_OSD_BOXES, CameraMotionDetector
-
-    ref_path = reference_frame_path(camera_id)
-    if cal is None or not ref_path.exists():
-        return None, {"reason": f"no reference frame at {ref_path.name}; motion not checked"}
-    ref = cv2.imread(str(ref_path))
-    cur = clip_median_frame(clip)
-    if ref is None or cur is None:
-        return None, {"reason": "could not read frames"}
-    boxes = [tuple(b) for b in cal.osd_boxes] if cal.osd_boxes else DEFAULT_OSD_BOXES
-    res = CameraMotionDetector(ref, osd_boxes=boxes).check(cur)
-    out = res.to_dict()
-    luma_ref, luma_cur = float(ref.mean()), float(cur.mean())
-    out.update(luma_ref=round(luma_ref, 1), luma_clip=round(luma_cur, 1))
-    if res.moved and luma_cur < 0.6 * luma_ref:
-        # Still treated as moved (conservative), but say why it might be a false alarm.
-        out["reason"] += " (clip much darker than the daytime reference: verify by eye, or calibrate a night view)"
-    return res.moved, out
+    Returns ``(calibration or None, match, moved)``. ``moved`` is True when no
+    *calibrated* view matches (unknown view, or a known preset nobody has
+    calibrated yet), False when one does, None when the view could not be checked.
+    """
+    if calibration_file is not None:  # explicit file: one view, its sibling .ref.jpg as reference
+        cf = Path(calibration_file)
+        ref = cf.with_name(cf.name[:-len(".json")] + ".ref.jpg")
+        cal = Calibration.load(cf)
+        views = [CameraView(camera_id, cal.view_id or cf.stem, calibration_path=cf,
+                            reference_paths=[ref] if ref.exists() else [])]
+    else:
+        views = list_views(camera_id)
+        if only_view:
+            views = [v for v in views if v.view_id == only_view]
+            if not views:
+                raise KeyError(f"camera {camera_id} has no view {only_view!r}")
+    calibrated = [v for v in views if v.calibrated]
+    if not calibrated and not any(v.reference_paths for v in views):
+        return None, ViewMatch("no_views", reason="camera not calibrated"), None
+    frame = clip_median_frame(clip) if Path(clip).exists() else None
+    if frame is None:
+        if len(calibrated) == 1:  # round-1 behaviour: trust the only calibration, say it was not checked
+            v = calibrated[0]
+            return v.load_calibration(), ViewMatch("unreadable", v, reason=f"could not read clip frames; view not "
+                                                   f"checked, using the only calibration ({v.view_id})"), None
+        return None, ViewMatch("unreadable", reason=f"could not read clip frames and {len(calibrated)} calibrated "
+                               "views exist: cannot tell which applies"), None
+    m = match_view(camera_id, frame, views)
+    if m.status == "no_views":  # calibrated but no reference frame to compare with
+        v = calibrated[0]
+        m = ViewMatch("no_views", v, reason=f"no reference frame for view {v.view_id}; motion not checked")
+        return v.load_calibration(), m, None
+    m.result = {**(m.result or {}), "luma_clip": round(float(frame.mean()), 1)}
+    return (m.calibration, m, False) if m.usable else (None, m, True)
 
 
 def process(camera_id: str, clip: Path, db_path: Path, tracks_path: Path | None = None,
             model: str = "yolo11n.pt", imgsz: int = 640, max_frames: int | None = None,
             reuse_tracks: bool = True, k_sigma: float = 2.0, min_margin_mph: float = 3.0,
             limit_mph: float | None = None, store_points: bool = True,
-            calibration_file: Path | None = None) -> dict:
+            calibration_file: Path | None = None, view_id: str | None = None) -> dict:
     from cctv.detect_track import group_tracks, load_jsonl, run_tracker, save_jsonl
 
     cam = get_camera(camera_id)
     limit = float(limit_mph or cam.get("posted_limit_mph") or 55)
-    cal_file = calibration_file or calibration_path(camera_id)
-    cal = Calibration.load(cal_file) if Path(cal_file).exists() else None
-
-    moved, motion = check_camera_motion(camera_id, clip, cal)
+    cal, match, moved = select_view(camera_id, clip, calibration_file, only_view=view_id)
+    motion = match.to_dict()
+    view_id = match.view.view_id if match.view else None
     if moved:
-        print(f"!! camera view changed since calibration: {motion.get('reason')} -> speeds rejected")
+        print(f"!! no calibrated view matches this clip: {match.reason} -> no speeds")
+    else:
+        print(f"view: {match.reason}")
+    if moved and match.status == "matched":
+        no_speed_reason = f"camera at preset {view_id}, which is not calibrated"
+    elif moved:
+        no_speed_reason = "camera moved: view matches no calibrated preset"
+    else:
+        no_speed_reason = "camera not calibrated"
 
     tracks_path = tracks_path or RUNS_DIR / f"{clip.stem}.{Path(model).stem}.tracks.jsonl"
     if reuse_tracks and tracks_path.exists():
@@ -138,9 +159,9 @@ def process(camera_id: str, clip: Path, db_path: Path, tracks_path: Path | None 
         calibration_utc=cal.created_utc if cal else None,
         calibration_rmse_m=cal.rmse_m if cal else None,
         scale_uncertainty=cal.scale_uncertainty if cal else None,
-        camera_moved=None if moved is None else int(moved), motion_json=json.dumps(motion),
-        reference_frame=str(reference_frame_path(camera_id).name) if cal else None,
-        notes="speeds rejected: camera moved" if moved else None)
+        camera_moved=None if moved is None else int(moved), motion_json=json.dumps(motion, default=str),
+        reference_frame=match.reference, view_id=view_id,
+        notes=f"no speeds: {no_speed_reason}" if moved else None)
 
     cfg = SpeedConfig()
     summary = {"run_id": run_id, "camera_id": camera_id, "tracks_total": len(tracks), "vehicles": 0,
@@ -153,8 +174,6 @@ def process(camera_id: str, clip: Path, db_path: Path, tracks_path: Path | None 
         t, uv = tr["t"][in_roi], tr["uv"][in_roi]
         if cal is not None:
             est = estimate_speed(t, uv, cal.H_np, cal.scale_uncertainty, cfg, track_id=tid, cls=tr["cls"])
-            if moved and est.accepted:
-                est.accepted, est.reject_reason = False, "camera moved since calibration"
         else:
             est = None
         mid_t = float((t[0] + t[-1]) / 2)
@@ -177,7 +196,7 @@ def process(camera_id: str, clip: Path, db_path: Path, tracks_path: Path | None 
                 key = (est.reject_reason or "").split(" (")[0].split(":")[0]
                 summary["rejected"][key] = summary["rejected"].get(key, 0) + 1
         else:
-            fields.update(accepted=0, reject_reason="camera not calibrated", over_limit=0)
+            fields.update(accepted=0, reject_reason=no_speed_reason, over_limit=0)
         pts = None
         if store_points:
             xy = cal.image_to_road(tr["uv"]) if cal else np.full((len(tr["t"]), 2), np.nan)
@@ -190,7 +209,8 @@ def process(camera_id: str, clip: Path, db_path: Path, tracks_path: Path | None 
         s = np.asarray(speeds)
         summary.update(median_mph=round(float(np.median(s)), 1), p85_mph=round(float(np.percentile(s, 85)), 1),
                        min_mph=round(float(s.min()), 1), max_mph=round(float(s.max()), 1))
-    summary.update(camera_moved=moved, motion=motion, clip_start_utc=start_iso,
+    summary.update(camera_moved=moved, view_id=view_id, view_status=match.status, motion=motion,
+                   clip_start_utc=start_iso,
                    ms_per_frame=meta.get("ms_per_frame_mean"))
     return summary
 
@@ -212,11 +232,14 @@ def main(argv: list[str] | None = None) -> None:
     ap.add_argument("--limit-mph", type=float, help="override the posted limit from the manifest")
     ap.add_argument("--k-sigma", type=float, default=2.0, help="margin = max(k*sigma, min margin)")
     ap.add_argument("--min-margin-mph", type=float, default=3.0)
+    ap.add_argument("--view", help="only consider this view (PTZ preset); it is still checked against the clip")
+    ap.add_argument("--calibration", type=Path, help="use this calibration JSON (and its sibling .ref.jpg) only")
     ap.add_argument("--no-points", action="store_true", help="don't store per-frame track points")
     args = ap.parse_args(argv)
     summary = process(args.camera, args.clip, args.db, args.tracks, args.model, args.imgsz, args.max_frames,
                       reuse_tracks=not args.retrack, k_sigma=args.k_sigma, min_margin_mph=args.min_margin_mph,
-                      limit_mph=args.limit_mph, store_points=not args.no_points)
+                      limit_mph=args.limit_mph, store_points=not args.no_points,
+                      calibration_file=args.calibration, view_id=args.view)
     print(json.dumps(summary, indent=1, default=str))
     print(f"db: {args.db}")
 
