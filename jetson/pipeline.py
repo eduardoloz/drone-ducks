@@ -91,18 +91,24 @@ class FollowPipeline:
         # Ego-rotation compensation: shift tracks by the drone's own yaw between frames (measured
         # yaw rate passed to step() or the sink's yaw_rate_deg_s, else the last commanded yaw rate).
         self.ego_compensation = ego_compensation
+        self.ego_tau_s = 0.35   # commanded -> actual yaw-rate lag model (PX4-ish first order)
         self._prev_stamp: Optional[float] = None
+        self._yaw_rate_est = 0.0
 
     def _ego_rotate(self, frame: Frame, yaw_rate_deg_s: Optional[float]) -> None:
         prev, self._prev_stamp = self._prev_stamp, frame.stamp
         if not self.ego_compensation or prev is None:
             return
+        dt = min(max(0.0, frame.stamp - prev), 0.5)
         rate = yaw_rate_deg_s
         if rate is None:
             rate = getattr(self.sink, "yaw_rate_deg_s", None)
         if rate is None:
-            rate = self.controller.last_command.yawspeed_deg_s
-        dt = min(max(0.0, frame.stamp - prev), 0.5)
+            # No measurement: the last command through a first-order lag (the drone is slower
+            # than the command; raw commands over-rotate the prediction at the start of a turn).
+            a = dt / (self.ego_tau_s + dt) if self.ego_tau_s > 0 else 1.0
+            self._yaw_rate_est += a * (self.controller.last_command.yawspeed_deg_s - self._yaw_rate_est)
+            rate = self._yaw_rate_est
         d_yaw = math.radians(rate) * dt
         if d_yaw:
             f = (frame.width / 2.0) / math.tan(math.radians(self.controller.config.hfov_deg) / 2.0)
