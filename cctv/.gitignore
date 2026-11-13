@@ -28,3 +28,6 @@ data/runs/
 # Per-view (PTZ preset) layout: data/calibration/<CAM>/<VIEW>.ref.jpg and <VIEW>.ref-<tag>.jpg
 !data/calibration/*/*.ref.jpg
 !data/calibration/*/*.ref-*.jpg
+# Ground truth: fetched NYC DOT link-speed rows and GPS logs stay local
+data/groundtruth/cache/
+data/groundtruth/drives/
