@@ -127,7 +127,8 @@ class FollowPipeline:
             bw = (box[2] - box[0]) / float(frame.width)
             dist = geometry.distance_from_width(bw, c.hfov_deg, c.face_width_m) if bw > 0 else None
             if not self.relock.update(key, fresh, score, frame.stamp, dist):
-                box, box_stamp, gated = None, None, True
+                # Not confirmed yet: not the target, so the HUD and --out blur treat it as a bystander.
+                box, box_stamp, gated, target = None, None, True, None
         else:
             self.relock.update(None, False, 0.0, frame.stamp)
         obs = None

@@ -202,3 +202,10 @@ def test_headeval_lateral_term_keeps_the_walker_in_front():
     on = run(30.0, 0.02, seconds=25.0, heading_noise_deg=0.0)
     assert off["timeout_s"] is not None and on["timeout_s"] is None
     assert on["lock_pct"] > 95 and on["front_pct"] > off["front_pct"] + 50
+
+
+def test_unconfirmed_relock_candidate_is_not_the_target_so_it_gets_blurred():
+    frames = [[FACE]] * 10 + [[]] * 30 + [[FACE]] * 6
+    res = _run(frames)
+    gated = [r for r in res[40:] if r.gated]
+    assert gated and all(r.target is None and r.faces for r in gated)
