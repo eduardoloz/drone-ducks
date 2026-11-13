@@ -174,6 +174,88 @@ def ended_early(rows: list[dict], script: walker.Script, margin_s: float = 2.0) 
     return ph < script.final_turn_s - margin_s
 
 
+def _sim_dts(rows: list[dict], max_dt: float = 0.5) -> list[float]:
+    """Sim-time duration each row stands for (gap to the next row, capped; 0 without sim time)."""
+    out = []
+    for r, nxt in zip(rows, rows[1:] + [None]):
+        a, b = r.get("sim_time"), (nxt or {}).get("sim_time")
+        out.append(min(max_dt, max(0.0, b - a)) if a is not None and b is not None else 0.0)
+    return out
+
+
+def _in_windows(ph: float, windows) -> bool:
+    return any(w0 <= ph < w1 for w0, w1, *_ in windows)
+
+
+def stay_in_front(rows: list[dict], script: walker.Script, in_front_deg: float = 30.0) -> dict:
+    """How long the drone stayed in front of the walker, from ground truth (walker heading vs the
+    direction to the drone: walker_facing_deg, 0 = looking straight at the drone).
+
+    Counted over frames from the first lock to the end, while the walker's script says the walker
+    faces the drone (script.facing_windows); durations in sim seconds. Per leg (script.legs): mean
+    and max |facing|, facing at the end of the leg, and % of the leg's frames with a TRACKING mode.
+    """
+    first = next((i for i, r in enumerate(rows) if r["mode"] == "TRACKING"), None)
+    if first is None:
+        return {}
+    rows = [r for r in rows[first:] if r.get("sim_time") is not None]
+    dts = _sim_dts(rows)
+    win, front = 0.0, 0.0
+    legs: dict = {}
+    for r, dt in zip(rows, dts):
+        f = r.get("walker_facing_deg")
+        ph = walker.phase(r["sim_time"], script)
+        if f is None or not _in_windows(ph, script.facing_windows):
+            continue
+        win += dt
+        front += dt if abs(f) <= in_front_deg else 0.0
+        for t0, t1, label in script.legs:
+            if t0 <= ph < t1:
+                legs.setdefault(label, []).append((ph, f, r["mode"]))
+    out = {"facing_window_s": round(win, 2), f"in_front_{in_front_deg:g}deg_s": round(front, 2),
+           f"pct_in_front_{in_front_deg:g}deg": round(100.0 * front / win, 1) if win > 0 else None}
+    for label, pts in legs.items():
+        fs = [abs(f) for _ph, f, _m in pts]
+        out[f"leg_{label}"] = {
+            "mean_abs_facing_deg": round(statistics.fmean(fs), 1), "max_abs_facing_deg": round(max(fs), 1),
+            "end_facing_deg": round(pts[-1][1], 1), "end_phase_s": round(pts[-1][0], 1),
+            "pct_tracking": round(100.0 * sum(m == "TRACKING" for *_x, m in pts) / len(pts), 1)}
+    return out
+
+
+def back_of_head(rows: list[dict], away_deg: float = 120.0, settle_s: float = 1.0) -> dict:
+    """False locks on the back of the walker's head, from ground truth.
+
+    relocks_facing_away   transitions into TRACKING (first lock or re-lock) by a face (not the body
+                          path) while the walker faces > 90 deg away from the drone
+    tracking_facing_away_s  sim seconds TRACKING by a face while the walker has faced > away_deg
+                          away for at least settle_s (skips the controller coasting on the last
+                          frontal detection for max_obs_age_s right after a turn)
+    """
+    relocks, relock_at, away_s = 0, [], 0.0
+    away_since = None
+    prev = None
+    dts = _sim_dts(rows)
+    for r, dt in zip(rows, dts):
+        f, st = r.get("walker_facing_deg"), r.get("sim_time")
+        by_face = r.get("source") in (None, "", "face")
+        if f is not None and st is not None:
+            if abs(f) > away_deg:
+                away_since = st if away_since is None else away_since
+            else:
+                away_since = None
+            if r["mode"] == "TRACKING" and prev not in (None, "TRACKING") and by_face and abs(f) > 90.0:
+                relocks += 1
+                relock_at.append({"t": r["t"], "facing_deg": round(f, 1),
+                                  "true_dist_m": None if r.get("true_dist_m") is None else round(r["true_dist_m"], 2)})
+            if (r["mode"] == "TRACKING" and by_face and away_since is not None
+                    and st - away_since >= settle_s):
+                away_s += dt
+        prev = r["mode"]
+    return {"relocks_facing_away": relocks, "relocks_facing_away_at": relock_at,
+            "tracking_facing_away_s": round(away_s, 2)}
+
+
 # ---------------------------------------------------------------- CSV logs
 # Committed run logs stay small: floats rounded to what the numbers mean (mm, 0.01 deg/ms), gzip.
 ROUND = 3
@@ -216,14 +298,17 @@ def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description="summary of a follow_person CSV log (.csv or .csv.gz)")
     ap.add_argument("csv")
     ap.add_argument("--target", type=float, default=4.0, help="target distance used in the run (m)")
-    ap.add_argument("--walker", default=None, help="walker script (lead/turnaway) for ended_early")
+    ap.add_argument("--walker", default=None, help="walker script (lead/turnaway/angled) for ended_early "
+                    "and the stay-in-front numbers")
     args = ap.parse_args(argv)
     rows = read_csv(args.csv)
     out = summarize(rows, args.target)
+    out["back_of_head"] = back_of_head(rows)
     if args.walker:
         sc = walker.get(args.walker)
         out["walker_end_phase_s"] = end_phase(rows, sc)
         out["ended_early"] = ended_early(rows, sc)
+        out["stay_in_front"] = stay_in_front(rows, sc)
     json.dump(out, sys.stdout, indent=2)
     print()
     return 0
