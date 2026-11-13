@@ -4,10 +4,10 @@
 
      Top view (metres):            N (+y)
                                      .        casual_female (4, 2)
-        drone (0,0) facing east ->   .        standing_person (4, 0)          walker: (10, 3) <-> (5, -1)
+        drone (0,0) facing east ->   .        standing_person (4, 0)          
                                      .        female_visitor (4, -2)
-     The three static people face the spawn point. The walker walks the diagonal towards the drone
-     (face visible) and back (face away), 1 m/s, looping every ~13 s: a moving target for followers.
+     walker: lane x = -3..-6.5, y = -12 -> 8 (west of the drone), see the actor comment below.
+     The three static people face the spawn point (examples/04_face_check.py).
 
      Models (Gazebo Fuel, fetched on first load; pre-fetch with sim/scripts/fetch_models.sh):
        Standing person, Casual female: OpenRobotics / MakeHuman, CC0-1.0
@@ -70,7 +70,11 @@
       <pose>4 -2 0 0 0 -1.5708</pose>
     </include>
 
-    <!-- ===== a walking person: diagonal towards the drone and back ===== -->
+    <!-- ===== a walking person for face-follow (sim/examples/follow_person.py) =====
+         Lane west of the static people. Walks north on an S-curve at 0.4 m/s facing a drone that
+         leads them (0-62.6 s, one look-back at 27-31.5 s), then turns and walks back at 1.4 m/s
+         (face away). Loop 78.9 s. Mirrored in quackdrone/integrations/walker.py: keep in sync
+         (tests/unit/test_walker.py). -->
     <actor name="walker">
       <skin>
         <filename>https://fuel.gazebosim.org/1.0/chapulina/models/Walking actor/2/files/meshes/walk.dae</filename>
@@ -86,12 +90,21 @@
         <delay_start>0</delay_start>
         <auto_start>true</auto_start>
         <trajectory id="0" type="walking">
-          <!-- actor faces its local +x; yaw -2.4669 = heading from (10,3) towards (5,-1) -->
-          <waypoint><time>0</time><pose>10 3 0 0 0 -2.4669</pose></waypoint>
-          <waypoint><time>6.4</time><pose>5 -1 0 0 0 -2.4669</pose></waypoint>
-          <waypoint><time>7.0</time><pose>5 -1 0 0 0 0.6747</pose></waypoint>
-          <waypoint><time>13.4</time><pose>10 3 0 0 0 0.6747</pose></waypoint>
-          <waypoint><time>14.0</time><pose>10 3 0 0 0 -2.4669</pose></waypoint>
+          <!-- actor faces its local +x; yaw = heading of the next leg -->
+          <waypoint><time>0.0</time><pose>-5.0 -12.0 0 0 0 1.1071</pose></waypoint>
+          <waypoint><time>11.2</time><pose>-3.0 -8.0 0 0 0 1.1071</pose></waypoint>
+          <waypoint><time>11.7</time><pose>-3.0 -8.0 0 0 0 2.191</pose></waypoint>
+          <waypoint><time>27.0</time><pose>-6.5 -3.0 0 0 0 2.191</pose></waypoint>
+          <waypoint><time>28.0</time><pose>-6.5 -3.0 0 0 0 -0.9506</pose></waypoint>
+          <waypoint><time>30.5</time><pose>-6.5 -3.0 0 0 0 -0.9506</pose></waypoint>
+          <waypoint><time>31.5</time><pose>-6.5 -3.0 0 0 0 2.191</pose></waypoint>
+          <waypoint><time>32.0</time><pose>-6.5 -3.0 0 0 0 1.0304</pose></waypoint>
+          <waypoint><time>46.6</time><pose>-3.5 2.0 0 0 0 1.0304</pose></waypoint>
+          <waypoint><time>47.1</time><pose>-3.5 2.0 0 0 0 1.8158</pose></waypoint>
+          <waypoint><time>62.6</time><pose>-5.0 8.0 0 0 0 1.8158</pose></waypoint>
+          <waypoint><time>63.6</time><pose>-5.0 8.0 0 0 0 -1.5708</pose></waypoint>
+          <waypoint><time>77.9</time><pose>-5.0 -12.0 0 0 0 -1.5708</pose></waypoint>
+          <waypoint><time>78.9</time><pose>-5.0 -12.0 0 0 0 1.1071</pose></waypoint>
         </trajectory>
       </script>
     </actor>
