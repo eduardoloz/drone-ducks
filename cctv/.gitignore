@@ -25,3 +25,6 @@ data/runs/
 # Calibration reference frames are small, needed to detect PTZ moves, and committed
 # (image: NYSDOT / 511NY public camera feed)
 !data/calibration/*.ref.jpg
+# Per-view (PTZ preset) layout: data/calibration/<CAM>/<VIEW>.ref.jpg and <VIEW>.ref-<tag>.jpg
+!data/calibration/*/*.ref.jpg
+!data/calibration/*/*.ref-*.jpg

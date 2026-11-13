@@ -211,5 +211,7 @@
  ],
  "created_utc": "2026-11-10T21:57:33+00:00",
  "method": "lane-dash homography; phase offsets {1: -0.20200000000025575} (from transverse joints)",
- "notes": "bootstrap scale sigma 0.0022; systematic paint tolerance 0.025; Line 0 = broken line between the 1st and 2nd general lanes right of the HOV buffer; line 1 = next broken line to the right. Dash corners from thresholded paint components (PCA endpoints), checked by eye on a 2.6x zoom. Nearest dashes are cut by the frame bottom, so only their far ends are used. Transverse lines are concrete pavement joints (assumed perpendicular to the lanes); both independently put the line-1 dash phase near 0, i.e. dashes on the two lines are painted in phase."
+ "notes": "bootstrap scale sigma 0.0022; systematic paint tolerance 0.025; Line 0 = broken line between the 1st and 2nd general lanes right of the HOV buffer; line 1 = next broken line to the right. Dash corners from thresholded paint components (PCA endpoints), checked by eye on a 2.6x zoom. Nearest dashes are cut by the frame bottom, so only their far ends are used. Transverse lines are concrete pavement joints (assumed perpendicular to the lanes); both independently put the line-1 dash phase near 0, i.e. dashes on the two lines are painted in phase.",
+ "view_id": "v1",
+ "direction_labels": null
 }
