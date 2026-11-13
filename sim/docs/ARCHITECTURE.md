@@ -110,7 +110,7 @@ detector accuracy. The walking actor: see "Follow-person" below.
 | Round 3 regression (2026-11-13, after round 2's `start_sim.sh` change) | `test_failsafes.py` 5/5; `test_flight.py` 3/4, then 4/4 on re-run: the failure was a 3 s MAVLink heartbeat gap (`link_lost`) 12 s after takeoff with load average ~8 (other apps at 280 % + 220 % CPU), not a code regression |
 | Round 3 follow runs + `test_body_lock_follows_through_long_turn_away` | see "Round 3" below; body-lock SITL test passed once |
 | `test_follow_walker_then_land_when_lost`, before the skip-loops fix | fresh world: **failed** (no face in 30 s), then passed (75 s) on the same world |
-| same, after the fix, twice in a row from a fresh `start_sim.sh` | **2/2 passed**: 72.8 s / 74.6 s followed, 100 % within 10 deg, 6 / 4 lost events |
+| same, after the fix, twice in a row from a fresh `start_sim.sh` | **2/2 passed**: 72.8 s / 74.6 s followed, 100 % within 10 deg, 6 / 4 lost events; then the full `tests/sitl` suite on the same world: 10 passed, 1 skipped (body test needs the turnaway world) |
 | `pytest tests/unit` (round 3) | 85 passed |
 
 ## Follow-person: Jetson pipeline + quackdrone
