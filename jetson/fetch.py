@@ -1,6 +1,6 @@
 """Download model weights and public-domain test media into gitignored folders.
 
-    python -m jetson.fetch models          # YuNet (default detector, MIT, ~230 KB)
+    python -m jetson.fetch models          # YuNet (face, MIT, ~230 KB) + YOLOX-nano (person, Apache-2.0, 3.7 MB)
     python -m jetson.fetch models --all    # + YuNet 2022mar, SCRFD-500M, yolov8n-face
     python -m jetson.fetch media           # NASA photos + a synthetic test video + toy face sprite
 
@@ -35,6 +35,10 @@ MODELS = {
         url="https://media.githubusercontent.com/media/opencv/opencv_zoo/main/models/face_detection_yunet/"
             "face_detection_yunet_2023mar.onnx",
         sha256="8f2383e4dd3cfbb4553ea8718107fc0423210dc964f9f4280604804ed2552fa4"),
+    "yolox-nano": dict(
+        file="yolox_nano.onnx", default=True, licence="Apache-2.0 (Megvii YOLOX code and weights); person detector",
+        url="https://github.com/Megvii-BaseDetection/YOLOX/releases/download/0.1.1rc0/yolox_nano.onnx",
+        sha256="c789161ed43c8269fcd4e67c67eeeb4e80c622da2eb296a20bc6007bd18a0b7d"),  # pinned 2026-11-12
     "yunet-2022": dict(
         file="face_detection_yunet_2022mar.onnx", licence="MIT (opencv_zoo); for OpenCV 4.5.4 - 4.7",
         url="https://media.githubusercontent.com/media/opencv/opencv_zoo/7e062e54cf5410c09b795ff71b4a255e58498c79/"
