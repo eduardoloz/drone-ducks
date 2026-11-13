@@ -24,10 +24,12 @@ from __future__ import annotations
 
 import argparse
 import ast
+import io
 import os
 import re
 import subprocess
 import sys
+import tokenize
 from typing import List, Optional, Sequence
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -50,9 +52,27 @@ def python_files(root: str = PKG) -> List[str]:
     out = []
     for d, dirs, files in os.walk(root):
         dirs[:] = [x for x in dirs if not x.startswith(".") and x not in ("__pycache__", "models", "media", "out")]
-        out += [os.path.join(d, f) for f in files if f.endswith(".py")
-                and os.path.join(d, f) != os.path.abspath(__file__)]  # our regexes would match themselves
+        out += [os.path.join(d, f) for f in files if f.endswith(".py")]
     return sorted(out)
+
+
+def _code_only(src: str) -> str:
+    """The source with string literals (docstrings included) and comments blanked, same line numbers."""
+    lines = src.splitlines(keepends=True)
+    out = [list(ln) for ln in lines]
+    try:
+        for tok in tokenize.generate_tokens(io.StringIO(src).readline):
+            if tok.type in (tokenize.STRING, tokenize.COMMENT):
+                (r1, c1), (r2, c2) = tok.start, tok.end
+                for r in range(r1, r2 + 1):
+                    a = c1 if r == r1 else 0
+                    b = c2 if r == r2 else len(out[r - 1])
+                    for c in range(a, b):
+                        if out[r - 1][c] != "\n":
+                            out[r - 1][c] = " "
+    except (tokenize.TokenError, IndentationError):
+        pass
+    return "".join("".join(ln) for ln in out)
 
 
 def check_file(path: str, version=MIN_VERSION) -> List[str]:
@@ -65,21 +85,14 @@ def check_file(path: str, version=MIN_VERSION) -> List[str]:
         return [f"{rel}:{e.lineno}: not valid Python {version[0]}.{version[1]} syntax: {e.msg}"]
     has_future = any(isinstance(n, ast.ImportFrom) and n.module == "__future__"
                      and any(a.name == "annotations" for a in n.names) for n in tree.body)
-    code_lines = [ln for ln in src.splitlines()]
-    in_doc = False
-    for i, line in enumerate(code_lines, 1):
-        s = line.strip()
-        if s.count('"""') == 1:
-            in_doc = not in_doc
+    for i, line in enumerate(_code_only(src).splitlines(), 1):
+        if not line.strip():
             continue
-        if in_doc or s.startswith("#"):
-            continue
-        code = line.split("#", 1)[0]
         for rx, why in NEWER_APIS:
-            if rx.search(code):
+            if rx.search(line):
                 problems.append(f"{rel}:{i}: {why}")
-        if not has_future and (s.startswith("def ") or re.match(r"^\s*\w+\s*:", line)) \
-                and NEW_ANNOTATION.search(code):
+        if not has_future and (line.lstrip().startswith("def ") or re.match(r"^\s*\w+\s*:", line)) \
+                and NEW_ANNOTATION.search(line):
             problems.append(f"{rel}:{i}: 3.9+/3.10+ annotation without `from __future__ import annotations`")
     return problems
 
