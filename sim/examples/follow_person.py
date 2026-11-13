@@ -73,6 +73,10 @@ def main() -> int:
     ap.add_argument("--max-seconds", type=float, default=110.0, help="stop following after this long")
     ap.add_argument("--no-reposition", action="store_true", help="follow from the takeoff spot")
     ap.add_argument("--no-wait", action="store_true", help="don't wait for the walker to restart its loop")
+    ap.add_argument("--skip-loops", type=int, default=2, metavar="N",
+                    help="don't start in the walker's first N loops after a world start: Gazebo renders the "
+                         "actor at inconsistent positions then (seen 2026-11-13: no face found, 3 of 3 runs "
+                         "started at sim time ~80 s; every run started at >= 160 s was fine)")
     ap.add_argument("--target-distance", type=float, default=4.0)
     ap.add_argument("--lost-timeout", type=float, default=5.0)
     ap.add_argument("--lost-action", default="land", choices=("land", "rtl", "hold"))
@@ -87,6 +91,8 @@ def main() -> int:
                     "probe's world), lead (quack_people) or turnaway (quack_people_turnaway)")
     ap.add_argument("--score", type=float, default=0.5,
                     help="YuNet score threshold (sim walker scores 0.65-0.75 at 2.5-3.5 m; jetson default 0.6)")
+    ap.add_argument("--snapshot-every", type=int, default=0, metavar="N",
+                    help="also save every Nth camera frame as JPEG next to the log (debugging)")
     ap.add_argument("--out", default=os.path.join(os.path.dirname(HERE), ".run", "follow"))
     args = ap.parse_args()
 
@@ -131,8 +137,10 @@ def main() -> int:
             if truth and truth.get("sim_time") is not None:
                 ph = walker.phase(truth["sim_time"], script)
                 wait = (script.period_s - ph - 2.0) % script.period_s
-                print(f"walker at phase {ph:.1f}/{script.period_s} s: waiting {wait:.1f} s")
-                time.sleep(wait)  # drone holds its Offboard position target meanwhile
+                while truth["sim_time"] + wait + 2.0 < args.skip_loops * script.period_s - 0.5:
+                    wait += script.period_s
+                print(f"walker at phase {ph:.1f}/{script.period_s} s: waiting {wait:.1f} s of sim time")
+                wait_until_sim_time(truth['sim_time'] + wait)  # drone holds its Offboard position target meanwhile
         sink = QuackdroneSink(drone, takeoff_alt_m=args.alt)
         pipe = FollowPipeline(det, FaceFollowController(cfg), sink=sink, person_detector=person,
                               person_every=args.person_every)
@@ -146,6 +154,11 @@ def main() -> int:
                     continue
                 last = frame.seq
                 res = pipe.step(frame)
+                if args.snapshot_every and len(rows) % args.snapshot_every == 0:
+                    import cv2
+                    snap_dir = os.path.join(args.out, f"frames-{stamp}")
+                    os.makedirs(snap_dir, exist_ok=True)
+                    cv2.imwrite(os.path.join(snap_dir, f"{len(rows):05d}.jpg"), frame.image)
                 rows.append(make_row(time.monotonic() - t0, res, sink, drone, script, person is not None))
                 if len(rows) % 30 == 0:
                     r = rows[-1]
@@ -162,6 +175,18 @@ def main() -> int:
                       "cam_pitch_deg": float(os.environ.get("CAM_PITCH_DEG", 8.0))}
             write_outputs(rows, cfg.target_distance_m, csv_path, json_path, sink.finish_reason, script, config)
     return 0
+
+
+def wait_until_sim_time(target: float, timeout_s: float = 600.0) -> None:
+    """Sleep until Gazebo's sim time reaches `target` (sim runs slower than real time on a busy laptop,
+    so sleeping the difference in wall time arrives early)."""
+    deadline = time.monotonic() + timeout_s
+    while time.monotonic() < deadline:
+        t = fm.fetch_truth()
+        st = t.get("sim_time") if t else None
+        if st is not None and st >= target:
+            return
+        time.sleep(0.1 if st is not None and target - st < 1.0 else 0.5)
 
 
 def fmt(v):
