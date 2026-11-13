@@ -25,6 +25,9 @@ Sign conventions (MAVSDK VelocityBodyYawspeed, PX4 body frame FRD):
   down_m_s     + = descend (NED!)       yawspeed_deg_s + = turn clockwise seen from above (right)
 So: face right of centre -> positive yaw rate; face far away -> positive forward;
 face below the desired row -> positive down (descend), only if vertical control is enabled.
+Optional sideways terms (both 0 = off by default): k_lateral * bearing, and k_head_lateral * head
+yaw (face pointing to the camera's right -> fly right, to stay in front of the person; see
+jetson/headpose.py). Their sum is capped at max_lateral_m_s.
 
 PX4 owns the real control loops (attitude, rate, velocity). These are just setpoints.
 """

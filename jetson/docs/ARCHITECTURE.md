@@ -110,6 +110,66 @@ Cost: YOLOX-nano 416 px took ~95-140 ms per frame on the shared Intel Mac CPU un
 a benchmark). On the Orin it should be a few ms with TensorRT FP16 (unmeasured); `--person-every N`
 runs it on every Nth frame if needed.
 
+### 2b. Confirmed re-lock after a loss (both paths, `jetson/relock.py`)
+
+SITL run 2 (`sim/docs/runs/follow-sitl-run2.csv`): after the walker turned and walked away, YuNet hits
+on the *back* of their head at 7-8.7 m (estimated 6.0-6.8 m) restarted tracking at 68.8 s and the
+drone flew toward them for 1.6 s. `RelockGate` now sits in front of the controller. Once the target
+has had no fresh detection for 0.3 s, observations are withheld (the drone hovers and the lost timer
+keeps running) until a re-lock is **confirmed**: 3 consecutive detections on one track (or one
+scoring >= 0.9), each estimated within `target_distance + 1.5 m` (5.5 m by default). An unconfirmed candidate
+is not the target, so the HUD and `--out` blur it like a bystander. Flags: `--relock-hits`,
+`--relock-score`, `--relock-max-distance`; `--relock-hits 1 --relock-score 0 --relock-max-distance 0`
+restores round 2.
+
+Why there's a distance cap and not just N hits: in run 2 the back-of-head detections came in streaks of 6, 7 and
+16 consecutive frames, so a hit count would have to be > 16 (1.1 s at 14.8 fps) to block that
+episode. Scores don't separate them either: YuNet on rendered *frontal* sim people scores 0.44-0.65 at
+6 m. What does separate them is range: the genuine re-lock in run 2 (34.4 s) was estimated at
+4.04 m, the false one at 6.0+ m. Cost: a person who walks beyond ~5.5 m while the face is lost is not
+re-locked; the drone lands after `lost_timeout_s` (fails safe).
+
+**Face-only mode does not wait out the lost timeout before adopting a new face** (body mode does).
+In face-only mode the same person turning back round is *always* a new track: the tracker drops a
+track after 1 s without a detection. SITL run 3 re-acquired the walker after 3.28 s and 2.87 s
+losses (`follow-sitl-run3.json`), which were new tracks both times. With a holdoff equal to the lost timeout, both of those
+would have become landings, i.e. face-only would never re-lock after a loss > 1 s. The bystander risk
+that the body path's holdoff guards against is covered here by the confirmation + distance cap.
+`--relock-holdoff S` adds a face-only holdoff if Eddie wants the stricter rule (tested).
+
+### 2c. Staying in front: head yaw -> sideways (`jetson/headpose.py`, `k_head_lateral`, off by default)
+
+The controller only yaws and moves forward/back, so any point on the line of sight looks "centred".
+A person walking at an angle to that line turns their face further and further away until it is
+lost; the sim track saw this on 14-39 deg legs (20-50 s). Now YuNet's 5 landmarks give a yaw proxy:
+where the nose tip sits between the eyes and between the mouth corners, `theta = atan(r / k)` with
+k ~ 1 (head model in `headpose.py`; + = face points to the camera's right). It is skipped on faces
+under 12 px. The controller smooths it (tau 0.5 s), drops it after 0.5 s without a sample (body-only
+steering, small face, lost), and adds `right_m_s = k_head_lateral * deadband(yaw, 8 deg)`,
+capped at `max_lateral_m_s` (0.5 m/s), alongside the yaw loop. Together that orbits the drone round to
+the person's front. `--head-lateral 0.02` turns it on.
+
+Closed loop without SITL (`python -m jetson.headeval`): toy world + a walker at 0.4 m/s who faces
+where they walk (face detectable within 60 deg of the drone), sim camera preset (68.75 deg, 0.13 m face, 2 m altitude, 8 deg
+tilt), landmark oracle with pixel noise, full pipeline (tracker, re-lock gate, head yaw, controller), 60 s:
+
+| walker leg vs line of sight | lock %, off | in front (<=30 deg) %, off | timed out, off | lock %, k=0.02 | in front %, k=0.02 | timed out, k=0.02 |
+|---|---|---|---|---|---|---|
+| 0 deg | 35 | 24 | 5/5 (~25 s) | 100 | 99 | 0/5 |
+| 15 deg | 39 | 31 | 5/5 (~28 s) | 100 | 99 | 0/5 |
+| 25 deg | 19 | 9 | 5/5 (~16 s) | 100 | 99 | 0/5 |
+| 35 deg | 13 | 1 | 5/5 (~12 s) | 100 | 95 | 0/5 |
+| 45 deg | 8 | 0 | 5/5 (~10 s) | 100 | 91 | 0/5 |
+
+(5 seeds, walker heading random walk 3 deg/sqrt(s); even the 0 deg leg drifts off without the term,
+as the sim track predicted.) With no heading noise the off case keeps 0 deg perfectly but times out on every
+leg >= 15 deg; k=0.02 keeps 100 % lock on all of them. k=0.01 also never times out but is in
+front only 38-78 % of the time. The imx219 preset gives the same picture (91-99 % in front).
+
+Not verified: real YuNet landmark noise on 12-20 px faces (the oracle adds 0.5 px + 4 % of the face width),
+the head-model constant k, and any flight. Sideways flight is blind (no side camera), so keep the cap small, test it in SITL first,
+then props-off. Moving sideways around someone who stands still and looks away is intended: it is an orbit to their front at <= 0.5 m/s.
+
 ## 3. Controller in one paragraph
 
 Bearing from the box centre (pinhole angle) -> yaw rate; distance from the box *width* (face ~0.16 m)
@@ -120,7 +180,8 @@ LOST for `lost_timeout_s` -> TIMEOUT with an action (land/rtl/hold) that latches
 the loop stays well damped with 0.3 s of perception latency in the toy closed-loop test
 (`test_perception_latency_still_converges_without_growing_oscillation`). Known limitation: P-only
 control trails a walking target by `v / k_forward` metres (`test_follows_a_walking_person...`);
-a velocity feed-forward from the tracker is the planned fix.
+a velocity feed-forward from the tracker is the planned fix (mentee task M1). Optional sideways terms:
+`k_lateral` (bearing) and `k_head_lateral` (head yaw, section 2c), both 0 by default, sharing `max_lateral_m_s`.
 
 ## 4. Latency budget (camera to PX4)
 
@@ -149,9 +210,9 @@ Rules of thumb that follow:
 | What | Interface | Our side |
 |---|---|---|
 | Camera | Gazebo camera bridge, `GET http://127.0.0.1:5601/frame`: raw RGB bytes, headers `X-Width`, `X-Height`, `X-Seq`, `X-Age-Ms`; `/health` JSON | `--source sim` (or `sim://host:port`): converts RGB->BGR, corrects the capture stamp by `X-Age-Ms`, skips repeated `X-Seq` |
-| Camera model | quack_cam: HFOV 1.2 rad = 68.75 deg, 640x480 at 15 Hz | `--hfov 68.75` |
+| Camera model | quack_cam: HFOV 1.2 rad = 68.75 deg, 640x480 at 15 Hz | `--camera-preset sim` (68.75 deg, face 0.13 m) |
 | Flight controller | PX4 SITL MAVLink, `udpin://0.0.0.0:14540` | `--connect udpin://0.0.0.0:14540` (default) |
-| Face target | **not there yet**: the demo world has YOLO objects, no faces | ask sim/ for a billboard/actor textured with a public-domain face |
+| Face target | `quack_people` world: a scripted walking actor (`sim/quackdrone/integrations/walker.py`) plus static people. YuNet boxes the walker's face at 0.13 m wide (sim agent, 3 frames at 2.3-3.9 m ground truth) and scores it 0.65-0.75 at 2.5-3.5 m; the walker's back of head also fires at 6-9 m (see 2b) | `--camera-preset sim`; the sim's `sim_follow_config()` sets the same values. Flown live by the sim track through `QuackdroneSink` (`sim/examples/follow_person.py`, results in `sim/docs/runs/`) |
 
 Run order for an end-to-end SITL test (the sim/ track starts and stops SITL; only one MAVSDK app can
 bind UDP 14540 at a time, so don't run TypeFly's PX4 wrapper simultaneously):
@@ -162,9 +223,9 @@ bind UDP 14540 at a time, so don't run TypeFly's PX4 wrapper simultaneously):
 curl -s http://127.0.0.1:5601/health
 python -m jetson.linkcheck --connect udpin://0.0.0.0:14540 --seconds 5
 # 3. dry run (no commands sent): watch the HUD/logs
-python -m jetson.follow --source sim --hfov 68.75 --show
+python -m jetson.follow --source sim --camera-preset sim --show
 # 4. fly in SITL: arm, take off to 3 m, follow; land when stopped
-python -m jetson.follow --source sim --hfov 68.75 --fly --yes --auto-takeoff 3 --on-exit land --csv jetson/out/sitl.csv
+python -m jetson.follow --source sim --camera-preset sim --fly --yes --auto-takeoff 3 --on-exit land --csv jetson/out/sitl.csv
 ```
 
 ### To the real PX4 drone
