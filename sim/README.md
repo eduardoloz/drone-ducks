@@ -58,7 +58,17 @@ WORLD=quack_people_turnaway scripts/start_sim.sh # walker turns away for ~14 s (
 scripts/py.sh examples/follow_person.py --person yolox     # face + body lock (jetson LockKeeper)
 CAM_PITCH_DEG=20 WORLD=quack_people scripts/start_sim.sh   # camera pitched for 3 m
 scripts/py.sh examples/follow_person.py --alt 3 --target-distance 5 --person yolox
+WORLD=quack_people_angled scripts/start_sim.sh   # legs at 25 / 40 deg to the line of sight
+scripts/py.sh examples/follow_person.py --person yolox --head-lateral 0.02   # "stay in front" (BLIND sideways)
 ```
+
+`quack_people_angled` (round 4): after an 8 s straight start the walker walks 10 m at 25 deg west of
+north, then 10 m at 40 deg east of north, then turns back. The JSON summary now also has
+`stay_in_front` (sim seconds with the walker facing within 30 deg of the drone, per-leg facing angles,
+from ground truth) and `back_of_head` (face locks while the walker faces away). Re-checked on old logs:
+round-2 run 2 has 1 back-of-head re-lock (68.8 s, walker 180 deg away at 7 m); the round-3 logs have 0
+re-locks, but `r3-turnaway-body` steered by a back-of-head "face" for 2.1 s while body-locked.
+Relock flags: `--relock-hits 1 --relock-score 0 --relock-max-distance 0` restores round-2 behaviour.
 
 `quack_people`: the walker walks straight towards the drone for ~62 s (with one 4.5 s look-back), then
 turns away; the face-only follower hovers and lands 5 s after losing the face. Per-frame CSV.gz
@@ -93,7 +103,7 @@ with Drone("udpin://0.0.0.0:14540") as drone:    # real drone: "serial:///dev/tt
 | Path | What |
 |---|---|
 | `quackdrone/` | core: `drone.py` (Drone), `safety.py` (limits, watchdog), `backends/` (MAVSDK native, fake), `camera.py`, `integrations/` (TypeFly adapter, Jetson follow sink, walker ground truth) |
-| `gazebo/` | `x500_quack` drone (x500 + light camera), worlds `quack_demo`, `quack_people`, `gz_camera_bridge.py`, `gz_pose_probe.py` (ground truth :5602) |
+| `gazebo/` | `x500_quack` drone (x500 + light camera), worlds `quack_demo`, `quack_people` (+ `_turnaway`, `_angled`), `gz_camera_bridge.py`, `gz_pose_probe.py` (ground truth :5602) |
 | `scripts/` | start/stop sim, camera bridge, TypeFly setup and launch |
 | `typefly/` | patch against upstream TypeFly + `e2e_check.py` |
 | `tests/unit` / `tests/sitl` | no-simulator tests / tests against live SITL |

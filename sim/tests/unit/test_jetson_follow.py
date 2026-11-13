@@ -236,3 +236,38 @@ def test_closed_loop_lost_face_hovers_then_lands(drone, fake):
         time.sleep(1 / 15)
     assert sink.finished and sink.action_taken == "land" and fake.state.mode == "LAND"
     assert 1.0 <= time.monotonic() - t0 < 2.5
+
+
+def test_sideways_commands_are_clamped_and_fenced(fake):
+    """--head-lateral sends right_m_s: quackdrone's speed cap and soft fence apply to it too."""
+    d = Drone("fake://", backend=fake, config=FAST, limits=Limits(fence_radius_m=1.0, max_speed_xy=1.5), log=None)
+    s = QuackdroneSink(d, takeoff_alt_m=2.0, stall_timeout_s=2.0, emit=None)
+    try:
+        s.start()
+        s.submit(ControlOutput(VelocityCommand(0.0, 4.0, 0.0, 0.0), TRACKING, "test"))
+        assert s.last.requested.right_m_s == 4.0 and s.last.sent.right_m_s == pytest.approx(1.5)
+        t0 = time.monotonic()
+        while time.monotonic() - t0 < 2.5:            # keep flying sideways into the 1 m fence
+            s.submit(ControlOutput(VelocityCommand(0.0, 0.5, 0.0, 0.0), TRACKING, "test"))
+            time.sleep(0.02)
+        assert math.hypot(fake.state.n, fake.state.e) < 1.2
+        assert s.last.sent.right_m_s < 0.2
+    finally:
+        s.stop()
+        d.close(land=False)
+
+
+def test_head_lateral_config_reaches_the_command():
+    """follow_person --head-lateral: a face turned right (head yaw +) gives a capped right command."""
+    from jetson.controller import TargetObservation
+    cfg = sim_follow_config(k_head_lateral=0.02, max_lateral_m_s=0.5)
+    ctl = FaceFollowController(cfg)
+    fw = cfg.face_width_m / (2 * math.tan(math.radians(cfg.hfov_deg / 2)) * cfg.target_distance_m)  # at target
+    for i in range(40):
+        o = TargetObservation(0.5, 0.5, fw, fw, stamp=i / 15, head_yaw_deg=60.0)
+        res = ctl.step(o, now=i / 15)
+    assert res.mode == TRACKING and 0.4 < res.command.right_m_s <= 0.5 + 1e-9
+    off = FaceFollowController(sim_follow_config())
+    for i in range(40):
+        res = off.step(TargetObservation(0.5, 0.5, fw, fw, stamp=i / 15, head_yaw_deg=60.0), now=i / 15)
+    assert res.command.right_m_s == 0.0

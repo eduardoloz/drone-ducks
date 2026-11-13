@@ -124,3 +124,24 @@ def test_battery_monitor():
     assert b.update(15) == "act"                 # straight to act (implies warned)
     with pytest.raises(ValueError):
         BatteryMonitor(warn_pct=10, act_pct=20)
+
+
+# ---- sideways commands (jetson --head-lateral flies right/left; the camera only looks forward)
+def test_lateral_only_command_is_speed_capped():
+    out, notes = clampv(VelocityCommand(0.0, 3.0, 0, 0))
+    assert out.right_m_s == pytest.approx(2.0) and out.forward_m_s == 0.0 and notes == ["max_speed_xy"]
+    out, notes = clampv(VelocityCommand(0.0, -0.5, 0, 0))          # jetson max_lateral_m_s: untouched
+    assert out.right_m_s == -0.5 and notes == []
+
+
+def test_fence_clamps_a_purely_sideways_approach():
+    # 29.5 m north of home facing EAST: flying LEFT (negative right) is straight at the fence
+    out, notes = clampv(VelocityCommand(0.0, -0.5, 0, 0), pos=(29.5, 0.0, -2.0), yaw=90.0)
+    assert notes == [] and out.right_m_s == pytest.approx(-0.5)     # 0.5 m left: 0.5 m/s allowed
+    out, notes = clampv(VelocityCommand(0.0, -2.0, 0, 0), pos=(29.8, 0.0, -2.0), yaw=90.0)
+    assert out.right_m_s == pytest.approx(-0.2) and notes == ["fence"]
+    out, notes = clampv(VelocityCommand(0.0, -0.5, 0, 0), pos=(30.5, 0.0, -2.0), yaw=90.0)
+    assert out.right_m_s == pytest.approx(0.0, abs=1e-9) and notes == ["fence"]
+    # flying right (back toward home) is never limited by the fence
+    out, notes = clampv(VelocityCommand(0.0, 0.5, 0, 0), pos=(30.5, 0.0, -2.0), yaw=90.0)
+    assert out.right_m_s == pytest.approx(0.5) and notes == []

@@ -19,6 +19,14 @@ quack_people_turnaway (body-lock test: one turned-away stretch LONGER than the 5
   39.0 - 69.0  walk north again facing the drone
   69.0 - 83.3  turn round and walk back to the start at 1.4 m/s (end of the follow either way)
 
+quack_people_angled (stay-in-front test: legs that cross the line of sight at an angle):
+  0 - 8.0 s    walk north at 0.4 m/s along x = -6, facing the drone (face lock acquired)
+  9.0 - 34.0   leg A: 10 m heading 25 deg west of north (the drone starts the leg straight ahead)
+  35.0 - 60.0  leg B: 10 m heading 40 deg east of north
+  61.0 - 75.3  turn round and walk back to the start at 1.4 m/s (end of the follow)
+  Yaw-only following keeps the face centred but lets the walker's facing angle grow on each leg;
+  the Jetson k_head_lateral term (--head-lateral) is meant to fly the drone back in front.
+
 The static people (x = 4, y = -2..2) are east of the lane and out of view.
 
 Why straight lines: the Jetson follower centres the face (yaw) and keeps distance along its camera
@@ -45,6 +53,7 @@ class Script:
     facing_windows: tuple                             # (t0, t1): face points along the path at the drone
     final_turn_s: float                               # walker turns away for good; follow is over after this
     drone_start_enu: tuple = (-5.0, -8.0)             # ~4 m ahead of the walker's start, facing it
+    legs: tuple = ()                                  # (t0, t1, label): stretches with per-leg metrics
 
     @property
     def period_s(self) -> float:
@@ -85,12 +94,35 @@ TURNAWAY = Script(
     final_turn_s=69.0,
 )
 
-SCRIPTS = {s.name: s for s in (LEAD, TURNAWAY)}
-ALIASES = {"lead": LEAD.name, "turnaway": TURNAWAY.name}
+YAW_A = 2.0071   # ENU yaw 115 deg: 25 deg west of north
+YAW_B = 0.8727   # ENU yaw 50 deg: 40 deg east of north
+YAW_BACK = -1.6809
+
+ANGLED = Script(
+    name="quack_people_angled",
+    waypoints=(
+        (0.0, -6.0, -13.0, N),
+        (8.0, -6.0, -9.8, N),
+        (9.0, -6.0, -9.8, YAW_A),
+        (34.0, -10.226, -0.737, YAW_A),   # leg A: 10 m, crosses the line of sight at 25 deg
+        (35.0, -10.226, -0.737, YAW_B),
+        (60.0, -3.798, 6.924, YAW_B),     # leg B: 10 m, crosses the line of sight at 40 deg
+        (61.0, -3.798, 6.924, YAW_BACK),  # turn round and walk back to the start
+        (75.3, -6.0, -13.0, YAW_BACK),
+        (76.3, -6.0, -13.0, N),
+    ),
+    facing_windows=((0.0, 60.0),),
+    final_turn_s=60.0,
+    drone_start_enu=(-6.0, -9.0),
+    legs=((9.0, 34.0, "A25"), (35.0, 60.0, "B40")),   # label = angle to the line of sight at the leg start
+)
+
+SCRIPTS = {s.name: s for s in (LEAD, TURNAWAY, ANGLED)}
+ALIASES = {"lead": LEAD.name, "turnaway": TURNAWAY.name, "angled": ANGLED.name}
 
 
 def get(name: str | None) -> Script:
-    """Script by world name or alias ('lead', 'turnaway'); None -> LEAD."""
+    """Script by world name or alias ('lead', 'turnaway', 'angled'); None -> LEAD."""
     if not name:
         return LEAD
     return SCRIPTS[ALIASES.get(name, name)]
