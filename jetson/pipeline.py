@@ -16,6 +16,7 @@ yaw estimate (jetson.headpose) that the controller can use to stay in front (k_h
 
 from __future__ import annotations
 
+import math
 import time
 from dataclasses import dataclass, field
 from typing import Dict, List, Optional
@@ -55,7 +56,7 @@ class FollowPipeline:
                  sink: Optional[CommandSink] = None, person_detector=None,
                  body_tracker: Optional[IouTracker] = None, lock: Optional[LockKeeper] = None,
                  person_every: int = 1, relock: Optional[RelockGate] = None,
-                 relock_holdoff_s: float = 0.0) -> None:
+                 relock_holdoff_s: float = 0.0, ego_compensation: bool = True) -> None:
         self.detector = detector
         self.controller = controller or FaceFollowController()
         self.tracker = tracker or IouTracker()
@@ -87,13 +88,35 @@ class FollowPipeline:
         self.relock_holdoff_s = relock_holdoff_s
         self._face_lost_at: Optional[float] = None
         self._last_target_id: Optional[int] = None
+        # Ego-rotation compensation: shift tracks by the drone's own yaw between frames (measured
+        # yaw rate passed to step() or the sink's yaw_rate_deg_s, else the last commanded yaw rate).
+        self.ego_compensation = ego_compensation
+        self._prev_stamp: Optional[float] = None
+
+    def _ego_rotate(self, frame: Frame, yaw_rate_deg_s: Optional[float]) -> None:
+        prev, self._prev_stamp = self._prev_stamp, frame.stamp
+        if not self.ego_compensation or prev is None:
+            return
+        rate = yaw_rate_deg_s
+        if rate is None:
+            rate = getattr(self.sink, "yaw_rate_deg_s", None)
+        if rate is None:
+            rate = self.controller.last_command.yawspeed_deg_s
+        dt = min(max(0.0, frame.stamp - prev), 0.5)
+        d_yaw = math.radians(rate) * dt
+        if d_yaw:
+            f = (frame.width / 2.0) / math.tan(math.radians(self.controller.config.hfov_deg) / 2.0)
+            self.tracker.compensate_rotation(d_yaw, f, frame.width / 2.0)
+            self.body_tracker.compensate_rotation(d_yaw, f, frame.width / 2.0)
 
     def step(self, frame: Frame, now: Optional[float] = None,
-             altitude_m: Optional[float] = None) -> StepResult:
-        """Process one frame. `now` defaults to time.monotonic(); pass a simulated clock for files/toys."""
+             altitude_m: Optional[float] = None, yaw_rate_deg_s: Optional[float] = None) -> StepResult:
+        """Process one frame. `now` defaults to time.monotonic(); pass a simulated clock for files/toys.
+        altitude_m / yaw_rate_deg_s: telemetry if the caller has it (else taken from the sink)."""
         t0 = time.perf_counter()
         faces = self.detector.detect(frame.image)
         t1 = time.perf_counter()
+        self._ego_rotate(frame, yaw_rate_deg_s)
         tracks = self.tracker.update(faces, frame.stamp)
         bodies: List[Face] = []
         body_tracks: List[Track] = []
