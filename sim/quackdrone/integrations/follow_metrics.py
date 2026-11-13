@@ -151,9 +151,18 @@ def summarize(rows: list[dict], target_distance_m: float, centred_deg: float = 5
 
 
 def end_phase(rows: list[dict], script: walker.Script) -> Optional[float]:
-    """Walker script time (s into its loop) at the last logged frame, or None without sim time."""
-    st = next((r.get("sim_time") for r in reversed(rows) if r.get("sim_time") is not None), None)
-    return None if st is None else walker.phase(float(st), script)
+    """Walker script time at the last logged frame, counted from the start of the walker loop in which
+    the target was first locked (so it exceeds the period if the follow ran into the next loop).
+    None without sim time."""
+    st = [r for r in rows if r.get("sim_time") is not None]
+    if not st:
+        return None
+    first = next((r for r in st if r["mode"] == "TRACKING"), st[0])
+    t0 = float(first["sim_time"])
+    loop_start = t0 - walker.phase(t0, script)
+    if walker.phase(t0, script) > script.final_turn_s:   # locked as the walker turned to start the next loop
+        loop_start += script.period_s
+    return float(st[-1]["sim_time"]) - loop_start
 
 
 def ended_early(rows: list[dict], script: walker.Script, margin_s: float = 2.0) -> Optional[bool]:

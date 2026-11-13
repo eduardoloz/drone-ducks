@@ -61,6 +61,12 @@ def test_ended_early_and_body_share():
     assert fm.ended_early(rows, sc) is True                    # landed at 30 s, final turn at 69 s
     late = [dict(r, sim_time=r["sim_time"] + 45) for r in rows]
     assert fm.ended_early(late, sc) is False
+    # followed into the next walker loop (body lock through the walk-back): not early either
+    wrapped = rows + [dict(rows[-1], sim_time=rows[-1]["sim_time"] + 70)]
+    assert fm.end_phase(wrapped, sc) == pytest.approx(99.9) and fm.ended_early(wrapped, sc) is False
+    # first lock during the turn at the very end of the previous loop counts from the next loop
+    tail = [dict(r, sim_time=r["sim_time"] - 21.0) for r in rows]   # first lock at phase 82.3
+    assert fm.end_phase(tail, sc) == pytest.approx(8.9)
     assert fm.ended_early([{"t": 0, "mode": "IDLE"}], sc) is None
     s = fm.summarize(rows, 4.0)
     assert s["body_frames"] == 50 and s["pct_following_by_body"] == pytest.approx(50.0)

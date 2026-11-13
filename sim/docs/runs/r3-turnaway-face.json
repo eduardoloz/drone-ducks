@@ -1,0 +1,38 @@
+{
+  "frames": 535,
+  "duration_s": 35.799,
+  "follow_s": 31.692,
+  "pct_frames_tracking_while_following": 85.83509513742072,
+  "lost_events": 1,
+  "reacquired": 0,
+  "lost_durations_s": [],
+  "final_mode": "TIMEOUT",
+  "pct_centred_5deg": 100.0,
+  "pct_centred_10deg": 100.0,
+  "pct_in_fov": 100.0,
+  "mean_abs_bearing_deg": 0.28927061310782237,
+  "true_dist_mean_m": 3.120414376321353,
+  "true_dist_median_m": 3.003,
+  "true_dist_minmax_m": [
+    2.283,
+    5.623
+  ],
+  "target_distance_m": 4.0,
+  "est_minus_true_dist_mean_m": -0.06928078817733989,
+  "est_minus_true_dist_mae_m": 0.32599014778325125,
+  "pct_walker_facing_within_60deg": 82.24101479915433,
+  "finish_reason": "target lost for 5.1 s -> land -> LAND",
+  "walker_end_phase_s": 30.863999999999976,
+  "ended_early": true,
+  "config": {
+    "alt_m": 2.0,
+    "person": "none",
+    "person_every": 1,
+    "walker": "quack_people_turnaway",
+    "target_distance_m": 4.0,
+    "lost_timeout_s": 5.0,
+    "score": 0.5,
+    "source": "sim",
+    "cam_pitch_deg": 8.0
+  }
+}
