@@ -183,3 +183,22 @@ def test_camera_presets():
     assert 65 < w.hfov_deg < 75
     kw = cli.relock_kwargs(_args(["--relock-hits", "1", "--relock-score", "0"]))
     assert kw["relock"].confirm_hits == 1 and kw["relock"].confirm_score is None
+
+
+def test_gate_distance_cap_matches_sitl_run2():
+    # sim/docs/runs/follow-sitl-run2.csv: genuine re-lock at 34.4 s estimated 4.04 m, the false
+    # back-of-head re-lock at 68.8 s 6.0-6.8 m (in streaks of up to 16 frames). Cap = 4 + 1.5 m.
+    g = RelockGate(max_distance_m=5.5)
+    g.update(1, True, 0.7, 0.0)
+    g.update(None, False, 0.0, 1.0)
+    assert not any(g.update(2, True, 0.7, 1.0 + k / 15, distance_m=6.0 + 0.05 * k) for k in range(16))
+    assert [g.update(3, True, 0.7, 3.0 + k / 15, distance_m=4.04) for k in range(3)] == [False, False, True]
+
+
+def test_headeval_lateral_term_keeps_the_walker_in_front():
+    from jetson.headeval import run
+
+    off = run(30.0, 0.0, seconds=25.0, heading_noise_deg=0.0)
+    on = run(30.0, 0.02, seconds=25.0, heading_noise_deg=0.0)
+    assert off["timeout_s"] is not None and on["timeout_s"] is None
+    assert on["lock_pct"] > 95 and on["front_pct"] > off["front_pct"] + 50

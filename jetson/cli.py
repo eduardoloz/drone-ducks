@@ -117,6 +117,8 @@ def add_controller_args(ap: argparse.ArgumentParser) -> None:
                    help="after a loss, resume only after this many consecutive detections (1 = round-2 behaviour)")
     g.add_argument("--relock-score", type=float, default=0.9,
                    help="...or one detection scoring at least this (<= 0 disables)")
+    g.add_argument("--relock-max-distance", type=float, default=None, metavar="M",
+                   help="...and only on a face estimated within M metres (default: target distance + 1.5)")
     g.add_argument("--relock-holdoff", type=float, default=0.0,
                    help="face-only: after a loss adopt no new face track for this long (s)")
 
@@ -137,8 +139,12 @@ def relock_kwargs(args) -> dict:
     from .relock import RelockGate
 
     score = getattr(args, "relock_score", 0.9)
+    maxd = getattr(args, "relock_max_distance", None)
+    if maxd is None:
+        maxd = getattr(args, "target_distance", 4.0) + 1.5
     gate = RelockGate(confirm_hits=getattr(args, "relock_hits", 3),
-                      confirm_score=score if score and score > 0 else None)
+                      confirm_score=score if score and score > 0 else None,
+                      max_distance_m=maxd if maxd > 0 else None)
     return {"relock": gate, "relock_holdoff_s": getattr(args, "relock_holdoff", 0.0)}
 
 

@@ -20,6 +20,7 @@ import time
 from dataclasses import dataclass, field
 from typing import Dict, List, Optional
 
+from . import geometry
 from .bridge import CommandSink, DryRunSink
 from .controller import ControlOutput, FaceFollowController, TargetObservation
 from .detectors.base import FaceDetector
@@ -76,7 +77,10 @@ class FollowPipeline:
         self._n = 0
         # Confirmed re-lock after a loss (both paths). RelockGate(confirm_hits=1, confirm_score=None)
         # restores the round-2 behaviour.
+        cfg = self.controller.config
         self.relock = relock if relock is not None else RelockGate()
+        if self.relock.max_distance_m is None and relock is None:
+            self.relock.max_distance_m = cfg.target_distance_m + 1.5
         # Face-only path: after losing the target, adopt no *new* face track for this long. Default 0:
         # in face-only mode the same person turning back round is always a new track (see
         # docs/ARCHITECTURE.md "Re-lock"), so a holdoff = lost_timeout_s would mean "never re-lock".
@@ -119,7 +123,10 @@ class FollowPipeline:
             key = (source, src_track.track_id if src_track is not None else None)
             fresh = box_stamp is not None and box_stamp >= frame.stamp - 1e-9
             score = src_track.score if src_track is not None else 0.0
-            if not self.relock.update(key, fresh, score, frame.stamp):
+            c = self.controller.config
+            bw = (box[2] - box[0]) / float(frame.width)
+            dist = geometry.distance_from_width(bw, c.hfov_deg, c.face_width_m) if bw > 0 else None
+            if not self.relock.update(key, fresh, score, frame.stamp, dist):
                 box, box_stamp, gated = None, None, True
         else:
             self.relock.update(None, False, 0.0, frame.stamp)

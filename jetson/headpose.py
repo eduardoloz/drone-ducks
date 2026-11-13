@@ -27,7 +27,7 @@ from typing import Optional, Sequence, Tuple
 Point = Tuple[float, float]
 
 NOSE_DEPTH_RATIO = 1.0   # k = nose depth / half eye distance
-MIN_FACE_PX = 20.0       # narrower faces: landmarks too noisy for a yaw estimate
+MIN_FACE_PX = 12.0       # narrower faces: landmarks too noisy for a yaw estimate (sim face at 4 m ~ 15 px)
 
 
 def _ratio(left: Point, right: Point, nose: Point) -> Optional[float]:

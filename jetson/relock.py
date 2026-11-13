@@ -11,7 +11,15 @@ RelockGate sits between "what to steer by" (FollowPipeline / LockKeeper) and the
   RELOCKING  no fresh detection of the target for `lost_after_s`: observations are withheld from
              the controller (it keeps hovering and its lost timer keeps running) until the target
              is detected in `confirm_hits` consecutive frames on the same track, or once with a
-             score >= `confirm_score` (None disables that fast path). Then ENGAGED again.
+             score >= `confirm_score` (None disables that fast path), and only from detections
+             no farther than `max_distance_m` (estimated from the box width). Then ENGAGED again.
+
+Why the distance cap: the N-hit rule alone does not catch the SITL failure. In
+sim/docs/runs/follow-sitl-run2.csv the false re-lock at 68.8 s came from back-of-head detections in
+runs of 6, 7 and 16 consecutive frames (walker facing 180 deg away, 7-8.7 m true, 6.0-6.8 m
+estimated), so N would have to be > 16 (1.1 s) to block it. Scores don't separate either: YuNet on
+rendered frontal sim people at 6 m scores 0.44-0.65. What does separate them is range: the genuine
+re-lock in the same run was at ~3.5 m. FollowPipeline sets max_distance_m = target distance + 1.5 m.
 
 The first acquisition is left to the tracker (min_hits) as before; the gate only arms after the
 target has been followed once. Pure, clock-free, unit-tested in tests/test_relock.py.
@@ -32,6 +40,7 @@ class RelockGate:
     confirm_hits: int = 3
     confirm_score: Optional[float] = 0.9
     lost_after_s: float = 0.3
+    max_distance_m: Optional[float] = None   # re-lock only on targets estimated this close (None = any)
 
     def __post_init__(self) -> None:
         if self.confirm_hits < 1:
@@ -48,7 +57,8 @@ class RelockGate:
         self.blocked = 0          # observations withheld so far (for logs/tests)
         self.relocks = 0          # times we went RELOCKING -> ENGAGED
 
-    def update(self, key: Optional[Hashable], fresh: bool, score: float, stamp: float) -> bool:
+    def update(self, key: Optional[Hashable], fresh: bool, score: float, stamp: float,
+               distance_m: Optional[float] = None) -> bool:
         """One frame. key: identity of the candidate target track (None = nothing to steer by);
         fresh: it was detected in this frame; score: that detection's score; stamp: frame capture
         time. Returns True if the controller may use this frame's observation."""
@@ -66,6 +76,8 @@ class RelockGate:
                 self._last_fresh = stamp
             return True
         # RELOCKING
+        if fresh and self.max_distance_m is not None and distance_m is not None and distance_m > self.max_distance_m:
+            fresh = False   # too far to trust as the person coming back (see module doc)
         if not fresh:
             self._streak = 0
             self.blocked += 1
