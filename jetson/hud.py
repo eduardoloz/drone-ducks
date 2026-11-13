@@ -66,6 +66,16 @@ def draw(result, cfg: FollowConfig, fps: float = 0.0, backend: str = "", status:
     for xx in (w // 2 - dx, w // 2 + dx):
         cv2.line(img, (xx, int(h * 0.42)), (xx, int(h * 0.58)), (200, 200, 200), 1)
 
+    tb = getattr(result, "target_body", None)
+    for b in getattr(result, "body_tracks", []):
+        if not b.confirmed:
+            continue
+        is_tb = tb is not None and b.track_id == tb.track_id
+        cv2.rectangle(img, (int(b.box[0]), int(b.box[1])), (int(b.box[2]), int(b.box[3])),
+                      (60, 255, 60) if is_tb else (120, 120, 120), 2 if is_tb else 1)
+        if is_tb and getattr(result, "target_source", "") == "body":
+            cv2.putText(img, "following body (face hidden)", (int(b.box[0]), min(h - 24, int(b.box[3]) + 14)),
+                        cv2.FONT_HERSHEY_SIMPLEX, 0.45, (60, 255, 60), 1, cv2.LINE_AA)
     for f in result.faces:
         cv2.rectangle(img, (int(f.x1), int(f.y1)), (int(f.x2), int(f.y2)), (140, 140, 140), 1)
     for tr in result.tracks:

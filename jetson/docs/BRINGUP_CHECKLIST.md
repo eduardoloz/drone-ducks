@@ -25,7 +25,11 @@ sources, not from running them on a Jetson. Mark each box, and fix this file whe
       (no SD image; open UART-TX bug report on the 40-pin header).
 - [ ] Power mode **MAXN SUPER**: top-bar power menu, or `cat /etc/nvpmodel.conf` to find its id, then
       `sudo nvpmodel -m <id>`. For benchmarks also `sudo jetson_clocks`. Watch temps: `tegrastats`.
-- [ ] Python env (system OpenCV + TensorRT stay visible):
+- [ ] **Scripted route (try first):** `git clone https://github.com/eduardoloz/drone-ducks.git ~/drone-ducks && cd ~/drone-ducks && git checkout eduardo`,
+      then `bash jetson/scripts/setup_jetson_jp6.sh --with-ort` (venv, JetPack OpenCV check, deps,
+      models, `export_trt.py --dry-run`, doctor, tests). It is **unverified**: if a step fails, do it by
+      hand below and fix the script. Container alternative: `jetson/docker/Dockerfile.jp6` (also unverified).
+- [ ] Manual route. Python env (system OpenCV + TensorRT stay visible):
       ```bash
       sudo apt install -y python3-venv python3-pip git
       git clone https://github.com/eduardoloz/drone-ducks.git ~/drone-ducks && cd ~/drone-ducks
@@ -93,9 +97,15 @@ sources, not from running them on a Jetson. Mark each box, and fix this file whe
       python -m jetson.bench --backends onnx:yunet@tensorrt,onnx:yunet@cuda,yunet --widths 640 --save
       ```
       (The first TensorRT run builds an engine into `jetson/models/trt_cache/` and takes minutes.)
-- [ ] Native TensorRT (optional):
-      `/usr/src/tensorrt/bin/trtexec --onnx=jetson/models/face_detection_yunet_2023mar.onnx --saveEngine=jetson/models/yunet_640_fp16.engine --fp16`,
-      `pip install pycuda`, `python -m jetson.bench --backends tensorrt --widths 640`
+- [ ] Native TensorRT (optional): `python jetson/scripts/export_trt.py yunet yolox --bench` (prints the
+      trtexec commands, builds `yunet_640_fp16.engine` + `yolox_nano_416_fp16.engine`, times them),
+      `pip install pycuda`, `python -m jetson.bench --backends tensorrt --widths 640`.
+- [ ] Person detector (body path) cost: `python -m jetson.demo --source csi://0 --person yolox --person-engine onnxruntime --device tensorrt --max-frames 300 --csv jetson/out/person.csv`
+      and read `person_ms` in the CSV; also try `--person tensorrt`.
+- [ ] **Acceptance (Orin Nano Super, MAXN SUPER, 640x480):** YuNet detect p90 <= 25 ms; YOLOX-nano
+      `person_ms` p90 <= 15 ms on GPU; whole pipeline >= 15 FPS with `--person yolox` (otherwise use
+      `--person-every 2-3`); frame age p90 <= 120 ms. Original Nano: >= 8 FPS face-only, frame age
+      p90 <= 220 ms. Write the numbers into `bench_results/` even if they miss.
 - [ ] jetson-inference (optional): `git clone --recursive --depth=1 https://github.com/dusty-nv/jetson-inference`,
       `cd jetson-inference && docker/run.sh` (JetPack 6.2: tag `r36.3.0` may need passing by hand),
       mount `~/drone-ducks`, then `python3 -m jetson.bench --backends jetson_inference`.
@@ -122,9 +132,22 @@ sources, not from running them on a Jetson. Mark each box, and fix this file whe
       (Nano: `--source tcp://127.0.0.1:5000`). A consenting teammate walks left/right/closer/away.
       Check in the log: yaw sign follows them, forward goes negative when they are closer than 4 m,
       LOST -> TIMEOUT when they leave the frame. Bystander faces in `dry.mp4` are blurred.
+- [ ] Body path, same setup plus `--person yolox`: the teammate faces the camera for 3 s, turns their
+      back and walks 3 m away, waits 5 s, turns round. **Accept:** CSV `source` goes face -> body -> face,
+      `mode` stays TRACKING throughout, `distance_m` keeps growing while their back is turned (the
+      virtual face box shrinks with the body). Then a second consenting teammate walks through the frame
+      facing the camera while the first has their back turned: `target_id` must not switch to them, and
+      their face is blurred in `dry.mp4`. Then both leave the frame: LOST, TIMEOUT after 5 s, and nobody
+      is re-acquired before that. Record the clip (team members only) for `lockeval --clip` later.
 
 ## 7. Props-off OFFBOARD test (stage 2)
 
+Props physically removed (not just "motors disabled"), drone strapped to the bench, battery in, RC on,
+a pilot with a hand on the kill switch, a second person reading QGC and the app log. Nobody within
+reach of the motors while armed. Abort = kill switch.
+
+- [ ] Before arming: QGC shows the TELEM2 link, GPS/EKF healthy (or `--no-gps` indoors), geofence and
+      RC-loss failsafe set (section 5), battery > 50 %.
 - [ ] Props **off**, battery in, RC on, pilot ready. Then:
       `python -m jetson.follow --source csi://0 --fly --bench-test --connect serial:///dev/ttyTHS1:921600 --max-forward 0 --csv jetson/out/bench.csv`
 - [ ] Pilot arms. The app enters OFFBOARD. QGC MAVLink Inspector shows `SET_POSITION_TARGET_LOCAL_NED`
@@ -135,6 +158,24 @@ sources, not from running them on a Jetson. Mark each box, and fix this file whe
   - [ ] Cover the camera: LOST, then land after 5 s.
   - [ ] Unplug the camera: hover, then land after 3 s.
   - [ ] `kill -9` the app: PX4 offboard-loss failsafe after 1 s.
+  - [ ] With `--person yolox`: teammate turns their back -> stays TRACKING (`source=body`), motors keep
+        responding to yaw; walks out of frame -> LOST -> land after 5 s.
+- [ ] **Acceptance numbers** (all from the app log / `bench.csv` / QGC, fill in the table and keep it):
+
+  | Check | Pass if |
+  |---|---|
+  | Setpoint stream (QGC MAVLink Inspector) | 18-22 Hz, steady, for the whole test |
+  | OFFBOARD engaged after arming | within 3 s (`engage_timeout_s`), else the app gives up |
+  | Command signs (teammate steps right / closer) | yaw > 0 when they are right of centre; fwd < 0 when closer than 4 m |
+  | Saturation | `|yaw|` never above `--max-yaw-rate` (default 30 deg/s); fwd 0 with `--max-forward 0` |
+  | Pilot override (mode switch) | app prints "left OFFBOARD" within 0.5 s of the switch (telemetry-rate dependent; measure) and never resumes |
+  | Target leaves frame | hover immediately, TIMEOUT -> land at 5.0 s +- 0.2 s (`lost_timeout_s`) |
+  | Camera unplugged | hover after 0.5 s (`command_timeout_s`), land after 3 s (`stall_timeout_s`) |
+  | App killed | PX4 offboard-loss failsafe within 1 s (`COM_OF_LOSS_T`) |
+  | Frame age p90 in `bench.csv` | <= 120 ms on Orin, <= 220 ms on the original Nano |
+  | Bystander faces in any saved video | blurred (spot-check 10 frames) |
+
+  Any fail: stop, write down what happened, fix, repeat section 7 from the top. No stage 3 until all pass.
 
 ## 8. Before the first flight
 

@@ -1,0 +1,52 @@
+# Container for the jetson/ face-follow stack on JetPack 6.x (L4T R36), Jetson Orin Nano (Super).
+# UNVERIFIED: written and lint-checked on a Mac; never built or run on a Jetson. Build it ON the Jetson
+# (arm64 + the NVIDIA container runtime that JetPack installs):
+#
+#   cat /etc/nv_tegra_release                 # R36 (release), REVISION: 4.x -> use tag r36.4.0
+#   docker build -f jetson/docker/Dockerfile.jp6 --build-arg L4T_TAG=r36.4.0 -t quack-jetson .
+#   docker run --rm -it --runtime nvidia --network host --ipc host \
+#       -v /tmp/argus_socket:/tmp/argus_socket --device /dev/video0 --device /dev/ttyTHS1 \
+#       -v $PWD/jetson/models:/app/jetson/models -v $PWD/jetson/out:/app/jetson/out \
+#       quack-jetson python3 -m jetson.doctor
+#
+# Run from the repo root (the build context must contain jetson/). Models and media are NOT baked
+# in: mount jetson/models (fetch once on the host) so weights never end up in an image layer.
+# Engines must be built inside the same image/TensorRT version that runs them:
+#   docker run ... quack-jetson python3 jetson/scripts/export_trt.py yunet yolox
+#
+# The bare-metal route (scripts/setup_jetson_jp6.sh) is simpler for a first bring-up; use this when
+# several people share the Jetson or you want the exact environment pinned.
+
+ARG L4T_TAG=r36.4.0
+# l4t-jetpack = L4T base + CUDA, cuDNN, TensorRT (+ trtexec) for that L4T release.
+FROM nvcr.io/nvidia/l4t-jetpack:${L4T_TAG}
+
+ENV DEBIAN_FRONTEND=noninteractive PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1
+
+# JetPack's OpenCV 4.8 (GStreamer-enabled; csi:// needs it) from NVIDIA's apt repo that the base image
+# already lists. Ubuntu's python3-opencv is 4.5: too old for YuNet 2023mar.
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        python3-pip python3-venv nvidia-opencv \
+        gstreamer1.0-tools gstreamer1.0-plugins-good gstreamer1.0-plugins-bad \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+COPY jetson/requirements-jetson-jp6.txt jetson/requirements-jetson-jp6.txt
+# numpy<2 (JetPack's cv2 is built against numpy 1.x), mavsdk, pytest.
+RUN python3 -m pip install --no-cache-dir -r jetson/requirements-jetson-jp6.txt
+
+# Optional TensorRT execution provider for onnxruntime (NVIDIA's Jetson wheel index).
+ARG WITH_ORT=1
+ARG ORT_INDEX=https://pypi.jetson-ai-lab.io/jp6/cu126/+simple/
+RUN if [ "$WITH_ORT" = "1" ]; then \
+        python3 -m pip install --no-cache-dir onnxruntime-gpu --index-url "$ORT_INDEX" \
+        || echo "WARNING: onnxruntime-gpu not installed (index down?)"; \
+    fi
+
+COPY jetson/ jetson/
+# Fail the build early if our code doesn't import or cv2 lost GStreamer.
+RUN python3 jetson/scripts/check_compat.py \
+    && python3 -c "import cv2, jetson.pipeline; print('cv2', cv2.__version__); \
+assert 'GStreamer' in cv2.getBuildInformation()"
+
+CMD ["python3", "-m", "jetson.doctor"]
