@@ -8,6 +8,7 @@ import os
 import time
 from typing import Optional
 
+from . import geometry
 from .controller import LOST_ACTIONS, FollowConfig
 from .detectors import BACKENDS, create_detector
 from .detectors.base import FaceDetector
@@ -70,12 +71,37 @@ def make_detector(args) -> FaceDetector:
     return create_detector(args.backend, **kw)
 
 
+# --camera-preset: (horizontal FOV deg, face width m as boxed by YuNet, note). --hfov / --face-width
+# override. Face widths: 0.16 m is the adult default; the Gazebo walking actor boxes at 0.13 m
+# (sim agent, 3 frames at 2.3-3.9 m ground truth). Re-measure face width on each real camera.
+CAMERA_PRESETS = {
+    "imx219": (geometry.CAMERAS["rpi-v2"].hfov_deg, geometry.FACE_WIDTH_M, "RPi Camera v2 / IMX219 stock lens"),
+    "imx219-wide": (geometry.CAMERAS["imx219-wide"].hfov_deg, geometry.FACE_WIDTH_M,
+                    "IMX219 ~120 deg module (fisheye-ish: distance is optimistic off-centre)"),
+    "webcam": (geometry.CAMERAS["c920"].hfov_deg, geometry.FACE_WIDTH_M, "Logitech C920-class USB webcam"),
+    "sim": (geometry.CAMERAS["sim"].hfov_deg, 0.13, "Gazebo quack_cam + walking actor"),
+}
+DEFAULT_CAMERA_PRESET = "imx219"   # == the FollowConfig defaults (62.2 deg, 0.16 m)
+
+
+def camera_params(preset: Optional[str] = None, hfov: Optional[float] = None,
+                  face_width: Optional[float] = None):
+    """(hfov_deg, face_width_m): the preset's values, overridden by explicit ones."""
+    p_hfov, p_face, _ = CAMERA_PRESETS[preset or DEFAULT_CAMERA_PRESET]
+    return (p_hfov if hfov is None else hfov, p_face if face_width is None else face_width)
+
+
 def add_controller_args(ap: argparse.ArgumentParser) -> None:
     d = FollowConfig()
     g = ap.add_argument_group("controller")
-    g.add_argument("--hfov", type=float, default=d.hfov_deg,
-                   help="camera horizontal FOV in degrees (sim camera: 68.75, RPi v2: 62.2)")
-    g.add_argument("--face-width", type=float, default=d.face_width_m, help="face width (m) for distance estimate")
+    g.add_argument("--camera-preset", default=None, choices=sorted(CAMERA_PRESETS),
+                   help="HFOV + face width for a camera: " + "; ".join(
+                       f"{k}: {v[0]:g} deg, {v[1]:g} m" for k, v in sorted(CAMERA_PRESETS.items()))
+                   + f" (default {DEFAULT_CAMERA_PRESET})")
+    g.add_argument("--hfov", type=float, default=None,
+                   help=f"camera horizontal FOV in degrees, overrides the preset (default {d.hfov_deg:g})")
+    g.add_argument("--face-width", type=float, default=None,
+                   help=f"face width (m) for the distance estimate, overrides the preset (default {d.face_width_m:g})")
     g.add_argument("--target-distance", type=float, default=d.target_distance_m, help="standoff distance (m)")
     g.add_argument("--min-distance", type=float, default=d.min_distance_m, help="never fly closer (m)")
     g.add_argument("--max-forward", type=float, default=d.max_forward_m_s, help="max forward speed (m/s)")
@@ -83,13 +109,37 @@ def add_controller_args(ap: argparse.ArgumentParser) -> None:
     g.add_argument("--lost-timeout", type=float, default=d.lost_timeout_s, help="hover this long when lost (s)")
     g.add_argument("--lost-action", default=d.lost_action, choices=LOST_ACTIONS, help="then do this")
     g.add_argument("--vertical", action="store_true", help="enable altitude control (needs altitude telemetry)")
+    g.add_argument("--head-lateral", type=float, default=d.k_head_lateral, metavar="K",
+                   help="fly sideways to stay in front of the face: m/s per deg of head yaw "
+                        "(0 = off; 0.02 tested in the toy world)")
+    g.add_argument("--max-lateral", type=float, default=d.max_lateral_m_s, help="max sideways speed (m/s)")
+    g.add_argument("--relock-hits", type=int, default=3,
+                   help="after a loss, resume only after this many consecutive detections (1 = round-2 behaviour)")
+    g.add_argument("--relock-score", type=float, default=0.9,
+                   help="...or one detection scoring at least this (<= 0 disables)")
+    g.add_argument("--relock-holdoff", type=float, default=0.0,
+                   help="face-only: after a loss adopt no new face track for this long (s)")
 
 
 def make_config(args) -> FollowConfig:
-    return FollowConfig(hfov_deg=args.hfov, face_width_m=args.face_width, target_distance_m=args.target_distance,
+    hfov, face_w = camera_params(getattr(args, "camera_preset", None), args.hfov, args.face_width)
+    d = FollowConfig()
+    return FollowConfig(hfov_deg=hfov, face_width_m=face_w, target_distance_m=args.target_distance,
                         min_distance_m=args.min_distance, max_forward_m_s=args.max_forward,
                         max_yaw_rate_deg_s=args.max_yaw_rate, lost_timeout_s=args.lost_timeout,
-                        lost_action=args.lost_action, enable_vertical=args.vertical)
+                        lost_action=args.lost_action, enable_vertical=args.vertical,
+                        k_head_lateral=getattr(args, "head_lateral", d.k_head_lateral),
+                        max_lateral_m_s=getattr(args, "max_lateral", d.max_lateral_m_s))
+
+
+def relock_kwargs(args) -> dict:
+    """FollowPipeline kwargs (relock=, relock_holdoff_s=) from the --relock-* flags."""
+    from .relock import RelockGate
+
+    score = getattr(args, "relock_score", 0.9)
+    gate = RelockGate(confirm_hits=getattr(args, "relock_hits", 3),
+                      confirm_score=score if score and score > 0 else None)
+    return {"relock": gate, "relock_holdoff_s": getattr(args, "relock_holdoff", 0.0)}
 
 
 class FpsMeter:

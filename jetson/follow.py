@@ -1,11 +1,11 @@
 """The onboard app: camera -> face detection -> controller -> PX4 (DRY-RUN unless --fly).
 
 Dry run (default; safe anywhere, logs the commands it would send):
-    python -m jetson.follow --source sim --hfov 68.75
+    python -m jetson.follow --source sim --camera-preset sim
     python -m jetson.follow --source csi://0
 
 SITL (only after the sim/ track has PX4 SITL + the camera bridge running; see docs/ARCHITECTURE.md):
-    python -m jetson.follow --source sim --hfov 68.75 --fly --auto-takeoff 3 --on-exit land
+    python -m jetson.follow --source sim --camera-preset sim --fly --auto-takeoff 3 --on-exit land
 
 Real drone (Jetson on Pixhawk TELEM2; pilot arms + takes off, then this takes over in OFFBOARD):
     python -m jetson.follow --source csi://0 --fly --connect serial:///dev/ttyTHS1:921600
@@ -106,7 +106,8 @@ def main(argv=None) -> int:
         sink = DryRunSink(log_every_s=1.0, emit=log.info, finish_on_timeout=True)
 
     pipe = FollowPipeline(det, FaceFollowController(cfg), sink=sink,
-                          person_detector=person, person_every=args.person_every)
+                          person_detector=person, person_every=args.person_every,
+                          **cli.relock_kwargs(args))
     writer = VideoSink(args.out, fps=15) if args.out else None
     steplog = cli.StepLog(args.csv)
     fps = cli.FpsMeter()
