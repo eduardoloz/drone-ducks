@@ -4,15 +4,17 @@ Must match the <actor name="walker"> <trajectory> in sim/gazebo/worlds/quack_peo
 (tests/unit/test_walker.py checks that). Gazebo ENU: x = east, y = north; yaw 0 = facing +x.
 
 Scenario ("leading" follow, like a selfie drone flying backwards in front of a person):
-  0 - 60.7 s   walk north at 0.4 m/s, zig-zagging 14-17 deg off north, facing the drone ahead of
-               them, with one look-back (face turned away) at 29.1 - 33.6 s
-  60.7 - 77.7  turn round and walk back to the start at 1.4 m/s (face away: the follower
+  0 - 62.0 s   walk straight north along x = -5 at 0.4 m/s, facing the drone ahead of them,
+               with one look-back (face turned away) at 27.5 - 32.0 s
+  62.0 - 80.4  turn round and walk back to the start at 1.4 m/s (face away: the follower
                loses the face, hovers, and lands after its lost timeout)
-Loop period 77.7 s. Why only ~15 deg: the follower centres the face with yaw and keeps distance
-by flying along its camera axis; it has no idea which way the person faces. When the person walks
-at an angle to the line of sight they drift sideways past the drone and the facing angle grows
-(a kinematic dry run with 35-39 deg legs lost the face after ~20 s for good). The static people (x = 4, y = -2..2) are east of this
-lane and out of view.
+Loop period 80.4 s. The static people (x = 4, y = -2..2) are east of this lane and out of view.
+
+Why a straight line: the Jetson follower centres the face (yaw) and keeps distance along its camera
+axis, but cannot observe which way the person faces. Any position on the line of sight centres
+the face, so nothing pulls the drone back in front of a person who walks at an angle to it: the
+facing angle random-walks and grows. Kinematic dry runs (FakeBackend + ideal detector) with legs
+14-39 deg off the line of sight lost the face for good after 20-50 s, even with lateral gain.
 
 Linear interpolation; Gazebo interpolates actor waypoints with a spline, so near the corners the
 true pose can differ by a few tens of cm. Prefer the pose probe's "walker" pose when available.
@@ -23,27 +25,22 @@ import math
 
 # (time s, x, y, yaw rad)
 WAYPOINTS = [
-    (0.0, -5.0, -12.0, 1.3258),
-    (15.5, -3.5, -6.0, 1.3258),
-    (16.0, -3.5, -6.0, 1.8623),
-    (29.1, -5.0, -1.0, 1.8623),
-    (30.1, -5.0, -1.0, -1.2793),   # look back over the shoulder: face away from the drone
-    (32.6, -5.0, -1.0, -1.2793),
-    (33.6, -5.0, -1.0, 1.8623),
-    (34.1, -5.0, -1.0, 1.2793),
-    (47.1, -3.5, 4.0, 1.2793),
-    (47.6, -3.5, 4.0, 1.8623),
-    (60.7, -5.0, 9.0, 1.8623),
-    (61.7, -5.0, 9.0, -1.5708),   # turn round and walk back to the start
-    (76.7, -5.0, -12.0, -1.5708),
-    (77.7, -5.0, -12.0, 1.3258),
+    (0.0, -5.0, -12.0, 1.5708),
+    (27.5, -5.0, -1.0, 1.5708),
+    (28.5, -5.0, -1.0, -1.5708),   # look back over the shoulder: face away from the drone
+    (31.0, -5.0, -1.0, -1.5708),
+    (32.0, -5.0, -1.0, 1.5708),
+    (62.0, -5.0, 11.0, 1.5708),
+    (63.0, -5.0, 11.0, -1.5708),   # turn round and walk back to the start
+    (79.4, -5.0, -12.0, -1.5708),
+    (80.4, -5.0, -12.0, 1.5708),
 ]
 PERIOD_S = WAYPOINTS[-1][0]
-FACING_WINDOWS = [(0.0, 29.1), (33.6, 60.7)]  # walker's face points along its path towards the drone
+FACING_WINDOWS = [(0.0, 27.5), (32.0, 62.0)]  # walker's face points along its path towards the drone
 FACE_HEIGHT_M = 1.6                           # approx. face height of the walking actor
 
 # Suggested drone start for follow_person.py: ~4 m ahead of the walker's start, facing it.
-DRONE_START_ENU = (-4.0, -8.0)
+DRONE_START_ENU = (-5.0, -8.0)
 
 
 def _lerp_angle(a: float, b: float, f: float) -> float:

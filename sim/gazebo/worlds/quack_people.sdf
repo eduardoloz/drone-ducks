@@ -6,7 +6,7 @@
                                      .        casual_female (4, 2)
         drone (0,0) facing east ->   .        standing_person (4, 0)          
                                      .        female_visitor (4, -2)
-     walker: lane x = -3..-6.5, y = -12 -> 9 (west of the drone), see the actor comment below.
+     walker: lane x = -5, y = -12 -> 11 (west of the drone), see the actor comment below.
      The three static people face the spawn point (examples/04_face_check.py).
 
      Models (Gazebo Fuel, fetched on first load; pre-fetch with sim/scripts/fetch_models.sh):
@@ -71,9 +71,9 @@
     </include>
 
     <!-- ===== a walking person for face-follow (sim/examples/follow_person.py) =====
-         Lane west of the static people. Walks north at 0.4 m/s, zig-zagging ~15 deg, facing a drone
-         that leads them (0-60.7 s, one look-back at 29.1-33.6 s), then turns and walks back at
-         1.4 m/s (face away). Loop 77.7 s. Mirrored in quackdrone/integrations/walker.py: keep in sync
+         Lane x = -5, west of the static people. Walks straight north at 0.4 m/s facing a drone that
+         leads them (0-62 s, one look-back at 27.5-32 s), then turns and walks back at 1.4 m/s
+         (face away). Loop 80.4 s. Straight on purpose: see quackdrone/integrations/walker.py. Mirrored in quackdrone/integrations/walker.py: keep in sync
          (tests/unit/test_walker.py). -->
     <actor name="walker">
       <skin>
@@ -91,20 +91,15 @@
         <auto_start>true</auto_start>
         <trajectory id="0" type="walking">
           <!-- actor faces its local +x; yaw = heading of the next leg -->
-          <waypoint><time>0.0</time><pose>-5.0 -12.0 0 0 0 1.3258</pose></waypoint>
-          <waypoint><time>15.5</time><pose>-3.5 -6.0 0 0 0 1.3258</pose></waypoint>
-          <waypoint><time>16.0</time><pose>-3.5 -6.0 0 0 0 1.8623</pose></waypoint>
-          <waypoint><time>29.1</time><pose>-5.0 -1.0 0 0 0 1.8623</pose></waypoint>
-          <waypoint><time>30.1</time><pose>-5.0 -1.0 0 0 0 -1.2793</pose></waypoint>
-          <waypoint><time>32.6</time><pose>-5.0 -1.0 0 0 0 -1.2793</pose></waypoint>
-          <waypoint><time>33.6</time><pose>-5.0 -1.0 0 0 0 1.8623</pose></waypoint>
-          <waypoint><time>34.1</time><pose>-5.0 -1.0 0 0 0 1.2793</pose></waypoint>
-          <waypoint><time>47.1</time><pose>-3.5 4.0 0 0 0 1.2793</pose></waypoint>
-          <waypoint><time>47.6</time><pose>-3.5 4.0 0 0 0 1.8623</pose></waypoint>
-          <waypoint><time>60.7</time><pose>-5.0 9.0 0 0 0 1.8623</pose></waypoint>
-          <waypoint><time>61.7</time><pose>-5.0 9.0 0 0 0 -1.5708</pose></waypoint>
-          <waypoint><time>76.7</time><pose>-5.0 -12.0 0 0 0 -1.5708</pose></waypoint>
-          <waypoint><time>77.7</time><pose>-5.0 -12.0 0 0 0 1.3258</pose></waypoint>
+          <waypoint><time>0.0</time><pose>-5.0 -12.0 0 0 0 1.5708</pose></waypoint>
+          <waypoint><time>27.5</time><pose>-5.0 -1.0 0 0 0 1.5708</pose></waypoint>
+          <waypoint><time>28.5</time><pose>-5.0 -1.0 0 0 0 -1.5708</pose></waypoint>
+          <waypoint><time>31.0</time><pose>-5.0 -1.0 0 0 0 -1.5708</pose></waypoint>
+          <waypoint><time>32.0</time><pose>-5.0 -1.0 0 0 0 1.5708</pose></waypoint>
+          <waypoint><time>62.0</time><pose>-5.0 11.0 0 0 0 1.5708</pose></waypoint>
+          <waypoint><time>63.0</time><pose>-5.0 11.0 0 0 0 -1.5708</pose></waypoint>
+          <waypoint><time>79.4</time><pose>-5.0 -12.0 0 0 0 -1.5708</pose></waypoint>
+          <waypoint><time>80.4</time><pose>-5.0 -12.0 0 0 0 1.5708</pose></waypoint>
         </trajectory>
       </script>
     </actor>

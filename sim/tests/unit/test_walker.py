@@ -21,8 +21,8 @@ def test_waypoints_match_world_file():
 
 def test_pose_interpolates_and_loops():
     assert walker.walker_pose(0.0)[:2] == pytest.approx((-5.0, -12.0))
-    assert walker.walker_pose(7.75)[:2] == pytest.approx((-4.25, -9.0))
-    assert walker.walker_pose(walker.PERIOD_S + 7.75)[:2] == pytest.approx((-4.25, -9.0))
+    assert walker.walker_pose(7.75)[:2] == pytest.approx((-5.0, -8.9))
+    assert walker.walker_pose(walker.PERIOD_S + 7.75)[:2] == pytest.approx((-5.0, -8.9))
 
 
 def test_facing_legs_are_slow_and_within_17_deg_of_north():
