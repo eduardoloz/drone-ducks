@@ -53,9 +53,16 @@ class FollowPipeline:
         self.sink = sink or DryRunSink()
         self.person_detector = person_detector
         # Bodies are big, so plain IoU matching works; min_hits=2 kills one-frame false positives.
-        self.body_tracker = body_tracker or IouTracker(high_score=0.5, low_score=0.25, max_age_s=1.0)
+        # center_gate=0: the small-face centre-distance fallback let a coasting body track jump to
+        # the next person in a group (seen on crew_pan.mp4), an identity swap we must not have.
+        self.body_tracker = body_tracker or IouTracker(high_score=0.5, low_score=0.2, max_age_s=1.0,
+                                                        center_gate=0.0)
         self.lock = lock or LockKeeper(self.selector)
         self.lock.selector = self.selector
+        if self.lock.reacquire_holdoff_s is None:
+            # After losing the consenting person, don't switch to anyone else before the controller
+            # has given up (TIMEOUT latches land/rtl/hold), unless it is them again (via their body).
+            self.lock.reacquire_holdoff_s = self.controller.config.lost_timeout_s
         self.person_every = max(1, int(person_every))  # run the person detector every Nth frame
         self._n = 0
 

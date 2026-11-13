@@ -16,6 +16,14 @@ Per run we report, over all frames after the target was first acquired:
   timeout    the controller gave up (lost too long -> land/rtl/hold)
   dist_err   mean |distance - standoff| while on target, metres
 
+Recorded clip (real detectors, open loop):
+
+    python -m jetson.lockeval --clip jetson/media/crew_pan.mp4 --mask-from 30 --mask-to 100
+
+runs YuNet face-only once to find the followed person, then replays the clip with that person's
+face painted out for frames [mask-from, mask-to) (a stand-in for "turned their head away") and
+counts, inside that window, how often each mode steers by the target vs by somebody else.
+
 Limitations: no occlusion between people, perfect association geometry (boxes are exact up to
 noise), no camera tilt during acceleration. It shows the *logic* works; recorded clips and the
 bench test are still needed for the detector side.
@@ -273,11 +281,93 @@ def format_rows(rows: List[Dict[str, object]]) -> str:
     return "\n".join(lines)
 
 
+def _paint_out(img: np.ndarray, box: Box, grow: float = 1.4) -> None:
+    x1, y1, x2, y2 = box
+    cx, cy, w, h = (x1 + x2) / 2, (y1 + y2) / 2, (x2 - x1) * grow, (y2 - y1) * grow
+    H, W = img.shape[:2]
+    a, b = int(max(0, cx - w / 2)), int(max(0, cy - h / 2))
+    c, d = int(min(W, cx + w / 2)), int(min(H, cy + h / 2))
+    if c > a and d > b:
+        img[b:d, a:c] = img[b:d, a:c].reshape(-1, 3).mean(0).astype(np.uint8)
+
+
+def clip_eval(path: str, mask_from: int = 30, mask_to: int = 100, max_frames: int = 0,
+              person: str = "yolox", face_backend: str = "yunet") -> Dict[str, Dict[str, float]]:
+    """Real detectors on a recorded clip; see the module docstring. Returns {mode: metrics}."""
+    import cv2
+
+    from .detectors import create_detector
+    from .detectors.person import create_person_detector
+
+    cap = cv2.VideoCapture(path)
+    frames = []
+    while True:
+        ok, img = cap.read()
+        if not ok or (max_frames and len(frames) >= max_frames):
+            break
+        frames.append(img)
+    cap.release()
+    if not frames:
+        raise ValueError(f"could not read {path}")
+    fps = 15.0
+    det = create_detector(face_backend)
+    ref = FollowPipeline(det, sink=DryRunSink(log_every_s=1e9))
+    target_boxes: List[Optional[Box]] = []
+    target_id = None
+    for i, img in enumerate(frames):
+        r = ref.step(Frame(img, i + 1, i / fps), now=i / fps)
+        if target_id is None and r.target is not None and i < mask_from:
+            target_id = r.target.track_id
+        target_boxes.append(r.target.box if r.target is not None and r.target.track_id == target_id else None)
+    pdet = create_person_detector(person)
+    results = {}
+    for use_body in (False, True):
+        pipe = FollowPipeline(create_detector(face_backend), sink=DryRunSink(log_every_s=1e9),
+                              person_detector=pdet if use_body else None)
+        on, wrong, lost, n, last_ref = 0, 0, 0, 0, None
+        for i, img in enumerate(frames):
+            ref_box = target_boxes[i] or last_ref
+            if target_boxes[i] is not None:
+                last_ref = target_boxes[i]
+            im = img
+            if mask_from <= i < mask_to and ref_box is not None:
+                im = img.copy()
+                _paint_out(im, ref_box)
+            r = pipe.step(Frame(im, i + 1, i / fps), now=i / fps)
+            if not (mask_from <= i < mask_to) or ref_box is None:
+                continue
+            n += 1
+            if r.observation is None or r.control.mode != "TRACKING":
+                lost += 1
+                continue
+            ox, oy = r.observation.cx * img.shape[1], r.observation.cy * img.shape[0]
+            fw = ref_box[2] - ref_box[0]
+            if abs(ox - (ref_box[0] + ref_box[2]) / 2) <= fw and abs(oy - (ref_box[1] + ref_box[3]) / 2) <= 1.5 * fw:
+                on += 1
+            else:
+                wrong += 1
+        k = max(1, n)
+        results["face+body" if use_body else "face-only"] = {"frames": n, "on_target": on / k,
+                                                             "on_wrong": wrong / k, "lost": lost / k}
+    return results
+
+
 def main(argv: Optional[Sequence[str]] = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     ap.add_argument("--scenario", choices=SCENARIOS, action="append", help="default: all")
     ap.add_argument("--seeds", type=int, default=5)
+    ap.add_argument("--clip", default=None, help="recorded clip: real detectors, target face painted out")
+    ap.add_argument("--mask-from", type=int, default=30)
+    ap.add_argument("--mask-to", type=int, default=100)
+    ap.add_argument("--max-frames", type=int, default=0)
+    ap.add_argument("--person", default="yolox", choices=("yolox", "hog"))
     args = ap.parse_args(argv)
+    if args.clip:
+        res = clip_eval(args.clip, args.mask_from, args.mask_to, args.max_frames, args.person)
+        for mode, m in res.items():
+            print(f"{mode:<10} masked frames {m['frames']:>4}  on_target {m['on_target']:>4.0%}  "
+                  f"on_wrong {m['on_wrong']:>4.0%}  lost {m['lost']:>4.0%}")
+        return 0
     print(format_rows(evaluate(args.scenario or SCENARIOS, args.seeds)))
     return 0
 

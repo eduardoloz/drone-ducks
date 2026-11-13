@@ -298,3 +298,22 @@ def test_yolox_onnxruntime_matches_opencv(media_image, yolox_model):
     a = create_person_detector("yolox", model=yolox_model).detect(img)
     b = create_person_detector("yolox", model=yolox_model, engine="onnxruntime").detect(img)
     assert len(a) == len(b) and all(x.box == pytest.approx(y.box, abs=1.0) for x, y in zip(a, b))
+
+
+def test_no_stranger_adopted_during_reacquire_holdoff():
+    k = LockKeeper(reacquire_holdoff_s=5.0)
+    k.update([trk(1, FACE)], [trk(10, BODY)], W, H, 0.0)
+    assert k.update([], [], W, H, 1.0).source == ""                       # both gone
+    assert k.update([trk(2, BYSTANDER_FACE)], [], W, H, 3.0).source == ""  # stranger refused
+    st = k.update([trk(2, BYSTANDER_FACE)], [], W, H, 6.5)                 # after holdoff: rule 1
+    assert st.source == "face" and st.face.track_id == 2
+
+
+def test_pipeline_sets_holdoff_from_controller_lost_timeout():
+    from jetson.controller import FaceFollowController, FollowConfig
+    from jetson.pipeline import FollowPipeline
+
+    p = FollowPipeline(_Fixed([[]]), FaceFollowController(FollowConfig(lost_timeout_s=7.0)),
+                       person_detector=_Fixed([[]]))
+    assert p.lock.reacquire_holdoff_s == 7.0
+    assert p.body_tracker.center_gate == 0.0

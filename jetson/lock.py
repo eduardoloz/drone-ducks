@@ -21,7 +21,9 @@ Rules (all here, all unit-tested in tests/test_lock.py):
      (re-acquired). Faces outside the target body are ignored: a bystander never steals the lock.
   5. Body following is capped at `max_body_only_s` without seeing the face. Body tracks can swap
      identity when two people cross; the cap bounds how long a swap could be followed. Then LOST.
-  6. Face and body both gone -> nothing (the controller hovers, then times out) and the next
+  6. Face and body both gone -> nothing (the controller hovers, then times out). For
+     `reacquire_holdoff_s` after that no *other* face is acquired (FollowPipeline sets it to the
+     controller's lost_timeout_s, so the drone lands/holds instead of adopting a stranger); then
      acquisition goes back to rule 1.
 
 This is detection + tracking continuity only. Nothing here recognises anyone: there are no
@@ -45,7 +47,8 @@ def face_body_score(face: Box, body: Box, max_rel_y: float = 0.45) -> float:
     """How plausible it is that `face` belongs to `body` (0 = not at all, up to 1).
 
     The face centre must be inside the body box horizontally, in the top `max_rel_y` of it
-    vertically, and the face must be narrower than the body. Score = how central it sits.
+    vertically (or within one face height of its top, for head-and-shoulders boxes close up),
+    and the face must be narrower than the body. Score = how central it sits.
     """
     fx1, fy1, fx2, fy2 = face
     bx1, by1, bx2, by2 = body
@@ -57,6 +60,10 @@ def face_body_score(face: Box, body: Box, max_rel_y: float = 0.45) -> float:
     if not bx1 <= fcx <= bx2:
         return 0.0
     rel_y = (fcy - by1) / bh
+    # Close up, the box is head-and-shoulders (cut off by the frame) and the face fills its top
+    # half, so also accept a face whose centre is within one face height of the box top.
+    if rel_y > max_rel_y and fcy - by1 <= fh:
+        rel_y = max_rel_y
     if rel_y < -0.05 or rel_y > max_rel_y or fy1 < by1 - fh:
         return 0.0
     if fw > 0.95 * bw or fw < 0.05 * bw:
@@ -143,8 +150,10 @@ def _whole(body: Box, frame_h: int, margin: float = 2.0) -> bool:
 
 class LockKeeper:
     def __init__(self, selector: Optional[TargetSelector] = None, max_body_only_s: float = 15.0,
-                 learn_rate: float = 0.2, min_link_score: float = 0.15) -> None:
+                 learn_rate: float = 0.2, min_link_score: float = 0.15,
+                 reacquire_holdoff_s: Optional[float] = None) -> None:
         self.selector = selector or TargetSelector()
+        self.reacquire_holdoff_s = reacquire_holdoff_s
         self.max_body_only_s = max_body_only_s
         self.learn_rate = learn_rate
         self.min_link_score = min_link_score
@@ -155,6 +164,7 @@ class LockKeeper:
         self.geometry = BodyGeometry()
         self.face_last_seen: Optional[float] = None
         self._was_body = False
+        self._lost_at: Optional[float] = None   # when face and body were both lost
 
     @property
     def face_id(self) -> Optional[int]:
@@ -190,7 +200,14 @@ class LockKeeper:
         if face is None and body is None:
             self.body_id = None
             self.geometry = BodyGeometry()
+            if self.face_last_seen is not None and self._lost_at is None:
+                self._lost_at = stamp
+            if self._lost_at is not None and self.reacquire_holdoff_s \
+                    and stamp - self._lost_at < self.reacquire_holdoff_s:
+                return LockState(None, None, None, None, "")
             face = self.selector.select(list(faces), frame_w, frame_h)
+            if face is not None:
+                self._lost_at = None
 
         face_fresh = face is not None and face.misses == 0
         if face_fresh:

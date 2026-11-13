@@ -131,7 +131,9 @@ class YoloxPersonDetector(PersonDetector):
     name = "yolox"
 
     def __init__(self, model: Optional[str] = None, engine: str = "opencv", device: str = "cpu",
-                 score_threshold: float = 0.4, nms_threshold: float = 0.45, input_size: int = 416) -> None:
+                 score_threshold: float = 0.2, nms_threshold: float = 0.45, input_size: int = 416) -> None:
+        # Low threshold on purpose: partly hidden people score 0.2-0.4, and the body tracker only lets
+        # boxes below its high_score (0.5) *extend* existing tracks (ByteTrack), never start new ones.
         self.path = require_file(model or model_path(YOLOX_NANO), "YOLOX-nano person model")
         self.engine, self.device = engine, device
         self.score_threshold, self.nms_threshold = score_threshold, nms_threshold
