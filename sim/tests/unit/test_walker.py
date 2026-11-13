@@ -15,7 +15,8 @@ def test_waypoints_match_world_file():
     actor = text[text.index('<actor name="walker">'):text.index("</actor>")]
     found = [(float(t), *map(float, p.split()))
              for t, p in re.findall(r"<time>([\d.]+)</time><pose>([^<]+)</pose>", actor)]
-    assert [(t, x, y, yaw) for t, x, y, _z, _r, _p, yaw in found] == pytest.approx(walker.WAYPOINTS)
+    got = [v for t, x, y, _z, _r, _p, yaw in found for v in (t, x, y, yaw)]
+    assert got == pytest.approx([v for wp in walker.WAYPOINTS for v in wp])
 
 
 def test_pose_interpolates_and_loops():
