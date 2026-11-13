@@ -82,6 +82,7 @@ def main(argv=None) -> int:
     cfg = cli.make_config(args)
     try:
         det = cli.make_detector(args)
+        person = cli.make_person_detector(args)  # before the sink: fail before arming
         reader = LatestFrameReader(open_source(args.source, realtime=True))  # files play like a camera
     except SourceError as e:
         print(f"camera error: {e}")
@@ -104,7 +105,8 @@ def main(argv=None) -> int:
     else:
         sink = DryRunSink(log_every_s=1.0, emit=log.info, finish_on_timeout=True)
 
-    pipe = FollowPipeline(det, FaceFollowController(cfg), sink=sink)
+    pipe = FollowPipeline(det, FaceFollowController(cfg), sink=sink,
+                          person_detector=person, person_every=args.person_every)
     writer = VideoSink(args.out, fps=15) if args.out else None
     steplog = cli.StepLog(args.csv)
     fps = cli.FpsMeter()

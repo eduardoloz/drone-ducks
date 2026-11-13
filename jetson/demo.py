@@ -92,7 +92,8 @@ def run_toy(args, cfg) -> int:
             print("no face sprite: run `python -m jetson.fetch media`, or use --backend oracle")
             return 2
         det = cli.make_detector(args)
-    pipe = FollowPipeline(det, FaceFollowController(cfg), sink=DryRunSink(log_every_s=args.log_every))
+    pipe = FollowPipeline(det, FaceFollowController(cfg), sink=DryRunSink(log_every_s=args.log_every),
+                          person_detector=cli.make_person_detector(args), person_every=args.person_every)
     writer = VideoSink(args.out, fps=15) if args.out else None
     steplog = cli.StepLog(args.csv)
     dt, n, detect_ms, modes, t0 = 1 / 15, 0, [], Counter(), time.perf_counter()
@@ -128,7 +129,8 @@ def run_source(args, cfg) -> int:
     # with "camera error" even when the model hasn't been fetched yet.
     src = open_source(args.source, realtime=args.realtime)
     det = cli.make_detector(args)
-    pipe = FollowPipeline(det, FaceFollowController(cfg), sink=DryRunSink(log_every_s=args.log_every))
+    pipe = FollowPipeline(det, FaceFollowController(cfg), sink=DryRunSink(log_every_s=args.log_every),
+                          person_detector=cli.make_person_detector(args), person_every=args.person_every)
     fps_hint = 30.0
     reader = None
     if src.live:

@@ -24,6 +24,26 @@ def add_detector_args(ap: argparse.ArgumentParser, extra_backends=()) -> None:
     g.add_argument("--input-width", type=int, default=640,
                    help="resize frames to this width before detection (speed vs range!)")
     g.add_argument("--score", type=float, default=None, help="detection score threshold")
+    g.add_argument("--person", default="none", choices=("none", "yolox", "hog"),
+                   help="also detect bodies and keep the lock when the face turns away "
+                        "(yolox: Apache-2.0 YOLOX-nano, needs `jetson.fetch models`; hog: OpenCV, slow)")
+    g.add_argument("--person-engine", default="opencv", choices=("opencv", "onnxruntime"),
+                   help="yolox runtime (onnxruntime + --device cuda|tensorrt on a Jetson)")
+    g.add_argument("--person-every", type=int, default=1, metavar="N",
+                   help="run the person detector on every Nth frame (saves time on a Nano)")
+
+
+def make_person_detector(args):
+    """The --person detector, or None. Body tracking only: nothing identifies anyone."""
+    name = getattr(args, "person", "none")
+    if name in (None, "none"):
+        return None
+    from .detectors.person import create_person_detector
+
+    if name == "yolox":
+        dev = args.device if args.device in ("cpu", "cuda", "tensorrt") else "cpu"
+        return create_person_detector("yolox", engine=args.person_engine, device=dev)
+    return create_person_detector(name)
 
 
 def make_detector(args) -> FaceDetector:
@@ -90,7 +110,7 @@ class StepLog:
     """Optional CSV log, one row per processed frame, for tuning plots."""
 
     FIELDS = ["t", "seq", "mode", "action", "faces", "target_id", "bearing_deg", "distance_m", "fwd", "right",
-              "down", "yaw", "detect_ms", "total_ms", "frame_age_ms"]
+              "down", "yaw", "detect_ms", "total_ms", "frame_age_ms", "source", "bodies", "person_ms"]
 
     def __init__(self, path: Optional[str]) -> None:
         self._f = self._w = None
@@ -111,7 +131,9 @@ class StepLog:
             "distance_m": "" if o.distance_m is None else f"{o.distance_m:.2f}",
             "fwd": f"{c.forward_m_s:.3f}", "right": f"{c.right_m_s:.3f}", "down": f"{c.down_m_s:.3f}",
             "yaw": f"{c.yawspeed_deg_s:.2f}", "detect_ms": f"{res.timings_ms['detect']:.1f}",
-            "total_ms": f"{res.timings_ms['total']:.1f}", "frame_age_ms": f"{res.timings_ms['frame_age']:.1f}"})
+            "total_ms": f"{res.timings_ms['total']:.1f}", "frame_age_ms": f"{res.timings_ms['frame_age']:.1f}",
+            "source": getattr(res, "target_source", ""), "bodies": len(getattr(res, "bodies", [])),
+            "person_ms": f"{res.timings_ms['person']:.1f}" if "person" in res.timings_ms else ""})
 
     def close(self) -> None:
         if self._f:
