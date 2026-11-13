@@ -194,7 +194,7 @@ def test_closed_loop_turns_and_approaches_face(drone, fake):
     sink = QuackdroneSink(drone, takeoff_alt_m=2.0, stall_timeout_s=2.0, emit=None)
     sink.start()
     person = (8 * math.cos(math.radians(30)), 8 * math.sin(math.radians(30)))   # NED, drone faces north
-    det = ProjectingDetector(fake, person)
+    det = ProjectingDetector(fake, person, face_m=sim_follow_config().face_width_m)
     pipe = FollowPipeline(det, FaceFollowController(sim_follow_config()), sink=sink)
     img = np.zeros((480, 640, 3), np.uint8)
     t0, seq, modes = time.monotonic(), 0, []

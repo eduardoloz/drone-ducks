@@ -39,6 +39,25 @@ NO_WEBUI=1 scripts/start_all.sh                  # sim + camera + YOLO, no LLM w
 scripts/py.sh typefly/e2e_check.py --no-llm      # canned plan, no OpenAI cost
 ```
 
+## Follow-person (Jetson face follower flying quackdrone)
+
+The Jetson track's pipeline (YuNet -> tracker -> `FaceFollowController`) reads the sim camera and
+flies through `Drone.set_velocity_body`, so quackdrone's limits and watchdog apply. Glue:
+`quackdrone/integrations/jetson_follow.py` (`QuackdroneSink`, a `jetson.bridge.CommandSink`).
+
+```bash
+# once: YuNet model (gitignored) -> jetson/models/
+(cd .. && sim/.venv/bin/python -m jetson.fetch models)
+WORLD=quack_people scripts/start_sim.sh          # also starts the ground-truth pose probe on :5602
+scripts/py.sh examples/follow_person.py          # take off, fly to the walker's lane, follow, land
+scripts/stop_sim.sh
+```
+
+The walker walks straight towards the drone for ~62 s (with one 4.5 s look-back), then turns away;
+the follower hovers and lands 5 s after losing the face. Per-frame CSV (estimate vs Gazebo ground
+truth) and a JSON summary land in `.run/follow/`. Behaviour, safety and measured numbers:
+[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md#follow-person-jetson-pipeline--quackdrone).
+
 ## Using the core
 
 ```python
@@ -54,12 +73,12 @@ with Drone("udpin://0.0.0.0:14540") as drone:    # real drone: "serial:///dev/tt
 
 | Path | What |
 |---|---|
-| `quackdrone/` | core: `drone.py` (Drone), `safety.py` (limits, watchdog), `backends/` (MAVSDK native, fake), `camera.py`, `integrations/typefly_px4.py` |
-| `gazebo/` | `x500_quack` drone (x500 + light camera), worlds `quack_demo`, `quack_people`, `gz_camera_bridge.py` |
+| `quackdrone/` | core: `drone.py` (Drone), `safety.py` (limits, watchdog), `backends/` (MAVSDK native, fake), `camera.py`, `integrations/` (TypeFly adapter, Jetson follow sink, walker ground truth) |
+| `gazebo/` | `x500_quack` drone (x500 + light camera), worlds `quack_demo`, `quack_people`, `gz_camera_bridge.py`, `gz_pose_probe.py` (ground truth :5602) |
 | `scripts/` | start/stop sim, camera bridge, TypeFly setup and launch |
 | `typefly/` | patch against upstream TypeFly + `e2e_check.py` |
 | `tests/unit` / `tests/sitl` | no-simulator tests / tests against live SITL |
-| `examples/` | 01 square, 04 face-detector check in `quack_people` |
+| `examples/` | 01 square, 04 face-detector check in `quack_people`, `follow_person.py` (face follow) |
 
 ## Good first tasks (mentees)
 

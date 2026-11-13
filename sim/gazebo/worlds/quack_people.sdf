@@ -90,16 +90,17 @@
         <delay_start>0</delay_start>
         <auto_start>true</auto_start>
         <trajectory id="0" type="walking">
-          <!-- actor faces its local +x; yaw = heading of the next leg -->
-          <waypoint><time>0.0</time><pose>-5.0 -12.0 0 0 0 1.5708</pose></waypoint>
-          <waypoint><time>27.5</time><pose>-5.0 -1.0 0 0 0 1.5708</pose></waypoint>
-          <waypoint><time>28.5</time><pose>-5.0 -1.0 0 0 0 -1.5708</pose></waypoint>
-          <waypoint><time>31.0</time><pose>-5.0 -1.0 0 0 0 -1.5708</pose></waypoint>
-          <waypoint><time>32.0</time><pose>-5.0 -1.0 0 0 0 1.5708</pose></waypoint>
-          <waypoint><time>62.0</time><pose>-5.0 11.0 0 0 0 1.5708</pose></waypoint>
-          <waypoint><time>63.0</time><pose>-5.0 11.0 0 0 0 -1.5708</pose></waypoint>
-          <waypoint><time>79.4</time><pose>-5.0 -12.0 0 0 0 -1.5708</pose></waypoint>
-          <waypoint><time>80.4</time><pose>-5.0 -12.0 0 0 0 1.5708</pose></waypoint>
+          <!-- actor faces its local +x; yaw = heading of the next leg. z = 1.0: the walk.dae origin is at
+               the hips (with z = 0, as in round 1, the walker was sunk half into the ground) -->
+          <waypoint><time>0.0</time><pose>-5.0 -12.0 1.0 0 0 1.5708</pose></waypoint>
+          <waypoint><time>27.5</time><pose>-5.0 -1.0 1.0 0 0 1.5708</pose></waypoint>
+          <waypoint><time>28.5</time><pose>-5.0 -1.0 1.0 0 0 -1.5708</pose></waypoint>
+          <waypoint><time>31.0</time><pose>-5.0 -1.0 1.0 0 0 -1.5708</pose></waypoint>
+          <waypoint><time>32.0</time><pose>-5.0 -1.0 1.0 0 0 1.5708</pose></waypoint>
+          <waypoint><time>62.0</time><pose>-5.0 11.0 1.0 0 0 1.5708</pose></waypoint>
+          <waypoint><time>63.0</time><pose>-5.0 11.0 1.0 0 0 -1.5708</pose></waypoint>
+          <waypoint><time>79.4</time><pose>-5.0 -12.0 1.0 0 0 -1.5708</pose></waypoint>
+          <waypoint><time>80.4</time><pose>-5.0 -12.0 1.0 0 0 1.5708</pose></waypoint>
         </trajectory>
       </script>
     </actor>

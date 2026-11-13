@@ -71,6 +71,8 @@ def main() -> int:
     ap.add_argument("--fence", type=float, default=25.0, help="quackdrone soft fence radius (m)")
     ap.add_argument("--max-speed", type=float, default=1.5, help="quackdrone horizontal speed cap (m/s)")
     ap.add_argument("--model", default=None, help="YuNet .onnx (default: jetson/models)")
+    ap.add_argument("--score", type=float, default=0.5,
+                    help="YuNet score threshold (sim walker scores 0.65-0.75 at 2.5-3.5 m; jetson default 0.6)")
     ap.add_argument("--out", default=os.path.join(os.path.dirname(HERE), ".run", "follow"))
     args = ap.parse_args()
 
@@ -79,7 +81,8 @@ def main() -> int:
     csv_path, json_path = (os.path.join(args.out, f"follow-{stamp}.{x}") for x in ("csv", "json"))
 
     model = find_yunet(args.model)
-    det = create_detector("yunet", **({"model": model} if model else {}), input_width=640)
+    det = create_detector("yunet", **({"model": model} if model else {}), input_width=640,
+                           score_threshold=args.score)
     reader = LatestFrameReader(open_source(args.source, realtime=True)).start()
     if reader.get(timeout=10.0) is None:
         print(f"no camera frames from {args.source}: is the camera bridge up? (curl :5601/health)")

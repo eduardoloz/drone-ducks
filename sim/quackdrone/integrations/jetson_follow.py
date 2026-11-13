@@ -51,6 +51,9 @@ from ..safety import VelocityCommand
 
 # quack_cam (sim/gazebo/models/quack_cam): horizontal_fov 1.2 rad, 640x480, pitched 0.14 rad down.
 SIM_HFOV_DEG = 68.75
+# YuNet box width of the walking actor's face, from frames at a known ground-truth distance
+# (3 frames at 2.3-3.9 m gave 0.11-0.14 m; the Jetson default 0.16 m makes the sim walker look ~20 % too far).
+SIM_FACE_WIDTH_M = 0.13
 ACTIONS = ("land", "rtl", "hold")
 
 
@@ -73,8 +76,9 @@ from jetson.controller import TIMEOUT, ControlOutput, FollowConfig  # noqa: E402
 
 
 def sim_follow_config(**overrides) -> FollowConfig:
-    """FollowConfig for the Gazebo quack_cam: Jetson defaults with the sim camera's HFOV."""
-    kw = dict(hfov_deg=SIM_HFOV_DEG)
+    """FollowConfig for the Gazebo quack_cam: Jetson defaults with the sim camera's HFOV and the
+    walking actor's face width."""
+    kw = dict(hfov_deg=SIM_HFOV_DEG, face_width_m=SIM_FACE_WIDTH_M)
     kw.update(overrides)
     return FollowConfig(**kw)
 

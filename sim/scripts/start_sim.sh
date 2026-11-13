@@ -34,6 +34,7 @@ if [ "$SIM" = "gz" ] && [ "${CAMERA:-1}" = "1" ]; then
   # ground-truth poses for follow_person.py logging (cheap; POSES=0 to skip)
   if [ "${POSES:-1}" = "1" ]; then
     tmux new-session -d -s quack-poses "bash '$S/run_pose_probe.sh' --world '${WORLD:-quack_demo}' 2>&1 | tee '$LOG_DIR/poses.log'"
+    wait_for 20 "ground-truth poses on http://127.0.0.1:5602/health" curl -sf -m 2 http://127.0.0.1:5602/health || true
   fi
 else
   echo "[2/2] camera bridge skipped"
