@@ -317,3 +317,26 @@ def test_pipeline_sets_holdoff_from_controller_lost_timeout():
                        person_detector=_Fixed([[]]))
     assert p.lock.reacquire_holdoff_s == 7.0
     assert p.body_tracker.center_gate == 0.0
+
+
+def test_hud_blurs_every_face_while_following_the_body():
+    cv2 = pytest.importorskip("cv2")
+    from jetson.controller import FollowConfig
+    from jetson.hud import draw
+    from jetson.pipeline import FollowPipeline
+
+    rng = np.random.default_rng(0)
+    img = rng.integers(0, 255, (H, W, 3), dtype=np.uint8)
+    from jetson.sources import Frame
+
+    face, body = Face(*FACE, 0.9), Face(*BODY, 0.9)
+    bystander = Face(*BYSTANDER_FACE, 0.9)
+    p = FollowPipeline(_Fixed([[face]] * 4 + [[bystander]] * 6), person_detector=_Fixed([[body]] * 10))
+    res = None
+    for i in range(10):
+        res = p.step(Frame(img, i + 1, i / 15.0), now=i / 15.0)
+    assert res.target_source == "body" and res.target is None
+    out = draw(res, FollowConfig(), blur_others=True)
+    x1, y1, x2, y2 = (int(v) for v in BYSTANDER_FACE)
+    # blurred region: far less high-frequency detail than the random-noise original
+    assert out[y1 + 5:y2 - 5, x1 + 5:x2 - 5].std() < 0.5 * img[y1 + 5:y2 - 5, x1 + 5:x2 - 5].std()

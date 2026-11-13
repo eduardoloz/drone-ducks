@@ -72,3 +72,20 @@ def test_doctor_runs(capsys):
     assert doctor.main([]) in (0, 1)
     out = capsys.readouterr().out
     assert "== Python" in out and "backend yunet" in out
+
+
+def test_demo_toy_with_person_detector_logs_source(tmp_path):
+    log = tmp_path / "toy_body.csv"
+    assert demo.main(["--source", "toy", "--backend", "oracle", "--seconds", "2", "--person", "hog",
+                      "--person-every", "2", "--csv", str(log), "--log-every", "100"]) == 0
+    rows = list(csv.DictReader(open(log)))
+    assert rows and {"source", "bodies", "person_ms"} <= set(rows[0])
+    assert rows[-1]["source"] in ("face", "body")
+
+
+def test_follow_missing_person_model_fails_before_arming(tmp_path, monkeypatch, capsys):
+    from jetson.detectors import base
+
+    monkeypatch.setattr("jetson.detectors.person.model_path", lambda f: str(tmp_path / f))
+    with pytest.raises(base.BackendUnavailable, match="jetson.fetch models"):
+        follow.main(["--source", "nope://camera", "--backend", "haar", "--person", "yolox"])
