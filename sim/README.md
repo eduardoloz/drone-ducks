@@ -15,7 +15,7 @@ otherwise `export PX4_DIR=...`.
 ```bash
 cd sim
 uv venv --python 3.12 .venv && uv pip install --python .venv/bin/python -e ".[dev,vision]"
-.venv/bin/python -m pytest tests/unit            # ~45 s, no simulator needed
+.venv/bin/python -m pytest tests/unit            # ~65 s, no simulator needed
 
 scripts/start_sim.sh                             # PX4 + Gazebo (quack_demo world) + camera bridge, in tmux
 scripts/py.sh examples/01_takeoff_square_land.py # fly a 2 m square
@@ -28,6 +28,8 @@ No PX4 at all? `Drone("fake://")` runs the same API on a pure-Python stand-in (g
 | Option | Effect |
 |---|---|
 | `WORLD=quack_people scripts/start_sim.sh` | people for face detection (3 standing + 1 walking) |
+| `WORLD=quack_people_turnaway` | same, walker with a 14 s turned-away stretch (body-lock test) |
+| `CAM_PITCH_DEG=20` | camera pitched 20 deg down instead of 8 (for 3 m follow altitude) |
 | `HEADLESS=0` | also open the Gazebo GUI |
 | `SIM=sih` | PX4's built-in physics, no Gazebo, no camera: lightest option |
 | `KEEP_PARAMS=1` | keep PX4 params between runs (default: fresh PX4 each start + `px4/sitl.params`) |
@@ -46,17 +48,34 @@ flies through `Drone.set_velocity_body`, so quackdrone's limits and watchdog app
 `quackdrone/integrations/jetson_follow.py` (`QuackdroneSink`, a `jetson.bridge.CommandSink`).
 
 ```bash
-# once: YuNet model (gitignored) -> jetson/models/
+# once, from the repo root with the sim venv: YuNet + YOLOX-nano (gitignored) -> jetson/models/
 (cd .. && sim/.venv/bin/python -m jetson.fetch models)
 WORLD=quack_people scripts/start_sim.sh          # also starts the ground-truth pose probe on :5602
 scripts/py.sh examples/follow_person.py          # take off, fly to the walker's lane, follow, land
 scripts/stop_sim.sh
+
+WORLD=quack_people_turnaway scripts/start_sim.sh # walker turns away for ~14 s (> 5 s lost timeout)
+scripts/py.sh examples/follow_person.py --person yolox     # face + body lock (jetson LockKeeper)
+CAM_PITCH_DEG=20 WORLD=quack_people scripts/start_sim.sh   # camera pitched for 3 m
+scripts/py.sh examples/follow_person.py --alt 3 --target-distance 5 --person yolox
 ```
 
-The walker walks straight towards the drone for ~62 s (with one 4.5 s look-back), then turns away;
-the follower hovers and lands 5 s after losing the face. Per-frame CSV (estimate vs Gazebo ground
-truth) and a JSON summary land in `.run/follow/`. Behaviour, safety and measured numbers:
-[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md#follow-person-jetson-pipeline--quackdrone).
+`quack_people`: the walker walks straight towards the drone for ~62 s (with one 4.5 s look-back), then
+turns away; the face-only follower hovers and lands 5 s after losing the face. Per-frame CSV.gz
+(estimate vs Gazebo ground truth) and a JSON summary land in `.run/follow/`; re-derive a summary with
+`.venv/bin/python -m quackdrone.integrations.follow_metrics <file.csv.gz> --walker turnaway`.
+
+Measured live in SITL (one run each, 2026-11-13; bearing within 5 deg 100 % of the follow in all runs;
+details and caveats in [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md#follow-person-jetson-pipeline--quackdrone)):
+
+| Walker | Alt / camera pitch / target | Detector | Followed | Lost events | Landed early? | True dist (TRACKING), mean |
+|---|---|---|---|---|---|---|
+| lead (round 2, run 2) | 2 m / 8 deg / 4 m | face | 72.8 s | 3 | no | 2.99 m |
+| turnaway | 2 m / 8 deg / 4 m | face | 31.7 s | 1 | **yes** (38 s before the final turn) | 2.85 m |
+| turnaway | 2 m / 8 deg / 4 m | face + body | 107.6 s (cap) | 0 | no | 4.23 m |
+| lead | 3 m / 20 deg / 4 m | face | 9.6 s | 2 | yes | 3.04 m |
+| lead | 3 m / 20 deg / 5 m | face | 27.6 s | 6 | yes | 3.79 m |
+| lead | 3 m / 20 deg / 5 m | face + body | 83.2 s | 1 | no | 5.10 m |
 
 ## Using the core
 
@@ -78,7 +97,8 @@ with Drone("udpin://0.0.0.0:14540") as drone:    # real drone: "serial:///dev/tt
 | `scripts/` | start/stop sim, camera bridge, TypeFly setup and launch |
 | `typefly/` | patch against upstream TypeFly + `e2e_check.py` |
 | `tests/unit` / `tests/sitl` | no-simulator tests / tests against live SITL |
-| `examples/` | 01 square, 04 face-detector check in `quack_people`, `follow_person.py` (face follow) |
+| `examples/` | 01 square, 04 face-detector check in `quack_people`, `follow_person.py` (face / face+body follow) |
+| `docs/runs/` | committed follow-run logs (gzipped CSV, floats rounded to 3 decimals) + JSON summaries |
 
 ## Good first tasks (mentees)
 

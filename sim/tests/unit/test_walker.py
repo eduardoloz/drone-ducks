@@ -34,3 +34,33 @@ def test_facing_legs_are_slow_and_within_17_deg_of_north():
         if any(w0 <= t0 < w1 for w0, w1 in walker.FACING_WINDOWS):
             assert speed == pytest.approx(0.4, abs=0.02)
             assert abs(math.degrees(a0) - 90) <= 17
+
+
+@pytest.mark.parametrize("script", list(walker.SCRIPTS.values()), ids=lambda s: s.name)
+def test_every_script_matches_its_world_file(script):
+    path = os.path.join(os.path.dirname(SDF), f"{script.name}.sdf")
+    text = open(path).read()
+    assert f'<world name="{script.name}">' in text
+    actor = text[text.index('<actor name="walker">'):text.index("</actor>")]
+    found = [(float(t), *map(float, p.split()))
+             for t, p in re.findall(r"<time>([\d.]+)</time><pose>([^<]+)</pose>", actor)]
+    got = [v for t, x, y, _z, _r, _p, yaw in found for v in (t, x, y, yaw)]
+    assert got == pytest.approx([v for wp in script.waypoints for v in wp])
+
+
+def test_turnaway_has_a_face_away_stretch_longer_than_the_lost_timeout():
+    sc = walker.TURNAWAY
+    (_, end1), (start2, _) = sc.facing_windows
+    assert start2 - end1 > 5.0 + 5.0          # well past the 5 s lost timeout ...
+    assert start2 - end1 < 15.0               # ... but inside jetson LockKeeper.max_body_only_s
+    # while turned away the walker walks away from the drone (south), slowly enough to follow
+    x0, y0, a0 = walker.walker_pose(30.0, sc)
+    x1, y1, _ = walker.walker_pose(34.0, sc)
+    assert y1 < y0 and abs(a0 - walker.S) < 1e-6 and (y0 - y1) / 4.0 == pytest.approx(0.4, abs=0.02)
+    assert walker.get("turnaway") is sc and walker.get(None) is walker.LEAD
+
+
+def test_scripts_stay_inside_the_follow_fence():
+    for sc in walker.SCRIPTS.values():
+        for _t, x, y, _a in sc.waypoints:
+            assert (x * x + y * y) ** 0.5 < 25.0 - 5.0   # drone stays ~4 m from the walker

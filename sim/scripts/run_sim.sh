@@ -7,6 +7,8 @@
 #   WORLD=quack_demo (default) | quack_people | any PX4 world (default, walls, baylands, ...)
 #   MODEL=x500_quack (default) | x500 | x500_depth | ...    POSE="x,y,z,roll,pitch,yaw" (Gazebo ENU)
 #   HEADLESS=1 (default) | 0 to also open the Gazebo GUI
+#   CAM_PITCH_DEG=20   pitch quack_cam further down (default 8 deg, set in gazebo/models/quack_cam);
+#                      use ~20 for 3 m follow altitude. Writes an override model to .run/models/
 #   KEEP_PARAMS=1      keep PX4 parameters from the last run (default: every start is a fresh PX4,
 #                      with sim/px4/sitl.params applied on top)
 #
@@ -42,6 +44,19 @@ set +u   # PX4's gz_env.sh and the pixi activation scripts read variables that m
 source "$PX4_BUILD/gz_env.sh"   # PX4 model/plugin paths, server config; on macOS loads the pixi env
 set -u
 export GZ_SIM_RESOURCE_PATH="$SIM_DIR/gazebo/models:$SIM_DIR/gazebo/worlds:${GZ_SIM_RESOURCE_PATH:-}"
+rm -rf "$RUN_DIR/models"
+if [ -n "${CAM_PITCH_DEG:-}" ]; then
+  # Same quack_cam, sensor pitched CAM_PITCH_DEG down; found first on the resource path, so
+  # x500_quack (and the model name x500_quack_0 the tools expect) is unchanged.
+  PITCH_RAD="$(awk -v d="$CAM_PITCH_DEG" 'BEGIN { printf "%.4f", d * 3.14159265 / 180 }')"
+  mkdir -p "$RUN_DIR/models"
+  cp -R "$SIM_DIR/gazebo/models/quack_cam" "$RUN_DIR/models/"
+  sed -i.bak "s|<pose>0 0 0 0 0.14 0</pose>|<pose>0 0 0 0 $PITCH_RAD 0</pose>|" "$RUN_DIR/models/quack_cam/model.sdf"
+  rm -f "$RUN_DIR/models/quack_cam/model.sdf.bak"
+  grep -q "0 0 0 0 $PITCH_RAD 0" "$RUN_DIR/models/quack_cam/model.sdf" || die "CAM_PITCH_DEG: camera pose not found in quack_cam"
+  export GZ_SIM_RESOURCE_PATH="$RUN_DIR/models:$GZ_SIM_RESOURCE_PATH"
+  echo "camera pitch: $CAM_PITCH_DEG deg down ($PITCH_RAD rad)"
+fi
 
 WORLD="${WORLD:-quack_demo}"
 MODEL="${MODEL:-x500_quack}"

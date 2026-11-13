@@ -1,0 +1,24 @@
+{
+  "frames": 415,
+  "duration_s": 30.096999999999998,
+  "follow_s": 0.0,
+  "pct_frames_tracking_while_following": 0.0,
+  "lost_events": 0,
+  "reacquired": 0,
+  "lost_durations_s": [],
+  "final_mode": "TIMEOUT",
+  "finish_reason": "no face found in 30 s -> land -> LAND",
+  "walker_end_phase_s": 24.932000000000002,
+  "ended_early": true,
+  "config": {
+    "alt_m": 2.0,
+    "person": "none",
+    "person_every": 1,
+    "walker": "quack_people_turnaway",
+    "target_distance_m": 4.0,
+    "lost_timeout_s": 5.0,
+    "score": 0.5,
+    "source": "sim",
+    "cam_pitch_deg": 8.0
+  }
+}

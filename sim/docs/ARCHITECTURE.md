@@ -107,6 +107,11 @@ detector accuracy. The walking actor: see "Follow-person" below.
 | `examples/04_face_check.py` | table above |
 | `examples/follow_person.py` / `tests/sitl/test_follow_person.py` (2026-11-13) | 2 runs, 73-74 s followed, see "Follow-person" |
 | `pytest tests/unit` (2026-11-13) | 77 passed |
+| Round 3 regression (2026-11-13, after round 2's `start_sim.sh` change) | `test_failsafes.py` 5/5; `test_flight.py` 3/4, then 4/4 on re-run: the failure was a 3 s MAVLink heartbeat gap (`link_lost`) 12 s after takeoff with load average ~8 (other apps at 280 % + 220 % CPU), not a code regression |
+| Round 3 follow runs + `test_body_lock_follows_through_long_turn_away` | see "Round 3" below; body-lock SITL test passed once |
+| `test_follow_walker_then_land_when_lost`, before the skip-loops fix | fresh world: **failed** (no face in 30 s), then passed (75 s) on the same world |
+| same, after the fix, twice in a row from a fresh `start_sim.sh` | **2/2 passed**: 72.8 s / 74.6 s followed, 100 % within 10 deg, 6 / 4 lost events; then the full `tests/sitl` suite on the same world: 10 passed, 1 skipped (body test needs the turnaway world) |
+| `pytest tests/unit` (round 3) | 85 passed |
 
 ## Follow-person: Jetson pipeline + quackdrone
 
@@ -184,12 +189,71 @@ of 0.11-0.14 m, hence `face_width_m = 0.13` for the sim.
   commanding forward flight toward the walker. Landing came 2-6 s later than it should.
 * Run 1 (before the actor-height fix) locked once and lost the face: logged, not counted.
 
+### Round 3 (2026-11-13): body lock, long turn-away walker, 3 m altitude
+
+Same stack plus the Jetson round-2 body path: `follow_person.py --person yolox` builds
+`FollowPipeline(person_detector=YOLOX-nano, ...)`, which uses `jetson.lock.LockKeeper` (acquire by
+face only; follow the target's body when the face is gone, up to `max_body_only_s` = 15 s; re-acquire
+the face inside that body). Models come from `python -m jetson.fetch models` run with the sim venv
+(into this checkout's gitignored `jetson/models/`); the round-2 fallback into the Jetson worktree is gone.
+
+New world `quack_people_turnaway` (walker script `walker.TURNAWAY`): 25 s towards the drone, then
+turns round and walks **away** for 12 s (~14 s without a face: longer than the 5 s lost timeout,
+shorter than the 15 s body cap), faces the drone again for 30 s, then the 1.4 m/s walk back.
+`CAM_PITCH_DEG=20` (run_sim.sh) pitches the camera for 3 m altitude (horizon moved from image row 175
+to 71, as predicted). All runs: one live SITL run each, Intel Mac under heavy load from other
+processes (load average ~8), YuNet score 0.5, lost timeout 5 s. Logs: `docs/runs/r3-*.{csv.gz,json}`.
+
+| Run (`docs/runs/r3-...`) | alt / cam / target | Followed | Lost events | Landed early? | True dist while TRACKING mean (median) | Steered by body |
+|---|---|---|---|---|---|---|
+| `turnaway-face` | 2 m / 8 deg / 4 m | 31.7 s | 1 (the turn-away) | **yes**: at walker t = 30.9 s (final turn at 69 s) | 2.85 m (2.89) | - |
+| `turnaway-body` (`--person yolox`) | 2 m / 8 deg / 4 m | **107.6 s** (hit `--max-seconds 110`) | **0** | no: followed the turn-away, the walk-back and into the next loop | 4.23 m (3.17) | 27 % of frames |
+| `alt3-face` | 3 m / 20 deg / 4 m | 9.6 s | 2 | yes: face lost as the walker came within 2.4 m | 3.04 m (2.95) | - |
+| `alt3-face-t5` | 3 m / 20 deg / 5 m | 27.6 s | 6 (5 reacquired) | yes: at walker t = 27.6 s (the look-back) | 3.79 m (3.69) | - |
+| `alt3-body-t5` (`--person yolox`) | 3 m / 20 deg / 5 m | **83.2 s** | 1 | no: lost the body only in the 1.4 m/s walk-back | 5.10 m (4.25) | 37 % |
+
+Bearing was within 5 deg of the walker 100 % of the follow in every run. Perception: 14.9 fps
+face-only (YuNet 11 ms); 11-13 fps with YOLOX-nano on every frame (61-73 ms per person pass on this
+CPU, under load). `turnaway-face-nolock.json` is the very first follow after a fresh world start: no
+face was detected in 30 s (acquire timeout -> landed). This reproduced 3 of 3 times when the follow
+started at sim time ~80 s (the walker's 2nd loop), and never when it started at >= 160 s. Camera
+snapshots (`--snapshot-every`) of such a run show the actor rendered at inconsistent places from one
+second to the next (about 1.5 m under the drone, then about 10 m away), not where its script puts it.
+Workaround: `follow_person.py --skip-loops 2` (default) starts only from the walker's 3rd loop, and
+the wait now polls Gazebo sim time (the sim runs ~0.9x real time here, so sleeping wall time arrived
+early). Root cause in Gazebo's actor system is not investigated.
+
+* **The body lock does what it is for**: same script, face-only lands 38 s before the walker's final
+  turn; face+body never loses them. It also means the session no longer ends when the person walks
+  off: with the body lock the drone follows a person walking *away* (at up to 1.5 m/s, our speed cap)
+  until it loses the body or hits `--max-seconds`.
+* **False faces on the back of the head are accepted as re-acquisitions.** During the turn-away, YuNet
+  (score 0.5) fires on the back of the walker's head at 5-6 m for 0.1-0.4 s at a time; the lock treats
+  each as "face re-acquired inside the target body" (rule 4) and steers by that box. Harmless here
+  (same person) but it makes the distance estimate jump. Request to jetson/ below.
+* **3 m needs a longer target distance and still wants the body lock.** At 3 m the controller's distance
+  is slant range (+0.36 m vs horizontal at 2.5 m) and faces seen from above score low: with target 4 m
+  the walker got within 2.4 m and the face vanished. Target 5 m keeps the face but detection is marginal
+  (6 lost events); with YOLOX the gaps are bridged (95 % TRACKING).
+* Body-lock distance while steering by body is the virtual face box from learned geometry: the
+  estimate was 0.6 m short on average at 3 m (it learns the ratio on a foreshortened face).
+
+Requests for jetson/ (not changed here): (1) don't re-acquire a "face" inside the target body unless it
+is confirmed over a few frames or scores high (the round-3 `relock.py` may already cover this: not
+tested here); (2) an altitude-aware distance (`horizontal = sqrt(slant^2 - (alt - face_h)^2)`) so 3 m
+flights hold the commanded distance; (3) an option to end the session when the person turns away and
+walks off (body seen, face absent for N s, distance growing), since following a departing person is
+not always wanted.
+
 ## TODO / not verified
 
 * LLM-planned run of the TypeFly demo (real OpenAI call, costs money); web UI frames by eye.
 * SIH mode (`SIM=sih`) written but never started; Apple Silicon / Ubuntu / Windows bring-up; Docker
   (not evaluated: Docker Desktop is installed here but its daemon was not started).
-* Follow-person: only the straight walker path, one altitude (2 m), 2 good runs; no turn-tolerant
-  following (needs head-orientation from landmarks); real camera / Jetson latency.
+* Follow-person: straight walker paths only; 2 m and 3 m, one live run per configuration (no
+  repeat statistics); no turn-tolerant following (the Jetson round-3 head-yaw term is not tried here
+  yet); real camera / Jetson latency. Gazebo renders the walker inconsistently for its first ~2 loops after a
+  world start (worked around by `--skip-loops`, root cause unknown).
+* Jetson round-3 (`relock.py`, `--head-lateral`, `--camera-preset`) not merged into this branch's runs.
 * Hardware params file (QGC) and real Pixhawk bring-up; Jetson UART URL is an example, untested.
 * `mavsdk>=4` wheels need macOS 15+ (Linux aarch64 4.1.0 needs glibc 2.28, i.e. JetPack 5+; JetPack 4 → `mavsdk==4.0.6`).

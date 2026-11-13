@@ -1,0 +1,40 @@
+{
+  "frames": 1215,
+  "duration_s": 109.94200000000001,
+  "follow_s": 107.63,
+  "pct_frames_tracking_while_following": 100.0,
+  "lost_events": 0,
+  "reacquired": 0,
+  "lost_durations_s": [],
+  "final_mode": "TRACKING",
+  "pct_centred_5deg": 100.0,
+  "pct_centred_10deg": 100.0,
+  "pct_in_fov": 100.0,
+  "mean_abs_bearing_deg": 0.6441457627118644,
+  "true_dist_mean_m": 4.228037288135593,
+  "true_dist_median_m": 3.175,
+  "true_dist_minmax_m": [
+    2.354,
+    12.014
+  ],
+  "target_distance_m": 4.0,
+  "est_minus_true_dist_mean_m": -0.24817118644067795,
+  "est_minus_true_dist_mae_m": 0.44936101694915254,
+  "pct_walker_facing_within_60deg": 76.1864406779661,
+  "body_frames": 320,
+  "pct_following_by_body": 27.11864406779661,
+  "finish_reason": "follow session stopped -> LAND",
+  "walker_end_phase_s": 105.36000000000001,
+  "ended_early": false,
+  "config": {
+    "alt_m": 2.0,
+    "person": "yolox",
+    "person_every": 1,
+    "walker": "quack_people_turnaway",
+    "target_distance_m": 4.0,
+    "lost_timeout_s": 5.0,
+    "score": 0.5,
+    "source": "sim",
+    "cam_pitch_deg": 8.0
+  }
+}
