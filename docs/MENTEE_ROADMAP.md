@@ -1,6 +1,6 @@
 # Mentee roadmap: fall 2026 through winter break
 
-_Owner: Eddie. Last updated 2026-11-13 (end of round 2). This is a living doc; update it at each Friday meeting._
+_Owner: Eddie. Last updated 2026-11-13 (end of round 3). This is a living doc; update it at each Friday meeting._
 
 ## The short version
 
@@ -30,7 +30,24 @@ All three tracks are merged into `eduardo` and every suite passes from a clean c
 | **B. Sim** | **Follow-person works in SITL.** Two live runs followed the walker for ~73 s each, with the face within 5° of centre the whole time, and landed by themselves when the walker turned away. Jetson pipeline → `QuackdroneSink` → `Drone.set_velocity_body` (one MAVSDK layer, with the sim's watchdog and limits). The sim now reports the walker's true position on :5602. 1 SITL follow test | Follower trails at 3.0 m instead of 4 m (needs feed-forward). Brief false locks on the back of the head at 7–10 m. Only a straight walker path works (no sideways control). Round-1 SITL/failsafe suite not re-run after the `start_sim.sh` change. LLM-planned run |
 | **C. Jetson** | Six face backends (YuNet default). **New in round 2:** it matches the followed face to that person's body with a YOLOX-nano person detector (Apache-2.0), so the lock holds when the face turns away. In the toy world, lock retention went from 16–19% to 100%, and the drone never switched to a bystander. Python 3.8 / 3.10 / 3.12 compatibility checks, TensorRT export dry run, JetPack 6 setup script and Dockerfile | Anything on a real Jetson. On a real crowded clip the body path held off the wrong person but didn't keep the lock, because the person detector scores packed groups low. **Needs a recorded walk-away clip of consenting team members** |
 
-**Next integration step:** run the sim follower with the Jetson body path on (`--person yolox`) and fix the issues found in SITL: confirm the target before re-locking, add feed-forward (Max's M1 task), and add sideways control based on which way the head faces.
+### Round 3 (2026-11-13): sim + Jetson only, CCTV paused for daylight and mentee calibration
+
+Suites on a clean checkout: sim 85 unit tests (+ the SITL suite: 10 passed, 1 skipped), Jetson 203 passed and 16 skipped, CCTV 81.
+
+**Body lock is the big win in SITL.** One live run per row; the bearing stayed within 5° of the walker 100% of the time in every row:
+
+| Walker | Altitude / camera pitch / target distance | Detector | Followed | Lost events | Landed early? |
+|---|---|---|---|---|---|
+| Turns away for 14 s (longer than the 5 s lost timeout) | 2 m / 8° / 4 m | face only | 31.7 s | 1 | yes |
+| Same | 2 m / 8° / 4 m | face + body | 107.6 s (hit the time cap) | 0 | no |
+| Walks ahead | 3 m / 20° / 5 m | face only | 27.6 s | 6 | yes |
+| Same | 3 m / 20° / 5 m | face + body | 83.2 s | 1 | no |
+
+Also in round 3:
+- **Jetson:** confirmed re-lock (3 hits in a row, or a score of 0.9 or higher, plus a distance limit), which stops locking onto the back of the walker's head. An optional "stay in front" sideways term driven by head yaw: in the toy world, lock went from timeouts to 100% at walker angles of 0–45°. It's off by default and untested in SITL. Camera presets (`--camera-preset sim|imx219|webcam`).
+- **Sim:** the round-1 regression suite passes (one flight failure was a heartbeat gap on an overloaded Mac). Fixed a Gazebo start-up bug where the walker was drawn in the wrong place for its first two loops. Run logs are gzipped (368 KB → 46 KB).
+
+**Next integration step:** an angled-walker world to test `--head-lateral` and the re-lock in SITL. A distance estimate that accounts for altitude (at 3 m the drone stops ~0.36 m too close). Confirm the face before treating it as re-acquired inside the body lock. Feed-forward stays Max's M1 task.
 
 ## Who does what (proposed; confirm at Friday's meeting)
 
@@ -159,6 +176,11 @@ Folder `jetson/`, branch `eduardo-jetson-face`. Research: `jetson/docs/WHAT_WE_N
     - Is a straight walker path OK for M2?
     - Keep the 368 KB SITL run CSV in git? (No people in it, just numbers.)
     - Lost target currently **lands**. Return-home on real hardware climbs to 60 m unless the parameter changes (see 6).
+13. **Round-3 calls:**
+    - With the body lock, the drone follows someone who walks away (up to 1.5 m/s) until it loses their body. Is that wanted, or should walking away end the session?
+    - Keep the head-yaw sideways term off by default? Sideways flight is blind, because the camera only looks forward.
+    - At 3 m altitude, use a 5 m target distance with the body lock on (the sim agent's recommendation).
+    - With the re-lock distance limit, losing the face beyond about 5.5 m means a landing.
 
 ## How we work
 
