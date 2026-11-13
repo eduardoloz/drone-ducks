@@ -32,6 +32,7 @@ MAVSDK-Python native 4.0.6). Not yet tried on Apple Silicon, Linux or Windows._
 | Process (tmux session) | Port | Notes |
 |---|---|---|
 | PX4 SITL + gz server (`quack-sim`) | UDP 14540 (API/offboard), 14550 (GCS/QGC) | PX4 binds localhost only (`MAV_x_BROADCAST=1` for LAN) |
+| ground-truth pose probe (`quack-poses`) | HTTP 5602 | `/poses`: Gazebo model poses + sim time (no actor poses) |
 | camera bridge (`quack-cam`) | HTTP 5601 | `--host 0.0.0.0` to let a Jetson on the LAN read it |
 | TypeFly YOLO (`quack-vision`) | 50049 HTTP, 50050 gRPC | |
 | TypeFly web UI (`quack-webui`) | 50000 | paid LLM calls |
@@ -90,7 +91,7 @@ loss → RTL because there is no RC (COM_OBL_RC_ACT=Position falls through to NA
 Drone at 1.5 m, frontal view. YuNet (OpenCV Zoo) detected every person at 1.5–6 m (score 0.83–0.95,
 face 12–59 px wide). OpenCV Haar detected the two MakeHuman models (CC0) at ≤ 4 m and never the low-poly
 FemaleVisitor (CC-BY). So sim faces work for pipeline/controller testing, but do not use them to judge
-detector accuracy. The walking actor is in the world but was not evaluated.
+detector accuracy. The walking actor: see "Follow-person" below.
 
 ## Verification log (what ran live, 2026-11-10)
 
@@ -104,12 +105,91 @@ detector accuracy. The walking actor is in the world but was not evaluated.
 | `setup_typefly.sh` | pinned clone + patch, 111 upstream TypeFly tests pass |
 | `typefly/e2e_check.py --no-llm` (find the chair) | PASS on a fresh sim: 2.8 m from chair, 2° facing error, 16 s |
 | `examples/04_face_check.py` | table above |
+| `examples/follow_person.py` / `tests/sitl/test_follow_person.py` (2026-11-13) | 2 runs, 73-74 s followed, see "Follow-person" |
+| `pytest tests/unit` (2026-11-13) | 77 passed |
+
+## Follow-person: Jetson pipeline + quackdrone
+
+_2026-11-13, round 2. Live in Gazebo SITL on Eddie's Intel Mac (same stack as above)._
+
+```
+ gz camera bridge :5601 /frame --> jetson LatestFrameReader --> YuNet (score 0.5) --> IouTracker/TargetSelector
+     --> FaceFollowController (sim_follow_config: hfov 68.75, face 0.13 m, target 4 m)
+     --> QuackdroneSink.submit() --> Drone.set_velocity_body()  [Limits clamp + 0.5 s watchdog] --> PX4 Offboard
+ gz pose probe :5602 (drone pose, sim time) + walker script  --> ground truth columns in the CSV log
+```
+
+* Glue: `quackdrone/integrations/jetson_follow.py`. `QuackdroneSink` implements the Jetson
+  `CommandSink` (start / submit / stop / finished / altitude_m / status) on a `Drone`; `jetson/` is
+  imported unchanged. No second MAVSDK connection, no second watchdog.
+* Example: `examples/follow_person.py` (take off, fly to the walker's lane, wait for its loop to
+  restart, follow, land). SITL test: `tests/sitl/test_follow_person.py` (runs the example).
+* Ground truth: `gazebo/gz_pose_probe.py` (started by `start_sim.sh`) serves model poses + sim time.
+  Gazebo does **not** publish the scripted actor's pose, so the walker's position comes from
+  `quackdrone/integrations/walker.py` evaluated at sim time (a unit test keeps it in sync with the
+  SDF). Checked against the camera from the ground: the walker crossed the drone at the predicted time.
+
+### Safety behaviour
+
+| Situation | What happens | Tested |
+|---|---|---|
+| Face lost | controller sends hover (zero velocity) at once | unit (closed loop), SITL |
+| Lost for `lost_timeout_s` (5 s) | `--lost-action`: land (default), rtl, or hold; latched, never resumes | unit, SITL (every run ends this way) |
+| Frames stop / detector hangs | quackdrone watchdog brakes after 0.5 s and holds; sink lands after 3 s without a submit | unit |
+| Soft fence (`--fence`, 25 m) / altitude band / 1.5 m/s cap | velocity clamped by quackdrone `Limits` | unit |
+| PX4 leaves Offboard (geofence, battery, pilot, link) | quackdrone stops commanding; session ends; never re-engages | unit (fake) |
+| Ctrl-C / exception / script ends | sink `stop()` lands; `with Drone` lands as a backstop | unit |
+
+### The walker (`quack_people`)
+
+Round 1's walker was sunk half into the ground (actor `z = 0`; the `walk.dae` origin is at the hips),
+so from 2 m only the top of the head showed and YuNet scored it below 0.6. Now `z = 1.0`, and the path
+is a "leading" scenario: straight north along x = -5 at 0.4 m/s facing the drone for 62 s, with one
+look-back (face away) at 27.5-32 s, then a 1.4 m/s walk back (face away) so every run ends with the
+lost-target landing. Loop 80.4 s.
+
+Why straight: the face controller centres the face with yaw and keeps distance along the camera
+axis, but cannot see which way the person faces. Every point on the line of sight centres the face,
+so nothing pulls the drone back in front of someone who walks at an angle. In kinematic dry runs
+(FakeBackend + ideal detector) with legs 14-39 deg off the line of sight, the facing angle crept
+up until the face was lost for good after 20-50 s, even with `k_lateral` 0.04-0.08.
+
+YuNet on the walker (2 m altitude, frontal): score 0.66-0.75 at 2.3-3.5 m, 0.37 at 3.9 m, 0.23 at
+2 m (face low in the frame). Hence `--score 0.5` in the example. Measured box width implies a face
+of 0.11-0.14 m, hence `face_width_m = 0.13` for the sim.
+
+### Results (2 live runs, 2026-11-13, alt 2 m, target distance 4 m)
+
+| | Run 2 (`docs/runs/follow-sitl-run2.*`) | Run 3 (the SITL test) |
+|---|---|---|
+| Followed (first lock to lost-timeout landing) | 72.8 s | 73.9 s |
+| Frames with a face (TRACKING) while following | 86 % | 84 % |
+| True bearing within 5 deg / 10 deg | 100 % / 100 % (mean abs 0.7 deg) | 100 % / 100 % (mean abs 0.4 deg) |
+| True distance while TRACKING: mean (median) | 2.99 m (2.90), min 2.24 | 2.99 m (2.86), min 2.16 |
+| Estimate minus truth, distance: mean, MAE | -0.16 m, 0.39 m | -0.12 m, 0.39 m |
+| Estimate minus truth, bearing | +1.3 deg bias (inside the 3 deg deadband) | |
+| Lost events | 3: look-back (lost 3.0 s, reacquired), turn-away, false lock | 5: look-back (3.3 s), turn-away, 3 false locks |
+| Walker facing within 60 deg of the drone | 82 % of the follow | 81 % |
+| Perception | 14.9 fps, frame age 31 ms mean / 48 ms p95, YuNet 11 ms | |
+
+* **Face-only following loses the target every time the person turns away**: here 1 look-back (5.6 %
+  of the walk) and the final turn. The look-back (4.5 s) fits inside the 5 s lost timeout, so the drone
+  hovered and re-acquired; any longer and it would have landed. 18-19 % of each run had the face turned
+  away.
+* **Trails the target**: mean 3.0 m instead of 4 m. The walker approaches at 0.4 m/s and the controller
+  reverses at most 0.5 m/s (P-only: `0.5 * (d - 3.5)` saturates near 2.7 m). Known limitation
+  (feed-forward is a Jetson good-first-task).
+* **False locks while the walker walks away** (score 0.5): 0.3-1.7 s of TRACKING at 7-10 m with the face
+  turned away (probably the back of the head), each one restarting the 5 s lost timer and briefly
+  commanding forward flight toward the walker. Landing came 2-6 s later than it should.
+* Run 1 (before the actor-height fix) locked once and lost the face: logged, not counted.
 
 ## TODO / not verified
 
 * LLM-planned run of the TypeFly demo (real OpenAI call, costs money); web UI frames by eye.
 * SIH mode (`SIM=sih`) written but never started; Apple Silicon / Ubuntu / Windows bring-up; Docker
   (not evaluated: Docker Desktop is installed here but its daemon was not started).
-* Follow controller closed loop on the walking actor; real camera / Jetson latency.
+* Follow-person: only the straight walker path, one altitude (2 m), 2 good runs; no turn-tolerant
+  following (needs head-orientation from landmarks); real camera / Jetson latency.
 * Hardware params file (QGC) and real Pixhawk bring-up; Jetson UART URL is an example, untested.
 * `mavsdk>=4` wheels need macOS 15+ (Linux aarch64 4.1.0 needs glibc 2.28, i.e. JetPack 5+; JetPack 4 → `mavsdk==4.0.6`).
