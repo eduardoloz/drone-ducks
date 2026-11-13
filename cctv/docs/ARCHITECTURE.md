@@ -35,16 +35,25 @@ Status legend: **[built]** exists in this branch and was run; **[planned]** desi
 - Marginal: about 30 low-resolution Queens cameras and 9 east-end cameras.
 - Snapshot only (counts or density at most): 21 NYC DOT cameras.
 - Each good camera still needs a calibratable view, and PTZ moves invalidate it (seen for
-  real on R10_041).
+  real on R10_041). Since round 2, a camera holds one calibration per PTZ preset, and
+  each clip is matched to the preset it shows (section 3.4).
 - **Proven end to end on 1 camera (R10_041):** 54 of 62 vehicles got speeds, median
   57 mph, σ about 1.7 mph.
-- **TODO:**
-  - ground-truth validation;
-  - calibrate 4+ more cameras;
+- **TODO** (round 2 status, 2026-11-13):
+  - [built, not yet run on real footage] ground-truth harnesses: NYC DOT link speeds
+    (`groundtruth/nyc_links.py`) and GPS validation drives (`groundtruth/gps_drive.py`,
+    protocol in [VALIDATION_DRIVE.md](VALIDATION_DRIVE.md)). **Still needed:** a
+    calibrated camera on a usable link (daylight), and the drive itself;
+  - [built] several calibrations per camera, one per PTZ preset (section 3.4);
+  - calibrate R10_041 preset v2 (seen only at night so far) and a camera on the
+    Little Neck Pkwy WB link (R10_007/R10_008, see 8.2);
+  - calibrate 4+ more cameras (mentee M1 task);
   - daylight re-measurement (R10_355 was dark);
-  - live ingest and the GPU worker (sections 3.2, 3.3);
+  - live ingest and the GPU worker (sections 3.2, 3.3), after 511NY access;
   - Postgres;
-  - WebSocket overlays.
+  - WebSocket overlays;
+  - small-shift compensation: apply the matched similarity transform instead of
+    rejecting views nudged by more than 4 px.
 
 ## 1. The product in one paragraph
 
@@ -143,7 +152,7 @@ NYSDOT HLS ---------------------^        \--> view check (PTZ) -----------------
   camera, and batches one frame from each of its cameras per inference call.
   TensorRT/FP16 export.
 
-### 3.4 View check (PTZ) [built]
+### 3.4 View check and PTZ presets [built]
 - `camera_motion.py`: ORB features with on-screen-display text masked out, a RANSAC
   similarity transform against the calibration's reference frame, and thresholds of 4 px
   shift, 2% zoom and 1° rotation. Few matches means the camera points somewhere else.
@@ -154,9 +163,31 @@ NYSDOT HLS ---------------------^        \--> view check (PTZ) -----------------
   the operator had turned it to face the other carriageway. The 17:43 clip got only 7
   feature matches, so its 7 tracks were stored without speeds, and the site says the
   camera was re-aimed and falls back to the last matching clip.
-- [planned] Per segment in live mode. Remember several calibrations per camera, one per
-  PTZ preset, keyed by a view fingerprint, so that returning to a known preset
-  re-activates its calibration automatically.
+- **Several calibrations per camera** (`views.py`, round 2). Each PTZ preset is a *view*
+  with its own files in `data/calibration/<CAM>/`:
+  `<VIEW>.json` (calibration, optional), `<VIEW>.points.json`, `<VIEW>.ref.jpg`, and extra
+  references such as `<VIEW>.ref-night.jpg`. `views.json` holds labels.
+  - The pipeline compares the clip's median frame with every reference of every view.
+    Views within the thresholds are candidates, and the one with the most RANSAC
+    inliers wins. Its calibration is used, and the run records `view_id`.
+  - Three outcomes: a calibrated view matches (speeds); a known but uncalibrated
+    preset matches (counts only; "camera at preset v2, which is not calibrated"); or
+    nothing matches (counts only; "view matches no calibrated preset").
+  - Round-1 flat files (`<CAM>.json`, `<CAM>.ref.jpg`) still load, as the view
+    `default`. `python -m cctv.calibrate migrate` moves them. R10_041 is migrated: v1
+    is the calibrated 16:39 view, and v2 is the re-aimed 17:43 view, registered from a
+    night reference and not calibrated.
+  - **Checked on real frames:** the 16:39 clip and three stills taken 6–8 minutes
+    later (16:45–16:48) match v1 with 86–1,081 inliers. The 17:43 clip and a 17:46
+    still match v2. Each matched the other view with at most 7 feature matches.
+    Caveat: each view's reference was built from one of those two clips, so only the
+    stills are independent checks.
+  - CLI: `calibrate views | add-view | match | migrate`, `--view` on
+    `fit`/`show`/`error_budget`/`pipeline`.
+  - Limits: one daytime reference per view so far, so a night clip of v1 will probably
+    read as "no match" until someone adds a `ref-night`. That is conservative but loses
+    data. [planned] Per segment in live mode; a cheap global fingerprint to pre-select
+    views when a camera has many.
 
 ### 3.5 Speed estimator [built]
 - `geometry.py`: the road-plane homography. Image (u, v) maps to road (X along the lanes,
@@ -221,7 +252,8 @@ cameras(id PK, name, owner, lat, lon, county, kind, exit, chainage_km, feed_type
         posted_limit_mph, speed_suitability, measured_json)
 runs(id PK, camera_id FK, source, processed_utc, clip_start_utc, clip_start_note, duration_s,
      frames, fps, model, tracker, ms_per_frame, calibration_utc, calibration_rmse_m,
-     scale_uncertainty, camera_moved, motion_json, reference_frame, notes)
+     scale_uncertainty, camera_moved, motion_json, reference_frame, notes,
+     view_id)     -- round 2; added to old databases by ALTER TABLE on connect
 vehicles(id PK, run_id FK cascade, camera_id, track_id, cls, ts_utc, t_start, t_end, n_points,
          n_inliers, distance_m, speed_mph, sigma_mph, sigma_stat_mph, sigma_cal_mph, direction,
          heading_deg, accepted, reject_reason, limit_mph, margin_mph, over_limit)
@@ -327,7 +359,8 @@ further west, lens distortion near the image edge, or box-bottom bias on small, 
 vehicles. The ground-truth drive (8.2) is how we find out.
 
 ### 8.2 Validation plan
-1. **Ground-truth drive.**
+1. **Ground-truth drive** [tooling built: `groundtruth/gps_drive.py`, protocol in
+   [VALIDATION_DRIVE.md](VALIDATION_DRIVE.md)].
    - A mentee drives past R10_041 (or another calibrated camera) on cruise control at a
      steady legal speed, logging phone GPS (Doppler speed, about ±0.2 m/s).
    - We record the stream at the same time with `record_hls`.
@@ -335,11 +368,29 @@ vehicles. The ground-truth drive (8.2) is how we find out.
      plates.
    - 10 passes over 2–3 lanes and both directions. Report bias and spread against GPS,
      then fold the bias into the calibration.
-2. **Public speed data.** NYC DOT Traffic Speeds (`i4gi-tjb9`) has live LIE links in
-   Queens, 84th St–108th St in both directions, next to cameras R11_140, R11_141 and
-   R11_142. Compare our 5-minute median spot speeds with the link speeds, which are
-   space-mean and lower than spot speeds in congestion. The two should track each other
-   over a day.
+2. **Public speed data** [harness built: `python -m cctv.groundtruth.nyc_links`].
+   - NYC DOT Traffic Speeds (`i4gi-tjb9`). A snapshot fetched 2026-11-12 has 4 live
+     LIE links. The tool finds the NYSDOT video cameras on them:
+     - EB/WB 84th St–108th St: R11_140, R11_141, R11_142 (352×240);
+     - WB Little Neck Pkwy → CIP/CVE: R10_005–R10_008 (Region 10 encoders) and
+       R11_154/155/254/255/269/287.
+   - The comparison uses the **harmonic mean** of our spot speeds, which estimates
+     space-mean speed, against the mean of link rows within ±10 min of the clip. It
+     uses the same direction only, from the calibration's `direction_labels`, and
+     shows a bootstrap 95% CI.
+   - **Link quality check** (`quality`), 2026-11-12 02:00–05:00, light traffic:
+     - Little Neck WB read a plausible 54.7 mph median.
+     - EB 84th–108th St read 20.8 mph. That is implausible for 3 am free flow,
+       unless there was an overnight work zone.
+     - WB 108th–84th St: 36 of 48 rows had status −101, with values from 0 to
+       114 mph. Non-"0" status rows are now skipped.
+   - So the **first camera to calibrate for this comparison is R10_007 or R10_008 on
+     the Little Neck WB link**, not R11_140. That is not verified in daylight.
+   - Caveats: link speed is a minutes-long, mile-long space-mean, while ours is a
+     60 s spot sample. Disagreement in congestion doesn't prove either is wrong.
+     `data_as_of` is assumed to be NY local time. The API flagged its copy as out of
+     date on every request, and two queries minutes apart disagreed about the newest
+     row.
 3. **Consistency checks** that run automatically:
    - near half against far half of each track (above);
    - adjacent cameras on the same carriageway (medians should agree within a few mph in
@@ -397,6 +448,6 @@ vehicles. The ground-truth drive (8.2) is how we find out.
 | Phase | Scope | Exit criteria |
 |---|---|---|
 | 0 [done] | Recon, manifest of 129 cameras, feed measurements (19 cameras), 1 calibrated camera, offline pipeline, SQLite, site on :8010, error budget, 41 tests | `pytest` green; R10_041 clip shows plausible speeds with σ |
-| 1 (weeks 1–3) | Request 511NY access. Calibrate 5 good cameras (R10_011, R10_014, R10_017, R10_019, R10_044). Ground-truth drive. Re-measure feeds in daylight. Multiple PTZ presets per camera. | Bias against GPS under 2 mph, σ under 2 mph on at least 2 cameras |
+| 1 (weeks 1–3) | Request 511NY access. Calibrate 5 good cameras (R10_011, R10_014, R10_017, R10_019, R10_044). Ground-truth drive. Re-measure feeds in daylight. ~~Multiple PTZ presets per camera~~ (built in round 2). Link-speed comparison on R10_007/008. | Bias against GPS under 2 mph, σ under 2 mph on at least 2 cameras |
 | 2 (weeks 4–8) | Live ingest workers and a GPU worker (T4 or a university GPU). Postgres/TimescaleDB with 5-min aggregates. WebSocket live overlays. Health dashboard. Daylight scheduling. | 10 cameras live for a week with under 5% downtime |
 | 3 (later) | All good cameras. Fine-tune the detector on LIE frames. Night mode (headlight pairs). Semi-automatic calibration (vanishing points + dash detection). Public site with rate limits and the publication policy. | Documented accuracy per camera, published methodology |
