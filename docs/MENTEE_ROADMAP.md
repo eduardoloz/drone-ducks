@@ -49,6 +49,20 @@ Also in round 3:
 
 **Next integration step:** an angled-walker world to test `--head-lateral` and the re-lock in SITL. A distance estimate that accounts for altitude (at 3 m the drone stops ~0.36 m too close). Confirm the face before treating it as re-acquired inside the body lock. Feed-forward stays Max's M1 task.
 
+### Round 4 (2026-11-13 to 2026-11-17): Jetson merged; sim SITL runs and CCTV round 3 in progress
+
+Round 4 was interrupted on Nov 13 when the Mac's battery ran out, and resumed on Nov 17.
+
+**Jetson (merged into `eduardo` on 2026-11-17; 268 tests pass, none skipped):**
+- **Face hand-back confirmation.** Inside the body lock, a face must be confirmed (3 hits in a row, or a score of 0.9 or higher) before the drone steers by it again. A bug in the first version could leave the drone with no target while both a face and a body were visible; that is fixed, with a test.
+- **Altitude-aware distance.** The controller now holds the horizontal distance. Toy check at 3 m altitude and 20° pitch: it holds 4.05 m for a 4 m target (was 3.80 m).
+- **Ego-rotation compensation.** The tracker shifts tracks by the drone's own yaw between frames. In the toy world during a ±20°/s turn, the prediction error for a still face at 8 m went from about 3.7 px per frame to about 0. No sink provides yaw-rate telemetry yet, so the commanded rate through a 0.35 s lag is what runs.
+- **Optional walk-away end** (`--end-on-walkaway`, off by default; `jetson/walkaway.py`). It ends the follow through the lost-target path (hover, then `--lost-action`) when, over 3 s, the drone steers by the body, the person recedes at 0.8 m/s or more, and they are more than 1 m beyond the target distance. Toy world: ends 1.9 s after the turn in 5/5 seeds; never ends for a person standing with their back turned. Replayed open loop on the round-3 SITL logs, it would have ended both walk-aways 2.3–2.8 s in, with no false triggers. **Not yet flown in SITL**: `sim/examples/follow_person.py` needs a flag for it.
+
+Known gaps: the re-lock distance cap still compares straight-line distance with a target that is now horizontal (about 0.2–0.4 m tighter at 3 m, inferred); a body-track ID change while following by body alone is treated as a loss.
+
+**Sim:** the round-4 code (angled-walker world, `--head-lateral`, re-lock flags, stay-in-front and back-of-head metrics, sideways soft-fence test) is merged, but its SITL runs are only happening now.
+
 ## Who does what (proposed; confirm at Friday's meeting)
 
 | Mentee | Primary track | Why | Secondary |
@@ -181,6 +195,10 @@ Folder `jetson/`, branch `eduardo-jetson-face`. Research: `jetson/docs/WHAT_WE_N
     - Keep the head-yaw sideways term off by default? Sideways flight is blind, because the camera only looks forward.
     - At 3 m altitude, use a 5 m target distance with the body lock on (the sim agent's recommendation).
     - With the re-lock distance limit, losing the face beyond about 5.5 m means a landing.
+14. **Round-4 calls** (walk-away now exists as an option, off by default, which partly answers the first round-3 call):
+    - Should walk-away **land** (the current lost-target action) or default to `hold`, so the pilot gets the drone back?
+    - Is 0.8 m/s the right threshold, or should a slow drift away (0.6 m/s or lower) also end the session?
+    - Should walk-away be on by default whenever the body lock is on?
 
 ## How we work
 
