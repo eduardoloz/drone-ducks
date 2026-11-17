@@ -29,6 +29,11 @@ Optional sideways terms (both 0 = off by default): k_lateral * bearing, and k_he
 yaw (face pointing to the camera's right -> fly right, to stay in front of the person; see
 jetson/headpose.py). Their sum is capped at max_lateral_m_s.
 
+Optional walk-away end (end_on_walkaway, off by default; jetson/walkaway.py): while steering by the
+body (no face), a person moving away over the ground at >= walkaway_speed_m_s for walkaway_s and
+farther than target + walkaway_margin_m ends the follow through the same TIMEOUT + lost_action
+path as a lost target.
+
 PX4 owns the real control loops (attitude, rate, velocity). These are just setpoints.
 """
 
@@ -39,6 +44,7 @@ from dataclasses import dataclass
 from typing import Optional, Tuple
 
 from . import geometry
+from .walkaway import WalkAwayDetector
 
 IDLE = "IDLE"
 TRACKING = "TRACKING"
@@ -63,13 +69,18 @@ class TargetObservation:
     # Which way the face points (jetson.headpose, + = toward the camera's right). None = unknown
     # (body-only steering, no landmarks, face too small). Only used if k_head_lateral > 0.
     head_yaw_deg: Optional[float] = None
+    # What the box comes from: "face" (a confirmed face) or "body" (virtual face box on the body,
+    # face not visible). Only the walk-away end (end_on_walkaway) uses it.
+    source: str = "face"
 
     @classmethod
     def from_box(cls, box: Tuple[float, float, float, float], frame_w: int, frame_h: int,
-                 stamp: float, head_yaw_deg: Optional[float] = None) -> "TargetObservation":
+                 stamp: float, head_yaw_deg: Optional[float] = None,
+                 source: str = "face") -> "TargetObservation":
         x1, y1, x2, y2 = box
         return cls(cx=(x1 + x2) / 2.0 / frame_w, cy=(y1 + y2) / 2.0 / frame_h,
-                   w=(x2 - x1) / frame_w, h=(y2 - y1) / frame_h, stamp=stamp, head_yaw_deg=head_yaw_deg)
+                   w=(x2 - x1) / frame_w, h=(y2 - y1) / frame_h, stamp=stamp, head_yaw_deg=head_yaw_deg,
+                   source=source)
 
 
 @dataclass(frozen=True)
@@ -108,6 +119,7 @@ class ControlOutput:
     head_yaw_deg: Optional[float] = None  # smoothed head yaw the lateral term used (None = unknown)
     range_m: Optional[float] = None       # raw box-width (optical-axis depth) estimate; distance_m is
                                           # the horizontal distance when altitude is known
+    recede_m_s: Optional[float] = None    # walk-away estimate of the person's speed away (end_on_walkaway)
 
 
 @dataclass
@@ -173,6 +185,15 @@ class FollowConfig:
     acquire_timeout_s: float = 30.0  # ...or this long if we never saw one at all
     lost_action: str = "land"        # then: "land" | "rtl" | "hold"
 
+    # Walk-away end (jetson/walkaway.py), OFF by default. While steering by the body (face not
+    # visible), if the person moves away over the ground at >= walkaway_speed_m_s for walkaway_s and
+    # is farther than target_distance_m + walkaway_margin_m, end the follow: TIMEOUT + lost_action,
+    # exactly like a lost target. Face-only mode never triggers it (the lost timeout comes first).
+    end_on_walkaway: bool = False
+    walkaway_s: float = 3.0
+    walkaway_speed_m_s: float = 0.8
+    walkaway_margin_m: float = 1.0
+
     def __post_init__(self) -> None:
         if not 0 < self.hfov_deg < 180:
             raise ValueError("hfov_deg must be in (0, 180)")
@@ -183,9 +204,11 @@ class FollowConfig:
         for name in ("max_yaw_rate_deg_s", "max_forward_m_s", "max_backward_m_s", "max_vertical_m_s",
                      "max_lateral_m_s", "max_accel_m_s2", "max_yaw_accel_deg_s2", "max_obs_age_s",
                      "lost_timeout_s", "acquire_timeout_s", "face_width_m", "max_dt_s", "k_head_lateral",
-                     "head_yaw_deadband_deg", "head_yaw_tau_s", "head_yaw_hold_s"):
+                     "head_yaw_deadband_deg", "head_yaw_tau_s", "head_yaw_hold_s", "walkaway_margin_m"):
             if getattr(self, name) < 0:
                 raise ValueError(f"{name} must be >= 0")
+        if self.walkaway_s <= 0 or self.walkaway_speed_m_s <= 0:
+            raise ValueError("walkaway_s and walkaway_speed_m_s must be > 0")
         if self.min_altitude_m >= self.max_altitude_m:
             raise ValueError("min_altitude_m must be below max_altitude_m")
 
@@ -226,6 +249,10 @@ class FaceFollowController:
         self._cmd = HOVER
         self._head_yaw: Optional[float] = None    # smoothed head yaw, deg
         self._head_yaw_at: Optional[float] = None  # stamp of the last raw head-yaw sample
+        c = self.config
+        self._walkaway: Optional[WalkAwayDetector] = WalkAwayDetector(
+            seconds=c.walkaway_s, speed_m_s=c.walkaway_speed_m_s,
+            min_distance_m=c.target_distance_m + c.walkaway_margin_m) if c.end_on_walkaway else None
 
     def _update_head_yaw(self, raw: Optional[float], stamp: float, dt: float) -> Optional[float]:
         c = self.config
@@ -289,8 +316,11 @@ class FaceFollowController:
             return ControlOutput(HOVER, TIMEOUT, self._timeout_reason, action=c.lost_action,
                                  lost_for_s=self._lost_for(now))
 
+        flying_fwd = self._cmd.forward_m_s   # what the drone has been flying since the last step
         ok, why = self._check(obs, now)
         if not ok:
+            if self._walkaway is not None:
+                self._walkaway.update(now, flying_fwd, None)
             return self._no_target(now, why)
 
         self._last_seen = obs.stamp
@@ -298,6 +328,12 @@ class FaceFollowController:
         elevation = geometry.bearing_deg(obs.cy, c.vfov) - geometry.bearing_deg(c.target_cy, c.vfov)
         rng = geometry.distance_from_width(obs.w, c.hfov_deg, c.face_width_m)
         distance = self.ground_distance(rng, obs.cx, obs.cy, altitude_m)
+        recede = None
+        if self._walkaway is not None:
+            wa = self._walkaway.update(now, flying_fwd, distance, face_visible=obs.source != "body")
+            recede = wa.speed_m_s
+            if wa.triggered:
+                return self._timeout(now, wa.reason)
         notes = []
 
         yaw = clamp(c.k_yaw * soft_deadband(bearing, c.yaw_deadband_deg),
@@ -346,7 +382,8 @@ class FaceFollowController:
         if c.k_head_lateral > 0 and head is not None:
             reason += f", head {head:+.0f} deg"
         return ControlOutput(self._cmd, TRACKING, reason, bearing_deg=bearing, elevation_deg=elevation,
-                             distance_m=distance, lost_for_s=0.0, head_yaw_deg=head, range_m=rng)
+                             distance_m=distance, lost_for_s=0.0, head_yaw_deg=head, range_m=rng,
+                             recede_m_s=recede)
 
     def ground_distance(self, range_m: float, cx: float, cy: float, altitude_m: Optional[float]) -> float:
         """Distance the controller regulates: horizontal if an altitude is known, else range_m."""
@@ -377,6 +414,7 @@ class FaceFollowController:
 
     def _timeout(self, now: float, why: str) -> ControlOutput:
         self._timed_out = True
+        self._cmd = HOVER
         self._timeout_reason = f"{why} -> {self.config.lost_action}"
         return ControlOutput(HOVER, TIMEOUT, self._timeout_reason, action=self.config.lost_action,
                              lost_for_s=self._lost_for(now))

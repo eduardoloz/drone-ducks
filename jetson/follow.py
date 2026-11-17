@@ -80,6 +80,9 @@ def main(argv=None) -> int:
     args = build_parser().parse_args(argv)
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(message)s", datefmt="%H:%M:%S")
     cfg = cli.make_config(args)
+    if cfg.end_on_walkaway and getattr(args, "person", "none") in (None, "none"):
+        log.warning("--end-on-walkaway only acts while steering by the body: add --person yolox "
+                    "(face-only mode ends on the lost timeout anyway)")
     try:
         det = cli.make_detector(args)
         person = cli.make_person_detector(args)  # before the sink: fail before arming

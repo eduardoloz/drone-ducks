@@ -121,6 +121,15 @@ def add_controller_args(ap: argparse.ArgumentParser) -> None:
                    help="...and only on a face estimated within M metres (default: target distance + 1.5)")
     g.add_argument("--relock-holdoff", type=float, default=0.0,
                    help="face-only: after a loss adopt no new face track for this long (s)")
+    g.add_argument("--end-on-walkaway", action="store_true",
+                   help="body lock: end the follow (TIMEOUT -> --lost-action) when the person walks away "
+                        "with no face visible, instead of chasing them (off by default; see README)")
+    g.add_argument("--walkaway-seconds", type=float, default=d.walkaway_s, metavar="S",
+                   help=f"...receding this long with no face (default {d.walkaway_s:g})")
+    g.add_argument("--walkaway-speed", type=float, default=d.walkaway_speed_m_s, metavar="M_S",
+                   help=f"...at least this fast over the ground (default {d.walkaway_speed_m_s:g} m/s)")
+    g.add_argument("--walkaway-margin", type=float, default=d.walkaway_margin_m, metavar="M",
+                   help=f"...and farther than target distance + M (default {d.walkaway_margin_m:g})")
 
 
 def make_config(args) -> FollowConfig:
@@ -131,7 +140,11 @@ def make_config(args) -> FollowConfig:
                         max_yaw_rate_deg_s=args.max_yaw_rate, lost_timeout_s=args.lost_timeout,
                         lost_action=args.lost_action, enable_vertical=args.vertical,
                         k_head_lateral=getattr(args, "head_lateral", d.k_head_lateral),
-                        max_lateral_m_s=getattr(args, "max_lateral", d.max_lateral_m_s))
+                        max_lateral_m_s=getattr(args, "max_lateral", d.max_lateral_m_s),
+                        end_on_walkaway=getattr(args, "end_on_walkaway", False),
+                        walkaway_s=getattr(args, "walkaway_seconds", d.walkaway_s),
+                        walkaway_speed_m_s=getattr(args, "walkaway_speed", d.walkaway_speed_m_s),
+                        walkaway_margin_m=getattr(args, "walkaway_margin", d.walkaway_margin_m))
 
 
 def relock_kwargs(args) -> dict:
@@ -167,7 +180,8 @@ class StepLog:
     """Optional CSV log, one row per processed frame, for tuning plots."""
 
     FIELDS = ["t", "seq", "mode", "action", "faces", "target_id", "bearing_deg", "distance_m", "fwd", "right",
-              "down", "yaw", "detect_ms", "total_ms", "frame_age_ms", "source", "bodies", "person_ms"]
+              "down", "yaw", "detect_ms", "total_ms", "frame_age_ms", "source", "bodies", "person_ms",
+              "recede_m_s"]
 
     def __init__(self, path: Optional[str]) -> None:
         self._f = self._w = None
@@ -190,7 +204,8 @@ class StepLog:
             "yaw": f"{c.yawspeed_deg_s:.2f}", "detect_ms": f"{res.timings_ms['detect']:.1f}",
             "total_ms": f"{res.timings_ms['total']:.1f}", "frame_age_ms": f"{res.timings_ms['frame_age']:.1f}",
             "source": getattr(res, "target_source", ""), "bodies": len(getattr(res, "bodies", [])),
-            "person_ms": f"{res.timings_ms['person']:.1f}" if "person" in res.timings_ms else ""})
+            "person_ms": f"{res.timings_ms['person']:.1f}" if "person" in res.timings_ms else "",
+            "recede_m_s": "" if getattr(o, "recede_m_s", None) is None else f"{o.recede_m_s:.2f}"})
 
     def close(self) -> None:
         if self._f:
