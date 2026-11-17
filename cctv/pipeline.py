@@ -25,6 +25,7 @@ from pathlib import Path
 import numpy as np
 
 from cctv import store
+from cctv.daylight import camera_light
 from cctv.geometry import Calibration
 from cctv.registry import DATA_DIR, get_camera, load_cameras
 from cctv.speed import SpeedConfig, estimate_speed, is_speeding
@@ -145,6 +146,14 @@ def process(camera_id: str, clip: Path, db_path: Path, tracks_path: Path | None 
 
     start_iso, start_note = clip_start_utc(clip)
     start_dt = datetime.fromisoformat(start_iso) if start_iso else None
+    light = camera_light(cam, start_dt) if start_dt else {"sun_elev_deg": None, "light": None}
+    luma = (match.result or {}).get("luma_clip")
+    shift_px = float(match.result["shift_px"]) if match.compensated and match.result else None
+    if match.compensated:
+        print(f"view offset compensated: {shift_px:.1f}px")
+    if light["light"] and light["light"] != "day":
+        print(f"note: {light['light']} (sun {light['sun_elev_deg']:+.1f} deg): the detector is trained on "
+              "daylight images; see README 'Night' before trusting these numbers")
     con = store.connect(db_path)
     store.upsert_cameras(con, load_cameras())
     store.delete_runs_for_source(con, camera_id, str(clip))
@@ -161,6 +170,7 @@ def process(camera_id: str, clip: Path, db_path: Path, tracks_path: Path | None 
         scale_uncertainty=cal.scale_uncertainty if cal else None,
         camera_moved=None if moved is None else int(moved), motion_json=json.dumps(motion, default=str),
         reference_frame=match.reference, view_id=view_id,
+        sun_elev_deg=light["sun_elev_deg"], light=light["light"], luma=luma, view_shift_px=shift_px,
         notes=f"no speeds: {no_speed_reason}" if moved else None)
 
     cfg = SpeedConfig()
@@ -210,7 +220,8 @@ def process(camera_id: str, clip: Path, db_path: Path, tracks_path: Path | None 
         summary.update(median_mph=round(float(np.median(s)), 1), p85_mph=round(float(np.percentile(s, 85)), 1),
                        min_mph=round(float(s.min()), 1), max_mph=round(float(s.max()), 1))
     summary.update(camera_moved=moved, view_id=view_id, view_status=match.status, motion=motion,
-                   clip_start_utc=start_iso,
+                   clip_start_utc=start_iso, view_compensated=match.compensated, view_shift_px=shift_px,
+                   light=light["light"], sun_elev_deg=light["sun_elev_deg"], luma=luma,
                    ms_per_frame=meta.get("ms_per_frame_mean"))
     return summary
 

@@ -77,7 +77,8 @@ def create_app(db_path: Path | str = store.DEFAULT_DB, manifest_path: Path | str
         s = speed_summary(rows, run["duration_s"])
         s.update(run_id=run["id"], clip_start_utc=run["clip_start_utc"], duration_s=_round(run["duration_s"]),
                  camera_moved=run["camera_moved"], view_id=run["view_id"], model=run["model"],
-                 ms_per_frame=run["ms_per_frame"])
+                 ms_per_frame=run["ms_per_frame"], light=run["light"], sun_elev_deg=_round(run["sun_elev_deg"]),
+                 luma=_round(run["luma"]), view_shift_px=_round(run["view_shift_px"]))
         return s
 
     def calibrated(cid: str) -> bool:

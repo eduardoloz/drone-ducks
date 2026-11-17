@@ -86,3 +86,18 @@ def test_moved_camera_run_does_not_hide_last_valid_run(tmp_path):
     assert cam["latest_valid"]["run_id"] == first["run_id"]
     detail = client.get("/api/cameras/R10_041").json()
     assert detail["runs"][0]["camera_moved"] == 1 and detail["latest_valid"]["run_id"] == first["run_id"]
+
+
+def test_runs_record_light_condition_and_api_exposes_it(tmp_path):
+    cal = Calibration.load(calibration_path("R10_041"))
+    tracks = tmp_path / "tracks.jsonl"
+    save_jsonl(synthetic_tracks(cal, [55.0]), tracks, meta={"frames": 60})
+    db = tmp_path / "l.sqlite"
+    day = process("R10_041", tmp_path / "R10_041_20261118T160000Z.ts", db, tracks_path=tracks)     # 11:00 local
+    night = process("R10_041", tmp_path / "R10_041_20261117T223000Z.ts", db, tracks_path=tracks)   # 17:30 local
+    assert day["light"] == "day" and day["sun_elev_deg"] > 20
+    assert night["light"] == "night" and night["sun_elev_deg"] < -6
+    assert day["view_compensated"] is False and day["view_shift_px"] is None
+    runs = {r["run_id"]: r for r in TestClient(create_app(db_path=db)).get("/api/cameras/R10_041").json()["runs"]}
+    assert runs[day["run_id"]]["light"] == "day" and runs[night["run_id"]]["light"] == "night"
+    assert runs[night["run_id"]]["sun_elev_deg"] < -6

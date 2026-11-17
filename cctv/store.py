@@ -35,7 +35,11 @@ CREATE TABLE IF NOT EXISTS runs (
   duration_s REAL, frames INTEGER, fps REAL, model TEXT, tracker TEXT, ms_per_frame REAL,
   calibration_utc TEXT, calibration_rmse_m REAL, scale_uncertainty REAL,
   camera_moved INTEGER, motion_json TEXT, reference_frame TEXT, notes TEXT,
-  view_id TEXT                 -- PTZ preset the clip matched (NULL: unknown view / not checked)
+  view_id TEXT,                -- PTZ preset the clip matched (NULL: unknown view / not checked)
+  sun_elev_deg REAL,           -- sun elevation at the camera at clip start (daylight.py)
+  light TEXT,                  -- 'day' | 'twilight' | 'night' from sun_elev_deg
+  luma REAL,                   -- mean brightness (0-255) of the clip's median frame
+  view_shift_px REAL           -- small PTZ offset compensated against the view's reference (views.py)
 );
 CREATE TABLE IF NOT EXISTS vehicles (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -72,7 +76,8 @@ def connect(path: Path | str = DEFAULT_DB) -> sqlite3.Connection:
 
 
 # Columns added after round 1; old databases get them via ALTER TABLE.
-_ADDED_COLUMNS = {"runs": [("view_id", "TEXT")]}
+_ADDED_COLUMNS = {"runs": [("view_id", "TEXT"), ("sun_elev_deg", "REAL"), ("light", "TEXT"), ("luma", "REAL"),
+                           ("view_shift_px", "REAL")]}
 
 
 def _migrate(con: sqlite3.Connection) -> None:
