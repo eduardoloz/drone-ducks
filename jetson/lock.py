@@ -23,6 +23,8 @@ Rules (all here, all unit-tested in tests/test_lock.py):
      jetson.relock.RelockGate). Until then the body keeps steering and the candidate is treated as
      a bystander. Why: in SITL (sim/docs/runs/r3-turnaway-body.csv.gz) YuNet fired on the back of
      the walker's head at 5-6 m and each one-to-few-frame hit was taken as re-acquisition.
+     If the old face track is back but held and the target body track has died, the body that
+     held face sits in becomes the target body (steer by it, not by nothing).
      Faces outside the target body are ignored: a bystander never steals the lock.
   5. Body following is capped at `max_body_only_s` without seeing the face. Body tracks can swap
      identity when two people cross; the cap bounds how long a swap could be followed. Then LOST.
@@ -237,6 +239,15 @@ class LockKeeper:
             self._cand_streak = 0
         if reacquired or (candidate is None and not held):
             self._cand_id, self._cand_streak = None, 0
+        if held and body is None:
+            # The target body track died (e.g. a missed detection made the body tracker start a new
+            # id) while the old face track is back but not confirmed. Steer by the body that face
+            # sits in rather than by nothing: the face is held back because it might be a false hit
+            # on the back of the head, and that is still inside the target's body. Without this, a
+            # flickering held face (streak keeps restarting) with a live body hovered to TIMEOUT.
+            bid = links.get(face.track_id)
+            if bid is not None:
+                self.body_id, body = bid, bodies_by_id[bid]
 
         # Never had a face (or lost face and body): acquire by face only (rule 1).
         if face is None and body is None:

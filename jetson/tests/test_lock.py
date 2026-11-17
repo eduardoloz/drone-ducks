@@ -423,3 +423,23 @@ def test_sitl_turnaway_replay_cuts_back_of_head_handbacks():
     assert after["false_face"] <= 0.5 * before["false_face"]
     assert after["false_handbacks"] <= 0.5 * before["false_handbacks"]
     assert after["genuine_face"] >= 0.9 * before["genuine_face"]
+
+
+def test_held_face_with_a_new_body_track_steers_by_that_body_not_nothing():
+    # Round-5 review: the body track id changed (body 10 died, body 11 is the same person) while the
+    # old face track flickered back unconfirmed. The held face must not leave the drone with no
+    # target when a body around it is detected: steer by that body until the face is confirmed.
+    k = LockKeeper()
+    k.update([trk(1, FACE)], [trk(10, BODY)], W, H, 0.0)
+    assert k.update([], [trk(10, BODY, last_seen=0.1)], W, H, 0.1).source == "body"
+    t = 0.2
+    for i in range(8):   # fresh, coasting, fresh, coasting...: the streak never reaches 3
+        face = _low(1, FACE, last_seen=t) if i % 2 == 0 else _low(1, FACE, misses=1, last_seen=t - 0.1)
+        st = k.update([face], [trk(11, BODY, last_seen=t)], W, H, t)
+        assert st.source == "body" and st.body.track_id == 11 and st.box is not None, i
+        t += 0.1
+    # and once the face is seen 3 frames in a row it takes over as before
+    for _ in range(3):
+        st = k.update([_low(1, FACE, last_seen=t)], [trk(11, BODY, last_seen=t)], W, H, t)
+        t += 0.1
+    assert st.source == "face" and st.reacquired
