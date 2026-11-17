@@ -115,8 +115,12 @@ def save_jsonl(points: list[TrackPoint], path: Path | str, meta: dict | None = N
 
 
 def load_jsonl(path: Path | str) -> tuple[list[TrackPoint], dict]:
+    """Read a tracks JSONL (optionally gzipped, ``.gz``) written by ``save_jsonl``."""
+    import gzip
+
     points, meta = [], {}
-    with open(path) as fh:
+    opener = gzip.open if str(path).endswith(".gz") else open
+    with opener(path, "rt") as fh:
         for line in fh:
             d = json.loads(line)
             if "meta" in d:
