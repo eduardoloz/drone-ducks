@@ -164,6 +164,26 @@ class IouTracker:
         if t.hits >= self.min_hits:
             t.confirmed = True
 
+    def compensate_rotation(self, d_yaw_rad: float, focal_px: float, cx0: float) -> None:
+        """Move every track by the image shift a camera yaw of `d_yaw_rad` (+ = turned right) causes.
+
+        Call once per frame before update(), with the yaw since the previous frame (yaw rate x dt).
+        The tracker's motion model is in pixels, so without this a drone turning at 20 deg/s moves
+        an 8 px face ~18 px per frame at 15 fps (620 px focal length), more than its own width:
+        the prediction misses and small faces lose their track while the drone yaws. A point at
+        image column u (angle atan((u - cx0) / f)) moves to cx0 + f * tan(angle - d_yaw). Velocities
+        are left alone: measured after this shift they describe the target's own motion.
+        """
+        if not d_yaw_rad or focal_px <= 0:
+            return
+        import math
+        for t in self.tracks:
+            ang = math.atan2(t.cx - cx0, focal_px) - d_yaw_rad
+            if abs(ang) >= math.pi / 2 - 1e-3:
+                continue
+            dx = cx0 + focal_px * math.tan(ang) - t.cx
+            t.box = (t.box[0] + dx, t.box[1], t.box[2] + dx, t.box[3])
+
     def update(self, faces: Sequence[Face], stamp: float) -> List[Track]:
         """Feed this frame's detections (capture time `stamp`); returns all live tracks."""
         high = [f for f in faces if f.score >= self.high_score]
