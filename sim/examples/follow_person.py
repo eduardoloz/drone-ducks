@@ -11,6 +11,9 @@
     # 3 m altitude: pitch the camera down so the face stays near the image centre
     CAM_PITCH_DEG=20 WORLD=quack_people scripts/start_sim.sh
     scripts/py.sh examples/follow_person.py --alt 3
+    # angled legs (25 / 40 deg to the line of sight), with the "stay in front" sideways term:
+    WORLD=quack_people_angled scripts/start_sim.sh
+    scripts/py.sh examples/follow_person.py --person yolox --head-lateral 0.02
 
 camera /video|/frame -> jetson YuNet (+ YOLOX-nano bodies + LockKeeper with --person) -> tracker
                      -> FaceFollowController -> QuackdroneSink
@@ -21,7 +24,13 @@ Safety (also see docs/ARCHITECTURE.md "Follow-person"):
   * lost for --lost-timeout s (5) -> --lost-action (land); never resumes after that
   * no controller output for 3 s (camera/detector dead) -> land
   * soft fence --fence m around takeoff (velocity toward the edge is scaled down), altitude band,
-    2 m/s cap; PX4's own failsafes (geofence params, battery, offboard loss) stay on top
+    --max-speed cap on |forward, right|; PX4's own failsafes (geofence params, battery, offboard loss)
+    stay on top. The same clamps apply to sideways commands (tests/unit/test_safety.py)
+  * --head-lateral flies SIDEWAYS, and sideways flight is BLIND: the only camera looks forward, so
+    nothing sees what the drone moves into. Capped at --max-lateral (0.5 m/s); off by default
+  * after a loss the controller only gets the target back after a confirmed re-lock (jetson
+    RelockGate: --relock-hits consecutive detections or one >= --relock-score, within
+    target distance + 1.5 m); --relock-hits 1 --relock-score 0 --relock-max-distance 0 = round 2
   * leaving the `with Drone` block for any reason (Ctrl-C, exception) lands
 
 Writes one CSV row per frame (controller estimate vs Gazebo ground truth; gzipped, floats rounded
@@ -44,7 +53,8 @@ from quackdrone import Drone, Limits  # noqa: E402
 from quackdrone.integrations import follow_metrics as fm, walker  # noqa: E402
 from quackdrone.integrations.jetson_follow import QuackdroneSink, sim_follow_config  # noqa: E402
 
-from jetson.controller import FaceFollowController  # noqa: E402  (importable after jetson_follow)
+from jetson import cli as jcli  # noqa: E402  (importable after jetson_follow)
+from jetson.controller import FaceFollowController  # noqa: E402
 from jetson.detectors import create_detector  # noqa: E402
 from jetson.detectors.base import model_path  # noqa: E402
 from jetson.pipeline import FollowPipeline  # noqa: E402
@@ -53,7 +63,7 @@ from jetson.sources import LatestFrameReader, open_source  # noqa: E402
 FIELDS = ["t", "sim_time", "mode", "faces", "est_bearing_deg", "est_dist_m", "req_fwd", "req_yaw", "sent_fwd",
           "sent_yaw", "px4_n", "px4_e", "alt_m", "px4_yaw", "drone_src", "walker_src", "walker_n", "walker_e",
           "true_dist_m", "true_bearing_deg", "walker_facing_deg", "frame_age_ms", "detect_ms", "reason",
-          "source", "bodies", "person_ms"]
+          "source", "bodies", "person_ms", "req_right", "sent_right", "head_yaw_deg", "gated"]
 FETCH_HINT = "fetch it from the repo root with the sim venv: (cd .. && sim/.venv/bin/python -m jetson.fetch models)"
 
 
@@ -88,7 +98,20 @@ def main() -> int:
     ap.add_argument("--person-every", type=int, default=1, metavar="N", help="person detector every Nth frame")
     ap.add_argument("--person-model", default=None, help="YOLOX-nano .onnx (default: jetson/models)")
     ap.add_argument("--walker", default="auto", help="walker script for ground truth: auto (from the pose "
-                    "probe's world), lead (quack_people) or turnaway (quack_people_turnaway)")
+                    "probe's world), lead (quack_people), turnaway (quack_people_turnaway) or angled "
+                    "(quack_people_angled)")
+    ap.add_argument("--camera-preset", default="sim", choices=sorted(jcli.CAMERA_PRESETS),
+                    help="jetson camera preset (HFOV + face width); sim = quack_cam 68.75 deg + walker face "
+                         "0.13 m, the same values as sim_follow_config()")
+    ap.add_argument("--head-lateral", type=float, default=0.0, metavar="K",
+                    help="jetson k_head_lateral: fly sideways K m/s per deg of head yaw to stay in front "
+                         "of the face (0 = off; BLIND: the camera looks forward only)")
+    ap.add_argument("--max-lateral", type=float, default=0.5, help="jetson max_lateral_m_s (m/s)")
+    ap.add_argument("--relock-hits", type=int, default=3,
+                    help="after a loss, resume after this many consecutive detections (1 = round 2)")
+    ap.add_argument("--relock-score", type=float, default=0.9, help="...or one this good (<= 0 disables)")
+    ap.add_argument("--relock-max-distance", type=float, default=None, metavar="M",
+                    help="...and only within M m (default target distance + 1.5; 0 = any distance)")
     ap.add_argument("--score", type=float, default=0.5,
                     help="YuNet score threshold (sim walker scores 0.65-0.75 at 2.5-3.5 m; jetson default 0.6)")
     ap.add_argument("--snapshot-every", type=int, default=0, metavar="N",
@@ -120,8 +143,10 @@ def main() -> int:
     script = fm.script_for(truth0, args.walker)
     print(f"walker script: {script.name} (period {script.period_s} s, final turn at {script.final_turn_s} s)")
 
+    hfov, face_w = jcli.camera_params(args.camera_preset)
     cfg = sim_follow_config(target_distance_m=args.target_distance, lost_timeout_s=args.lost_timeout,
-                            lost_action=args.lost_action)
+                            lost_action=args.lost_action, hfov_deg=hfov, face_width_m=face_w,
+                            k_head_lateral=args.head_lateral, max_lateral_m_s=args.max_lateral)
     limits = Limits(fence_radius_m=args.fence, max_speed_xy=args.max_speed)
     rows: list[dict] = []
     with Drone(args.connect, limits=limits) as drone:
@@ -143,7 +168,7 @@ def main() -> int:
                 wait_until_sim_time(truth['sim_time'] + wait)  # drone holds its Offboard position target meanwhile
         sink = QuackdroneSink(drone, takeoff_alt_m=args.alt)
         pipe = FollowPipeline(det, FaceFollowController(cfg), sink=sink, person_detector=person,
-                              person_every=args.person_every)
+                              person_every=args.person_every, **jcli.relock_kwargs(args))
         sink.start()
         t0, last = time.monotonic(), 0
         try:
@@ -165,6 +190,7 @@ def main() -> int:
                     print(f"t={r['t']:5.1f} {r['mode']:8s} est {fmt(r['est_dist_m'])} m "
                           f"true {fmt(r['true_dist_m'])} m  bearing est {fmt(r['est_bearing_deg'])} "
                           f"true {fmt(r['true_bearing_deg'])}  facing {fmt(r['walker_facing_deg'])}"
+                          + (f"  right {fmt(r['sent_right'])}" if args.head_lateral else "")
                           + (f"  [{r['source'] or '-'}]" if person is not None else ""))
         finally:
             sink.stop()          # lands if the session is still ours
@@ -172,7 +198,11 @@ def main() -> int:
             config = {"alt_m": args.alt, "person": args.person, "person_every": args.person_every,
                       "walker": script.name, "target_distance_m": args.target_distance,
                       "lost_timeout_s": args.lost_timeout, "score": args.score, "source": args.source,
-                      "cam_pitch_deg": float(os.environ.get("CAM_PITCH_DEG", 8.0))}
+                      "cam_pitch_deg": float(os.environ.get("CAM_PITCH_DEG", 8.0)),
+                      "camera_preset": args.camera_preset, "hfov_deg": hfov, "face_width_m": face_w,
+                      "head_lateral": args.head_lateral, "max_lateral_m_s": args.max_lateral,
+                      "relock_hits": args.relock_hits, "relock_score": args.relock_score,
+                      "relock_max_distance_m": args.relock_max_distance}
             write_outputs(rows, cfg.target_distance_m, csv_path, json_path, sink.finish_reason, script, config)
     return 0
 
@@ -214,7 +244,10 @@ def make_row(t, res, sink, drone, script=walker.LEAD, body_path=False) -> dict:
            "true_dist_m": None, "true_bearing_deg": None, "walker_facing_deg": None,
            "frame_age_ms": res.timings_ms.get("frame_age"), "detect_ms": res.timings_ms.get("detect"),
            "reason": c.reason, "source": res.target_source if body_path else None,
-           "bodies": len(res.bodies) if body_path else None, "person_ms": res.timings_ms.get("person")}
+           "bodies": len(res.bodies) if body_path else None, "person_ms": res.timings_ms.get("person"),
+           "req_right": last.requested.right_m_s if last else None,
+           "sent_right": last.sent.right_m_s if last and last.sent else None,
+           "head_yaw_deg": c.head_yaw_deg, "gated": int(bool(getattr(res, "gated", False)))}
     if w:
         row.update(fm.truth_geometry(d[:2], d[2], w[:2], w[2]))
     return row
@@ -226,6 +259,9 @@ def write_outputs(rows, target, csv_path, json_path, finish_reason, script=walke
     summary["finish_reason"] = finish_reason
     summary["walker_end_phase_s"] = fm.end_phase(rows, script)
     summary["ended_early"] = fm.ended_early(rows, script)
+    logged = fm.read_csv(csv_path)
+    summary["stay_in_front"] = fm.stay_in_front(logged, script)
+    summary["back_of_head"] = fm.back_of_head(logged)
     summary["config"] = config or {}
     with open(json_path, "w") as f:
         json.dump(summary, f, indent=2)

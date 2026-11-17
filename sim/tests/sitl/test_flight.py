@@ -101,3 +101,16 @@ def test_soft_fence_stops_velocity_at_radius(make_pilot):
     print(f"7 s at 1 m/s with a 3 m fence: ended {r:.2f} m from home")
     assert r < 3.3
     assert pilot.events("limit")
+
+
+def test_soft_fence_stops_sideways_velocity(make_pilot):
+    """jetson --head-lateral flies right/left (blind: forward camera only); the fence must clamp it too."""
+    pilot = make_pilot(limits=Limits(fence_radius_m=3.0, max_speed_xy=0.8))
+    pilot.takeoff(2.0)
+    home = pilot.home_ned
+    stream_velocity(pilot, 8.0, right_m_s=2.0)           # asks for 2 m/s sideways: capped to 0.8
+    pilot.stop()
+    r = horizontal_dist(pilot.telemetry.position_ned, home)
+    print(f"8 s at 2 m/s sideways (cap 0.8) with a 3 m fence: ended {r:.2f} m from home")
+    assert r < 3.3
+    assert pilot.events("limit")
