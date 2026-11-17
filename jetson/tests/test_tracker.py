@@ -181,3 +181,21 @@ def test_unconfirmed_tracks_are_never_selected():
     tr = IouTracker(min_hits=3)
     tr.update([face(320, 240, 50)], stamp=0.0)
     assert TargetSelector().select(tr.tracks, 640, 480) is None
+
+
+# ----------------------------------------------------------------------------- ego-rotation compensation
+def test_compensate_rotation_sign_turning_right_moves_tracks_left():
+    import math
+    f, cx0 = 500.0, 320.0
+    t = IouTracker(min_hits=1)
+    t.update([face(320, 240, 20), face(420, 240, 20)], 0.0)
+    before = [tr.cx for tr in t.tracks]
+    t.compensate_rotation(math.radians(5.0), f, cx0)   # + = drone yawed right (clockwise from above)
+    after = [tr.cx for tr in t.tracks]
+    assert after[0] == pytest.approx(cx0 - f * math.tan(math.radians(5.0)))
+    ang = math.atan2(before[1] - cx0, f) - math.radians(5.0)
+    assert after[1] == pytest.approx(cx0 + f * math.tan(ang))
+    assert all(a < b for a, b in zip(after, before))
+    assert [tr.w for tr in t.tracks] == pytest.approx([20.0, 20.0])   # pure shift, size kept
+    t.compensate_rotation(-math.radians(5.0), f, cx0)                  # turning back undoes it
+    assert [tr.cx for tr in t.tracks] == pytest.approx(before)

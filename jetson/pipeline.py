@@ -109,6 +109,8 @@ class FollowPipeline:
             a = dt / (self.ego_tau_s + dt) if self.ego_tau_s > 0 else 1.0
             self._yaw_rate_est += a * (self.controller.last_command.yawspeed_deg_s - self._yaw_rate_est)
             rate = self._yaw_rate_est
+        else:
+            self._yaw_rate_est = rate   # if telemetry drops out, the lag model starts from the truth
         d_yaw = math.radians(rate) * dt
         if d_yaw:
             f = (frame.width / 2.0) / math.tan(math.radians(self.controller.config.hfov_deg) / 2.0)
@@ -167,7 +169,8 @@ class FollowPipeline:
             yaw = None
             if source == "face" and target is not None and target.last_seen >= frame.stamp - 1e-9:
                 yaw = head_yaw_deg(target.landmarks, face_width_px=target.w)
-            obs = TargetObservation.from_box(box, frame.width, frame.height, stamp=box_stamp, head_yaw_deg=yaw)
+            obs = TargetObservation.from_box(box, frame.width, frame.height, stamp=box_stamp, head_yaw_deg=yaw,
+                                             source="body" if source == "body" else "face")
         t2 = time.perf_counter()
         now = time.monotonic() if now is None else now
         alt = altitude_m if altitude_m is not None else self.sink.altitude_m
