@@ -86,8 +86,11 @@ def test_unknown_view_is_rejected(tmp_path):
     _make_view(tmp_path, "CAM", "west", scene(1))
     m = match_view("CAM", scene(42), cal_dir=tmp_path)
     assert m.status == "no_match" and m.view is None and not m.usable and m.calibration is None
-    m = match_view("CAM", shift(scene(0), 15, 0), cal_dir=tmp_path)  # known preset but nudged 15 px
+    m = match_view("CAM", shift(scene(0), 15, 0), cal_dir=tmp_path, compensate=False)  # nudged 15 px
     assert m.status == "no_match" and "shift" in m.reason
+    # (with compensation on, which is the default, a 15 px nudge is matched: test_view_compensation.py)
+    m = match_view("CAM", shift(scene(0), 80, 0), cal_dir=tmp_path)
+    assert m.status == "no_match"
 
 
 def test_known_but_uncalibrated_preset(tmp_path):

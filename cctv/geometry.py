@@ -21,7 +21,7 @@ bounding box, which is close to where the vehicle touches the road.
 from __future__ import annotations
 
 import json
-from dataclasses import asdict, dataclass, field
+from dataclasses import asdict, dataclass, field, replace
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -177,6 +177,21 @@ class Calibration:
         if not self.roi_polygon:
             return np.ones(len(pts), dtype=bool)
         return points_in_polygon(pts, np.asarray(self.roi_polygon, float))
+
+    def with_image_transform(self, M) -> "Calibration":
+        """This calibration for a view that is the calibrated one moved by the 2x3 image transform ``M``.
+
+        ``M`` maps reference-frame pixels to current-frame pixels (a small PTZ nudge,
+        see ``views.py``). Road = H(ref px) = H(M^-1 cur px), so H' = H @ M^-1; the ROI
+        polygon and the clicked points move with the picture.
+        """
+        M3 = np.vstack([np.asarray(M, float).reshape(2, 3), [0.0, 0.0, 1.0]])
+        H2 = self.H_np @ np.linalg.inv(M3)
+        H2 = H2 / H2[2, 2]
+        move = lambda pts: (np.c_[np.asarray(pts, float), np.ones(len(pts))] @ M3.T)[:, :2].tolist()  # noqa: E731
+        return replace(self, H=H2.tolist(), img_pts=move(self.img_pts) if self.img_pts else self.img_pts,
+                       roi_polygon=move(self.roi_polygon) if self.roi_polygon else self.roi_polygon,
+                       notes=(self.notes + "; " if self.notes else "") + "compensated for a small view offset")
 
     def save(self, path: Path | str) -> None:
         Path(path).parent.mkdir(parents=True, exist_ok=True)

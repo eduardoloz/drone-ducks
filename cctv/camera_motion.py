@@ -32,6 +32,7 @@ class MotionResult:
     rotation_deg: float
     inlier_ratio: float      # RANSAC inliers / good matches
     n_matches: int
+    transform: list[list[float]] | None = None  # 2x3 similarity, reference pixel -> current pixel
 
     def to_dict(self) -> dict:
         return asdict(self)
@@ -114,4 +115,4 @@ class CameraMotionDetector:
         if abs(rot) > self.max_rotation_deg:
             reasons.append(f"rotation {rot:.2f} deg")
         return MotionResult(bool(reasons), "; ".join(reasons) or "static", shift, scale, rot,
-                            ratio, len(good))
+                            ratio, len(good), [[round(float(x), 6) for x in row] for row in M])

@@ -24,6 +24,15 @@ Matching: ORB + RANSAC against every reference frame of every view (see
 ``camera_motion.py``). Pairs whose shift/zoom/rotation are inside the
 thresholds are candidates; the one with the most RANSAC inliers wins. If no
 view matches, the clip is from an unknown view and gets no speeds.
+
+Small-offset compensation (round 3): presets do not always return to exactly the
+same pixel. If the only thing wrong with a match against a view's *calibration
+frame* (``<VIEW>.ref.jpg``) is a small shift / zoom / rotation (up to
+``MAX_COMP_SHIFT_PX``, ``MAX_COMP_SCALE``, ``MAX_COMP_ROT_DEG``) and the RANSAC fit is
+well supported, the measured similarity transform is applied to the calibration
+(``Calibration.with_image_transform``) instead of rejecting the clip. Extra
+references (``ref-night`` ...) are never used for this: they need not be aligned
+with the frame the calibration was clicked on.
 """
 
 from __future__ import annotations
@@ -40,6 +49,12 @@ from cctv.geometry import Calibration
 from cctv.registry import CALIBRATION_DIR
 
 LEGACY_VIEW = "default"
+# Small-offset compensation limits (640x480). Beyond these a preset is treated as a different view.
+MAX_COMP_SHIFT_PX = 30.0
+MAX_COMP_SCALE = 0.03
+MAX_COMP_ROT_DEG = 2.0
+MIN_COMP_INLIER_RATIO = 0.4
+MIN_COMP_MATCHES = 40
 VIEW_ID_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9_-]{0,39}$")
 
 
@@ -157,10 +172,20 @@ class ViewMatch:
     result: dict[str, Any] | None = None  # MotionResult of the winning (or best failing) comparison
     candidates: list[dict[str, Any]] = field(default_factory=list)
     reason: str = ""
+    compensated: bool = False         # matched only after applying the small-offset transform
+
+    @property
+    def transform(self) -> list[list[float]] | None:
+        return (self.result or {}).get("transform") if self.compensated else None
 
     @property
     def calibration(self) -> Calibration | None:
-        return self.view.load_calibration() if (self.status == "matched" and self.view) else None
+        if not (self.status == "matched" and self.view):
+            return None
+        cal = self.view.load_calibration()
+        if cal is not None and self.compensated and self.transform is not None:
+            cal = cal.with_image_transform(self.transform)
+        return cal
 
     @property
     def usable(self) -> bool:
@@ -170,6 +195,7 @@ class ViewMatch:
     def to_dict(self) -> dict[str, Any]:
         return {"status": self.status, "view_id": self.view.view_id if self.view else None,
                 "calibrated": bool(self.view and self.view.calibrated), "reference": self.reference,
+                "compensated": self.compensated,
                 "reason": self.reason, "result": self.result, "candidates": self.candidates}
 
 
@@ -177,9 +203,30 @@ def _score(r: dict[str, Any]) -> float:
     return r["inlier_ratio"] * r["n_matches"]
 
 
+def calibration_reference(view: CameraView) -> str | None:
+    """File name of the frame the view's calibration was clicked on (``<VIEW>.ref.jpg`` / legacy ``<CAM>.ref.jpg``)."""
+    return next((p.name for p in view.reference_paths if p.name.endswith(".ref.jpg")), None)
+
+
+def compensable(r: dict[str, Any], calibration_ref: str | None) -> bool:
+    """A failed comparison that is only a small, well-measured offset from the view's calibration frame."""
+    vals = [r.get(k) for k in ("shift_px", "scale", "rotation_deg")]
+    if not r.get("moved") or r.get("transform") is None or any(v is None or not np.isfinite(v) for v in vals):
+        return False
+    if calibration_ref is None or r.get("reference") != calibration_ref:
+        return False
+    return (r["inlier_ratio"] >= MIN_COMP_INLIER_RATIO and r["n_matches"] >= MIN_COMP_MATCHES
+            and r["shift_px"] <= MAX_COMP_SHIFT_PX and abs(r["scale"] - 1) <= MAX_COMP_SCALE
+            and abs(r["rotation_deg"]) <= MAX_COMP_ROT_DEG)
+
+
 def match_view(camera_id: str, frame: np.ndarray, views: list[CameraView] | None = None,
-               cal_dir: Path | str = CALIBRATION_DIR, **detector_kw: Any) -> ViewMatch:
-    """Compare ``frame`` with every reference of every view and pick the matching view."""
+               cal_dir: Path | str = CALIBRATION_DIR, compensate: bool = True, **detector_kw: Any) -> ViewMatch:
+    """Compare ``frame`` with every reference of every view and pick the matching view.
+
+    With ``compensate`` (default), a calibrated view that is only slightly offset is
+    accepted with its calibration moved by the measured transform (see module doc).
+    """
     import cv2
 
     from cctv.camera_motion import DEFAULT_OSD_BOXES, CameraMotionDetector
@@ -212,6 +259,15 @@ def match_view(camera_id: str, frame: np.ndarray, views: list[CameraView] | None
         if not view.calibrated:
             why += "; this view is not calibrated, so no speeds"
         return ViewMatch("matched", view, best["reference"], best, cands, why)
+    comp = [c for c in cands if compensate and by_id[c["view_id"]].calibrated
+            and compensable(c, calibration_reference(by_id[c["view_id"]]))]
+    if comp:
+        best = max(comp, key=_score)
+        view = by_id[best["view_id"]]
+        why = (f"matches view {view.view_id} ({best['reference']}) after compensating a small offset: "
+               f"shift {best['shift_px']:.1f}px, zoom x{best['scale']:.3f}, rotation {best['rotation_deg']:.2f} deg, "
+               f"{best['n_matches']} matches")
+        return ViewMatch("matched", view, best["reference"], best, cands, why, compensated=True)
     best = max(cands, key=lambda c: (_score(c), -np.nan_to_num(c["shift_px"], nan=1e9)))
     why = f"matches none of {len(views)} known view(s); closest {best['view_id']}: {best['reason']}"
     if luma_cur < 0.6 * best["luma_ref"]:
