@@ -2,6 +2,7 @@
 
     python -m cctv.web.app            # http://127.0.0.1:8010
     python -m cctv.web.app --port 8011 --db other.sqlite
+    python -m cctv.web.app --publish-delay-min 15   # public deployments: per-vehicle data only after 15 min
 
 JSON API (all read-only except the stateless calibration fit):
     GET  /api/health
@@ -21,7 +22,7 @@ import argparse
 import json
 import sqlite3
 from collections import Counter
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any
 from zoneinfo import ZoneInfo
@@ -58,8 +59,20 @@ def speed_summary(rows: list[sqlite3.Row], duration_s: float | None = None) -> d
     return out
 
 
-def create_app(db_path: Path | str = store.DEFAULT_DB, manifest_path: Path | str = MANIFEST_PATH) -> FastAPI:
+PUBLIC_DELAY_MIN = 15.0   # ARCHITECTURE section 9: per-vehicle rows delayed by at least 15 min on a public site
+
+
+def create_app(db_path: Path | str = store.DEFAULT_DB, manifest_path: Path | str = MANIFEST_PATH,
+               publish_delay_min: float = 0.0, now=None) -> FastAPI:
+    """``publish_delay_min``: per-vehicle data (events, track overlays) younger than this is withheld;
+    aggregates are not delayed. ``now`` (a callable returning an aware UTC datetime) is for tests."""
     app = FastAPI(title="LIE traffic speed analytics (prototype)", version="0.1.0")
+    now = now or (lambda: datetime.now(timezone.utc))
+
+    def cutoff_iso() -> str | None:
+        if not publish_delay_min:
+            return None
+        return (now() - timedelta(minutes=publish_delay_min)).isoformat(timespec="seconds")
     con = store.connect(db_path)
     manifest = load_manifest(manifest_path)
     cams = {c["id"]: c for c in manifest["cameras"]}
@@ -109,7 +122,8 @@ def create_app(db_path: Path | str = store.DEFAULT_DB, manifest_path: Path | str
     @app.get("/api/health")
     def health() -> dict[str, Any]:
         n = con.execute("SELECT COUNT(*) FROM vehicles").fetchone()[0]
-        return {"ok": True, "cameras": len(cams), "vehicles": n, "manifest_generated": manifest["generated_at"]}
+        return {"ok": True, "cameras": len(cams), "vehicles": n, "manifest_generated": manifest["generated_at"],
+                "publish_delay_min": publish_delay_min}
 
     @app.get("/api/cameras")
     def cameras() -> dict[str, Any]:
@@ -179,13 +193,17 @@ def create_app(db_path: Path | str = store.DEFAULT_DB, manifest_path: Path | str
             args.append(camera_id)
         if over_only:
             sql += " AND v.over_limit = 1"
+        cut = cutoff_iso()
+        if cut:
+            sql += " AND v.ts_utc IS NOT NULL AND julianday(v.ts_utc) <= julianday(?)"
+            args.append(cut)
         sql += " ORDER BY v.ts_utc DESC, v.speed_mph DESC LIMIT ? OFFSET ?"
         args += [limit, offset]
         rows = [dict(r) for r in con.execute(sql, args).fetchall()]
         for r in rows:
             for k in ("speed_mph", "sigma_mph", "margin_mph", "distance_m"):
                 r[k] = _round(r[k])
-        return {"events": rows, "limit": limit, "offset": offset}
+        return {"events": rows, "limit": limit, "offset": offset, "publish_delay_min": publish_delay_min}
 
     @app.get("/api/stats")
     def stats(camera_id: str | None = None, bin_mph: int = Query(5, ge=1, le=20)) -> dict[str, Any]:
@@ -220,6 +238,13 @@ def create_app(db_path: Path | str = store.DEFAULT_DB, manifest_path: Path | str
         run = con.execute("SELECT * FROM runs WHERE id = ?", (run_id,)).fetchone()
         if run is None:
             raise HTTPException(404, f"unknown run {run_id}")
+        cut = cutoff_iso()
+        if cut:
+            start = run["clip_start_utc"]
+            end = (datetime.fromisoformat(start) + timedelta(seconds=float(run["duration_s"] or 0))) if start else None
+            if end is None or end > datetime.fromisoformat(cut):
+                raise HTTPException(403, f"per-vehicle tracks are published {publish_delay_min:g} min after "
+                                         "the clip ends")
         cid = run["camera_id"]
         vid = run["view_id"]
         try:
@@ -284,8 +309,14 @@ def main(argv: list[str] | None = None) -> None:
     ap.add_argument("--db", type=Path, default=store.DEFAULT_DB)
     ap.add_argument("--host", default="127.0.0.1")
     ap.add_argument("--port", type=int, default=8010)
+    ap.add_argument("--publish-delay-min", type=float, default=0.0,
+                    help=f"withhold per-vehicle data younger than this (use {PUBLIC_DELAY_MIN:g} or more on a public site)")
     args = ap.parse_args(argv)
-    uvicorn.run(create_app(args.db), host=args.host, port=args.port, log_level="info")
+    if args.host not in ("127.0.0.1", "localhost") and args.publish_delay_min < PUBLIC_DELAY_MIN:
+        print(f"warning: serving on {args.host} with a per-vehicle delay of {args.publish_delay_min:g} min; "
+              f"the publication policy (docs/ARCHITECTURE.md section 9) asks for >= {PUBLIC_DELAY_MIN:g}")
+    uvicorn.run(create_app(args.db, publish_delay_min=args.publish_delay_min), host=args.host, port=args.port,
+                log_level="info")
 
 
 if __name__ == "__main__":

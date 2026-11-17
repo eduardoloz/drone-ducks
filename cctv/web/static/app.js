@@ -179,7 +179,11 @@ async function selectCamera(id) {
   if (latest) {
     const s = await api(`/api/stats?camera_id=${encodeURIComponent(id)}`);
     renderHistogram(document.getElementById("hist"), s.histogram, cam.posted_limit_mph);
-    renderOverlay(document.getElementById("overlay"), await api(`/api/runs/${latest.run_id}/overlay`));
+    try {
+      renderOverlay(document.getElementById("overlay"), await api(`/api/runs/${latest.run_id}/overlay`));
+    } catch (e) {  // 403 on a public site while the clip is younger than the publication delay
+      document.getElementById("overlay").innerHTML = `<p class="muted">Track replay is published with a delay; check back later.</p>`;
+    }
     const ev = await api(`/api/events?camera_id=${encodeURIComponent(id)}&limit=40`);
     document.getElementById("cam-events").innerHTML = eventsTable(ev.events, false);
   }

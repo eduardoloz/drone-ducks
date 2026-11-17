@@ -101,3 +101,27 @@ def test_runs_record_light_condition_and_api_exposes_it(tmp_path):
     runs = {r["run_id"]: r for r in TestClient(create_app(db_path=db)).get("/api/cameras/R10_041").json()["runs"]}
     assert runs[day["run_id"]]["light"] == "day" and runs[night["run_id"]]["light"] == "night"
     assert runs[night["run_id"]]["sun_elev_deg"] < -6
+
+
+def test_publication_delay_withholds_recent_per_vehicle_data(tmp_path):
+    from datetime import datetime, timedelta, timezone
+
+    cal = Calibration.load(calibration_path("R10_041"))
+    tracks = tmp_path / "tracks.jsonl"
+    save_jsonl(synthetic_tracks(cal, [50.0, 70.0]), tracks, meta={"frames": 120})
+    db = tmp_path / "d.sqlite"
+    s = process("R10_041", tmp_path / "R10_041_20261118T160000Z.ts", db, tracks_path=tracks)  # clip 16:00:00Z
+    clip_t = datetime(2026, 11, 18, 16, 0, tzinfo=timezone.utc)
+
+    def client_at(minutes_after, delay=15.0):
+        app = create_app(db_path=db, publish_delay_min=delay, now=lambda: clip_t + timedelta(minutes=minutes_after))
+        return TestClient(app)
+
+    early, late = client_at(5), client_at(30)
+    assert early.get("/api/events").json()["events"] == []
+    assert early.get(f"/api/runs/{s['run_id']}/overlay").status_code == 403
+    assert early.get("/api/stats?camera_id=R10_041").json()["summary"]["with_speed"] == 2   # aggregates not delayed
+    assert len(late.get("/api/events").json()["events"]) == 2
+    assert late.get(f"/api/runs/{s['run_id']}/overlay").status_code == 200
+    assert early.get("/api/health").json()["publish_delay_min"] == 15.0
+    assert len(client_at(5, delay=0).get("/api/events").json()["events"]) == 2           # local default: no delay
