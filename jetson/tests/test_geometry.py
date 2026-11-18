@@ -64,3 +64,26 @@ def test_tables_render():
     assert t.count("\n") >= 6 and "RPi Camera v2" in t
     assert "px" in g.pixels_table()
     assert g.main([]) == 0
+
+
+# ----------------------------------------------------------------------------- round 4: horizontal distance
+def test_horizontal_distance_unchanged_without_altitude():
+    assert g.horizontal_distance(4.0, 0.5, 0.3, 62.2, 48.8, None, 20.0) == 4.0
+
+
+def test_horizontal_distance_from_altitude_on_axis():
+    # face on the optical axis, 3 m altitude, face at 1.6 m: slant 5 -> ground sqrt(25 - 1.96)
+    h = g.horizontal_distance(5.0, 0.5, 0.5, 62.2, 48.8, 3.0, 20.0, 1.6)
+    assert h == pytest.approx(math.sqrt(25.0 - 1.4 ** 2))
+
+
+def test_horizontal_distance_falls_back_to_the_camera_ray():
+    # box says 1.0 m but the height difference is 1.4 m: use the pitched ray instead
+    h = g.horizontal_distance(1.0, 0.5, 0.5, 62.2, 48.8, 3.0, 30.0, 1.6)
+    assert h == pytest.approx(math.cos(math.radians(30.0)))
+
+
+def test_slant_from_depth_grows_off_axis():
+    assert g.slant_from_depth(4.0, 0.5, 0.5, 62.2, 48.8) == 4.0
+    assert g.slant_from_depth(4.0, 1.0, 0.5, 62.2, 48.8) == pytest.approx(
+        4.0 / math.cos(math.radians(31.1)))

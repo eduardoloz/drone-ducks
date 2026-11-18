@@ -115,3 +115,90 @@ def test_render_draws_a_face_where_projected():
     x1, y1, x2, y2 = (int(v) for v in world.face_box())
     face_patch = img[y1:y2, x1:x2].reshape(-1, 3).mean(axis=0)
     assert face_patch[2] > 150                        # skin-ish (red channel high) where the face is
+
+
+@pytest.mark.parametrize("alt,pitch,target", [(3.0, 20.0, 4.0), (5.0, 30.0, 5.0)])
+def test_altitude_aware_distance_holds_the_ground_distance(alt, pitch, target):
+    from jetson.controller import FaceFollowController, FollowConfig
+    res = {}
+    for pa in (False, True):
+        w = ToyWorld(altitude=alt, cam_pitch_deg=pitch, person_n=target + 3)
+        c = FaceFollowController(FollowConfig(target_distance_m=target, cam_pitch_deg=pitch, distance_deadband_m=0.05))
+        h = run_closed_loop(w, c, 30, pass_altitude=pa)
+        res[pa] = sum(x["distance"] for x in h[-60:]) / 60
+    assert abs(res[True] - target) < 0.1           # holds the commanded ground distance
+    assert res[False] < target - 0.15              # slant range: stops too close
+
+
+def test_assumed_altitude_used_when_no_telemetry():
+    from jetson.controller import FaceFollowController, FollowConfig, TargetObservation
+    obs = TargetObservation(0.5, 0.5, 0.05, 0.06, stamp=0.0)
+    raw = FaceFollowController(FollowConfig()).step(obs, 0.0)
+    assumed = FaceFollowController(FollowConfig(assumed_altitude_m=3.0)).step(obs, 0.0)
+    tele = FaceFollowController(FollowConfig(assumed_altitude_m=10.0)).step(obs, 0.0, altitude_m=3.0)
+    assert raw.distance_m == raw.range_m
+    assert assumed.distance_m < raw.distance_m and assumed.distance_m == pytest.approx(tele.distance_m)
+
+
+# ----------------------------------------------------------------------------- round-5 review: ego compensation
+class _StaticTarget:
+    """Pipeline driven in the toy world with a fixed yaw command (no controller feedback), so the
+    image motion of a static face is caused only by the drone's own rotation."""
+
+    def __init__(self, yaw_cmd, ego, telemetry=False):
+        from jetson.controller import VelocityCommand
+        from jetson.pipeline import FollowPipeline
+
+        self.world = world_with_person(8.0, 0.0, altitude=1.6)
+        ctrl = FaceFollowController(FollowConfig(hfov_deg=self.world.hfov_deg))
+        ctrl._cmd = VelocityCommand(yawspeed_deg_s=yaw_cmd)   # what the pipeline's lag model reads
+        self.cmd = ctrl._cmd
+        self.ctrl, self.telemetry = ctrl, telemetry
+        self.pipe = FollowPipeline(OracleDetector(self.world), ctrl, ego_compensation=ego)
+        self.errors = []   # |predicted centre - detected centre| per frame, px
+
+    def run(self, frames=16, dt=1 / 15):
+        from jetson.sources import Frame
+
+        blank = np.zeros((self.world.height, self.world.width, 3), np.uint8)
+        trk = self.pipe.tracker
+        orig_update = trk.update
+
+        def spy(faces, stamp):
+            if faces and trk.tracks:
+                p = trk.tracks[0].predicted_box(stamp)
+                self.errors.append(abs((p[0] + p[2]) / 2 - (faces[0].x1 + faces[0].x2) / 2))
+            return orig_update(faces, stamp)
+
+        trk.update = spy
+        for i in range(frames):
+            rate = self.world.yaw_rate if self.telemetry else None
+            self.pipe.step(Frame(blank, i + 1, self.world.t), now=self.world.t, yaw_rate_deg_s=rate)
+            self.ctrl._cmd = self.cmd          # keep yawing regardless of what the controller wanted
+            self.world.step(self.cmd, dt)
+        return self
+
+
+@pytest.mark.parametrize("yaw_cmd", [20.0, -20.0])
+def test_ego_compensation_predicts_the_image_shift_of_the_drones_own_turn(yaw_cmd):
+    # Sign check in both directions: without compensation a static face 8 m away appears to move
+    # by up to ~5 px more per frame than the tracker predicts while the turn builds up (its
+    # constant-velocity model only catches up later); with compensation the prediction is right.
+    # A wrong sign would double the error instead.
+    off = _StaticTarget(yaw_cmd, ego=False).run()
+    lag = _StaticTarget(yaw_cmd, ego=True).run()                    # commanded rate through the 0.35 s lag
+    tel = _StaticTarget(yaw_cmd, ego=True, telemetry=True).run()    # measured yaw rate passed to step()
+    onset = slice(0, 8)
+    assert len(off.errors) == len(lag.errors) == len(tel.errors) == 15
+    assert np.mean(off.errors[onset]) > 2.5
+    assert np.mean(lag.errors[onset]) < 0.15 * np.mean(off.errors[onset])
+    assert np.mean(tel.errors[onset]) < 0.15 * np.mean(off.errors[onset])
+    assert abs(lag.world.bearing_deg) > 10.0 and lag.world.bearing_deg * yaw_cmd < 0   # it really turned
+
+
+def test_ego_lag_model_starts_slow_like_the_drone():
+    # The first frame after a step in the yaw command: the toy drone (tau 0.35 s) has only reached
+    # dt / (tau + dt) of the commanded rate, and so has the pipeline's estimate.
+    s = _StaticTarget(30.0, ego=True).run(frames=2)
+    a = (1 / 15) / (0.35 + 1 / 15)
+    assert s.pipe._yaw_rate_est == pytest.approx(30.0 * a, rel=1e-6)

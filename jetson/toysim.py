@@ -186,11 +186,13 @@ class OracleDetector(FaceDetector):
 
 def run_closed_loop(world: ToyWorld, controller: FaceFollowController, seconds: float, dt: float = 1 / 15,
                     latency_s: float = 0.0,
-                    on_step: Optional[Callable[[ToyWorld, object], None]] = None) -> List[dict]:
+                    on_step: Optional[Callable[[ToyWorld, object], None]] = None,
+                    pass_altitude: bool = False) -> List[dict]:
     """Close the loop observation -> controller -> world without images. Returns per-step history.
 
     latency_s delays each observation (capture-to-command delay of a real perception pipeline);
-    the observation keeps its capture stamp, as the real pipeline does.
+    the observation keeps its capture stamp, as the real pipeline does. pass_altitude gives the
+    controller the drone's true altitude (as PX4 telemetry would), for the horizontal distance.
     """
     pending: deque = deque()
     history = []
@@ -200,7 +202,7 @@ def run_closed_loop(world: ToyWorld, controller: FaceFollowController, seconds: 
         obs = None
         while pending and pending[0][0] <= world.t + 1e-9:
             obs = pending.popleft()[1]
-        out = controller.step(obs, world.t)
+        out = controller.step(obs, world.t, altitude_m=world.altitude if pass_altitude else None)
         if on_step:
             on_step(world, out)
         history.append({"t": world.t, "mode": out.mode, "action": out.action, "distance": world.distance_m,

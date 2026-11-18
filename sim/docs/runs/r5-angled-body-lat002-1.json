@@ -1,0 +1,76 @@
+{
+  "frames": 168,
+  "duration_s": 50.886,
+  "follow_s": 48.075,
+  "pct_frames_tracking_while_following": 88.0503144654088,
+  "lost_events": 4,
+  "reacquired": 3,
+  "lost_durations_s": [
+    0.28,
+    1.21,
+    1.13
+  ],
+  "final_mode": "TIMEOUT",
+  "pct_centred_5deg": 63.522012578616355,
+  "pct_centred_10deg": 79.87421383647799,
+  "pct_in_fov": 100.0,
+  "mean_abs_bearing_deg": 5.622805031446541,
+  "true_dist_mean_m": 3.0569245283018867,
+  "true_dist_median_m": 3.05,
+  "true_dist_minmax_m": [
+    2.176,
+    4.929
+  ],
+  "target_distance_m": 4.0,
+  "est_minus_true_dist_mean_m": -0.08428571428571431,
+  "est_minus_true_dist_mae_m": 0.32980000000000004,
+  "pct_walker_facing_within_60deg": 80.50314465408805,
+  "body_frames": 85,
+  "pct_following_by_body": 53.459119496855344,
+  "finish_reason": "target lost for 5.2 s -> land -> LAND",
+  "walker_end_phase_s": 45.132000000000005,
+  "ended_early": true,
+  "stay_in_front": {
+    "facing_window_s": 44.48,
+    "in_front_30deg_s": 32.34,
+    "pct_in_front_30deg": 72.7,
+    "leg_A25": {
+      "mean_abs_facing_deg": 10.4,
+      "max_abs_facing_deg": 17.6,
+      "end_facing_deg": -13.8,
+      "end_phase_s": 33.8,
+      "pct_tracking": 98.9
+    },
+    "leg_B40": {
+      "mean_abs_facing_deg": 103.7,
+      "max_abs_facing_deg": 128.5,
+      "end_facing_deg": -128.5,
+      "end_phase_s": 45.1,
+      "pct_tracking": 41.9
+    }
+  },
+  "back_of_head": {
+    "relocks_facing_away": 0,
+    "relocks_facing_away_at": [],
+    "tracking_facing_away_s": 0.0
+  },
+  "config": {
+    "alt_m": 2.0,
+    "person": "yolox",
+    "person_every": 1,
+    "walker": "quack_people_angled",
+    "target_distance_m": 4.0,
+    "lost_timeout_s": 5.0,
+    "score": 0.5,
+    "source": "sim",
+    "cam_pitch_deg": 8.0,
+    "camera_preset": "sim",
+    "hfov_deg": 68.75,
+    "face_width_m": 0.13,
+    "head_lateral": 0.02,
+    "max_lateral_m_s": 0.5,
+    "relock_hits": 3,
+    "relock_score": 0.9,
+    "relock_max_distance_m": null
+  }
+}

@@ -142,7 +142,12 @@ face 30 deg off and 8 m away, ~8 px wide): while the drone yaws, the tracker los
 and spawns new tracks. Its motion model is in image space and ignores the drone's own rotation, and the
 selector stays on the coasting old track until it expires (1 s). That was already true in round 2 and the
 re-lock gate doesn't change it (the test passes 4/4), but it costs ~60 % of tracking time on far faces
-while turning. Possible fix: shift predicted boxes by the commanded yaw rate (ego-motion compensation).
+while turning. Round 4 added the fix: `FollowPipeline` shifts every face and body track by the image
+motion of the drone's own yaw before matching (`IouTracker.compensate_rotation`, on by default). The yaw
+rate is telemetry if the caller passes it, else the last commanded rate through a 0.35 s first-order lag
+(no sink provides yaw-rate telemetry yet). Round 5 checked the sign and the lag path in the toy world
+(`test_ego_compensation_predicts_the_image_shift_of_the_drones_own_turn`): prediction error at the start
+of a 20 deg/s turn drops from ~3.7 px/frame to ~0 for a face 8 m away; a flipped sign makes it 7.4 px.
 
 ### 2c. Staying in front: head yaw -> sideways (`jetson/headpose.py`, `k_head_lateral`, off by default)
 
@@ -176,6 +181,18 @@ front only 38-78 % of the time. The imx219 preset gives the same picture (91-99 
 Not verified: real YuNet landmark noise on 12-20 px faces (the oracle adds 0.5 px + 4 % of the face width),
 the head-model constant k, and any flight. Sideways flight is blind (no side camera), so keep the cap small, test it in SITL first,
 then props-off. Moving sideways around someone who stands still and looks away is intended: it is an orbit to their front at <= 0.5 m/s.
+
+### 2d. Ending the follow when the person walks away (`end_on_walkaway`, off by default)
+
+`jetson/walkaway.py`, called by the controller each step when enabled. Over the last `walkaway_s` (3 s):
+steering by the body now and in >= 2/3 of the frames, the person's ground speed away >= `walkaway_speed_m_s`
+(0.8 m/s), and distance > target + `walkaway_margin_m` (1 m) -> TIMEOUT with `lost_action`, latched, like
+a lost target (so `bridge.py` and the sim's `QuackdroneSink` handle it unchanged). Ground speed away =
+slope of (distance + drone forward travel), the travel being the forward command through a 0.35 s lag
+(matched PX4's real travel within ~0.2 m over 30 s in `r3-turnaway-body`). The slope is taken within
+runs of body-steered frames only, because each face frame re-learns the face-in-body geometry and can
+step the body distance by ~1 m. Toy world and SITL-replay numbers: `README.md`; the threshold choices
+are in the module docstring. Open loop only so far: no SITL flight with it on.
 
 ## 3. Controller in one paragraph
 

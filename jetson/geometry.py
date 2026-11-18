@@ -90,6 +90,45 @@ def depression_deg(altitude_m: float, horizontal_m: float, target_height_m: floa
     return math.degrees(math.atan2(altitude_m - target_height_m, horizontal_m))
 
 
+def slant_from_depth(depth_m: float, x_norm: float, y_norm: float, hfov_deg: float, vfov_deg: float) -> float:
+    """Straight-line camera-to-face range from the *depth* a box width gives.
+
+    distance_from_width() measures depth along the optical axis (pinhole: width_px = f * W / depth).
+    A face off the image centre is farther than that along its ray by sqrt(1 + x^2 + y^2), with x, y
+    its normalised image-plane coordinates (tan of its angles off the axis)."""
+    x = (2.0 * x_norm - 1.0) * _tan_half(hfov_deg)
+    y = (2.0 * y_norm - 1.0) * _tan_half(vfov_deg)
+    return depth_m * math.sqrt(1.0 + x * x + y * y)
+
+
+def horizontal_distance(depth_m: float, x_norm: float, y_norm: float, hfov_deg: float, vfov_deg: float,
+                        altitude_m: Optional[float], cam_pitch_deg: float = 0.0,
+                        target_height_m: float = 1.6) -> float:
+    """Ground (horizontal) distance from the drone to a face, from its box-width depth estimate.
+
+    altitude_m None (unknown): returns depth_m unchanged (the pre-round-4 behaviour).
+    Otherwise uses the height difference dh = altitude - face height:
+        slant = slant_from_depth(...);  horizontal = sqrt(slant^2 - dh^2)
+    Altitude (PX4 relative altitude, i.e. height above the take-off point; flat ground assumed) is
+    preferred over the camera ray because the ray's look-down angle moves with the body's pitch
+    when the drone accelerates (a few degrees at 1 m/s), whereas dh barely moves. Only if the two
+    disagree physically (slant <= |dh|: the box says closer than the height difference, e.g. a
+    child, a person on stairs, or a bad box) do we fall back to the ray: rotate it by the camera
+    pitch (+ = tilted down) and take its horizontal component.
+    """
+    if altitude_m is None or not math.isfinite(altitude_m):
+        return depth_m
+    slant = slant_from_depth(depth_m, x_norm, y_norm, hfov_deg, vfov_deg)
+    dh = altitude_m - target_height_m
+    if slant > abs(dh) * 1.02:
+        return math.sqrt(slant * slant - dh * dh)
+    x = (2.0 * x_norm - 1.0) * _tan_half(hfov_deg)
+    y = (2.0 * y_norm - 1.0) * _tan_half(vfov_deg)
+    p = math.radians(cam_pitch_deg)
+    fwd = math.cos(p) - y * math.sin(p)      # camera ray (x right, y down, 1 forward) -> body frame
+    return depth_m * math.hypot(max(fwd, 0.0), x)
+
+
 class CameraPreset(NamedTuple):
     name: str
     hfov_deg: float

@@ -1,0 +1,61 @@
+{
+  "frames": 343,
+  "duration_s": 47.678,
+  "follow_s": 45.403,
+  "pct_frames_tracking_while_following": 99.079754601227,
+  "lost_events": 2,
+  "reacquired": 2,
+  "lost_durations_s": [
+    0.78,
+    0.21
+  ],
+  "final_mode": "TRACKING",
+  "pct_centred_5deg": 100.0,
+  "pct_centred_10deg": 100.0,
+  "pct_in_fov": 100.0,
+  "mean_abs_bearing_deg": 0.39913803680981597,
+  "true_dist_mean_m": 3.5902331288343556,
+  "true_dist_median_m": 3.0854999999999997,
+  "true_dist_minmax_m": [
+    2.255,
+    6.75
+  ],
+  "target_distance_m": 4.0,
+  "est_minus_true_dist_mean_m": -0.1436377708978328,
+  "est_minus_true_dist_mae_m": 0.4076501547987616,
+  "pct_walker_facing_within_60deg": 73.31288343558282,
+  "body_frames": 75,
+  "pct_following_by_body": 23.006134969325153,
+  "finish_reason": "quackdrone lost control (control released)",
+  "walker_end_phase_s": 42.74000000000001,
+  "ended_early": true,
+  "stay_in_front": {
+    "facing_window_s": 28.35,
+    "in_front_30deg_s": 28.35,
+    "pct_in_front_30deg": 100.0
+  },
+  "back_of_head": {
+    "relocks_facing_away": 0,
+    "relocks_facing_away_at": [],
+    "tracking_facing_away_s": 2.27
+  },
+  "config": {
+    "alt_m": 2.0,
+    "person": "yolox",
+    "person_every": 1,
+    "walker": "quack_people_turnaway",
+    "target_distance_m": 4.0,
+    "lost_timeout_s": 5.0,
+    "score": 0.5,
+    "source": "sim",
+    "cam_pitch_deg": 8.0,
+    "camera_preset": "sim",
+    "hfov_deg": 68.75,
+    "face_width_m": 0.13,
+    "head_lateral": 0.0,
+    "max_lateral_m_s": 0.5,
+    "relock_hits": 3,
+    "relock_score": 0.9,
+    "relock_max_distance_m": null
+  }
+}

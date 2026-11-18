@@ -49,6 +49,36 @@ Also in round 3:
 
 **Next integration step:** an angled-walker world to test `--head-lateral` and the re-lock in SITL. A distance estimate that accounts for altitude (at 3 m the drone stops ~0.36 m too close). Confirm the face before treating it as re-acquired inside the body lock. Feed-forward stays Max's M1 task.
 
+### Round 4 (2026-11-13 to 2026-11-17): all three tracks merged; sim body-lock re-run and full SITL suite still to do
+
+Round 4 was interrupted on Nov 13 when the Mac's battery ran out, and resumed on Nov 17.
+
+**Jetson (merged into `eduardo` on 2026-11-17; 268 tests pass, none skipped):**
+- **Face hand-back confirmation.** Inside the body lock, a face must be confirmed (3 hits in a row, or a score of 0.9 or higher) before the drone steers by it again. A bug in the first version could leave the drone with no target while both a face and a body were visible; that is fixed, with a test.
+- **Altitude-aware distance.** The controller now holds the horizontal distance. Toy check at 3 m altitude and 20° pitch: it holds 4.05 m for a 4 m target (was 3.80 m).
+- **Ego-rotation compensation.** The tracker shifts tracks by the drone's own yaw between frames. In the toy world during a ±20°/s turn, the prediction error for a still face at 8 m went from about 3.7 px per frame to about 0. No sink provides yaw-rate telemetry yet, so the commanded rate through a 0.35 s lag is what runs.
+- **Optional walk-away end** (`--end-on-walkaway`, off by default; `jetson/walkaway.py`). It ends the follow through the lost-target path (hover, then `--lost-action`) when, over 3 s, the drone steers by the body, the person recedes at 0.8 m/s or more, and they are more than 1 m beyond the target distance. Toy world: ends 1.9 s after the turn in 5/5 seeds; never ends for a person standing with their back turned. Replayed open loop on the round-3 SITL logs, it would have ended both walk-aways 2.3–2.8 s in, with no false triggers. **Not yet flown in SITL**: `sim/examples/follow_person.py` needs a flag for it.
+
+Known gaps: the re-lock distance cap still compares straight-line distance with a target that is now horizontal (about 0.2–0.4 m tighter at 3 m, inferred); a body-track ID change while following by body alone is treated as a loss.
+
+**Sim:** the round-4 code (angled-walker world, `--head-lateral`, re-lock flags, stay-in-front and back-of-head metrics, sideways soft-fence test) is merged, and most of its SITL runs happened on 2026-11-17 (logs in `sim/docs/runs/r5-*`). The Mac was overloaded (perception at 3–8 fps instead of 11–13) and then slept mid-run, so treat the numbers as provisional.
+- **Sideways soft fence passes in SITL.** A 2 m/s sideways request was capped to 0.8 m/s and stopped 3.19 m from home. The pass bar is 3.3 m, so the margin is only 0.11 m.
+- **`--head-lateral` helps on a gentle angle, not on a sharp turn.** Angled-walker world, body lock on, 2 m altitude, 4 m target, two runs each:
+
+| Setting | Time followed | Time in front of the walker (within 30°) | Facing angle on the 25° leg (mean) | Landed early? |
+|---|---|---|---|---|
+| Off | 41.5 s, 40.7 s | 10.2 s, 10.7 s | 80°, 82° | yes, yes |
+| `--head-lateral 0.02` | 48.1 s, 57.4 s | 32.3 s, 32.4 s | 10°, 15° | yes, yes |
+
+  All four runs landed early at the 65° turn into the second leg. The face disappears within about a second, head yaw is only measured while a face is detected, so the sideways command drops to zero. Fix to try next (Jetson side): hold the last head yaw briefly, or estimate the walker's heading from the body box or its motion.
+- **Body-lock SITL test: 1 of 2 green.** Run 1 followed for 74.6 s without landing early. Run 2 failed because the Mac went to sleep mid-flight (no camera frames, then link lost). It needs a re-run, as does the full SITL suite (expect 11 passed / 1 skipped).
+
+**CCTV (merged 2026-11-17; 99 tests pass):**
+- **Footage:** seven clips recorded locally (git-ignored, about 15 MB): R10_041, R10_007 and R10_008 at sunset (16:26–16:31), R10_008 at twilight (16:47) and a 35 s night clip (18:51). None is full daylight. Daylight capture is now one command: `cctv/scripts/record_daylight.sh`.
+- **No speed-vs-NYC DOT numbers yet.** R10_041 was pointed in a third direction that matches neither stored view, and R10_007/R10_008 are not calibrated (Stephen's M2 task). NYC DOT's public link data also ran about 2 hours behind at recording time.
+- **Detection on R10_008 looks weak:** by a rough eye count on 2 frames per clip, the tracker caught about 58% of vehicles at sunset and about 50% at twilight. Night is not measured yet.
+- **New:** a camera that returns slightly off a calibrated view (up to 30 px / 3% zoom / 2°) has its calibration adjusted instead of the clip being rejected (synthetic images only so far). Every run stores sun elevation and a day / twilight / night label. A regression test pins the known R10_041 result (62 vehicles, 54 with speeds, median 57.2 mph) from a 66 KB file of bounding boxes. `--publish-delay-min` withholds recent per-vehicle rows on the site. The tracker now re-applies the CPU thread cap that ultralytics was overriding.
+
 ## Who does what (proposed; confirm at Friday's meeting)
 
 | Mentee | Primary track | Why | Secondary |
@@ -178,9 +208,18 @@ Folder `jetson/`, branch `eduardo-jetson-face`. Research: `jetson/docs/WHAT_WE_N
     - Lost target currently **lands**. Return-home on real hardware climbs to 60 m unless the parameter changes (see 6).
 13. **Round-3 calls:**
     - With the body lock, the drone follows someone who walks away (up to 1.5 m/s) until it loses their body. Is that wanted, or should walking away end the session?
-    - Keep the head-yaw sideways term off by default? Sideways flight is blind, because the camera only looks forward.
+    - Keep the head-yaw sideways term off by default? Sideways flight is blind, because the camera only looks forward. (Round-4 SITL supports keeping it off until it handles sharp turns.)
     - At 3 m altitude, use a 5 m target distance with the body lock on (the sim agent's recommendation).
     - With the re-lock distance limit, losing the face beyond about 5.5 m means a landing.
+14. **Round-4 calls** (walk-away now exists as an option, off by default, which partly answers the first round-3 call):
+    - Should walk-away **land** (the current lost-target action) or default to `hold`, so the pilot gets the drone back?
+    - Is 0.8 m/s the right threshold, or should a slow drift away (0.6 m/s or lower) also end the session?
+    - Should walk-away be on by default whenever the body lock is on?
+    - To survive sharp turns, should the sideways term hold the last head yaw briefly, or use the walker's heading from the body box?
+    - Is the 5.5 m re-lock distance limit too tight? One run failed to re-lock a walker who turned back at about 5.7 m.
+    - OK to keep the 66 KB file of anonymous bounding boxes from R10_041 in the public repo? It has no images.
+    - Should Stephen also calibrate R10_041's new third direction?
+    - Try a bigger detector (yolo11s or a larger input size) on R10_008 before its calibration gets used?
 
 ## How we work
 
