@@ -61,7 +61,17 @@ Round 4 was interrupted on Nov 13 when the Mac's battery ran out, and resumed on
 
 Known gaps: the re-lock distance cap still compares straight-line distance with a target that is now horizontal (about 0.2–0.4 m tighter at 3 m, inferred); a body-track ID change while following by body alone is treated as a loss.
 
-**Sim:** the round-4 code (angled-walker world, `--head-lateral`, re-lock flags, stay-in-front and back-of-head metrics, sideways soft-fence test) is merged, but its SITL runs are only happening now.
+**Sim:** the round-4 code (angled-walker world, `--head-lateral`, re-lock flags, stay-in-front and back-of-head metrics, sideways soft-fence test) is merged, and most of its SITL runs happened on 2026-11-17 (logs in `sim/docs/runs/r5-*`). The Mac was overloaded (perception at 3–8 fps instead of 11–13) and then slept mid-run, so treat the numbers as provisional.
+- **Sideways soft fence passes in SITL.** A 2 m/s sideways request was capped to 0.8 m/s and stopped 3.19 m from home. The pass bar is 3.3 m, so the margin is only 0.11 m.
+- **`--head-lateral` helps on a gentle angle, not on a sharp turn.** Angled-walker world, body lock on, 2 m altitude, 4 m target, two runs each:
+
+| Setting | Time followed | Time in front of the walker (within 30°) | Facing angle on the 25° leg (mean) | Landed early? |
+|---|---|---|---|---|
+| Off | 41.5 s, 40.7 s | 10.2 s, 10.7 s | 80°, 82° | yes, yes |
+| `--head-lateral 0.02` | 48.1 s, 57.4 s | 32.3 s, 32.4 s | 10°, 15° | yes, yes |
+
+  All four runs landed early at the 65° turn into the second leg. The face disappears within about a second, head yaw is only measured while a face is detected, so the sideways command drops to zero. Fix to try next (Jetson side): hold the last head yaw briefly, or estimate the walker's heading from the body box or its motion.
+- **Body-lock SITL test: 1 of 2 green.** Run 1 followed for 74.6 s without landing early. Run 2 failed because the Mac went to sleep mid-flight (no camera frames, then link lost). It needs a re-run, as does the full SITL suite (expect 11 passed / 1 skipped).
 
 ## Who does what (proposed; confirm at Friday's meeting)
 
@@ -192,7 +202,7 @@ Folder `jetson/`, branch `eduardo-jetson-face`. Research: `jetson/docs/WHAT_WE_N
     - Lost target currently **lands**. Return-home on real hardware climbs to 60 m unless the parameter changes (see 6).
 13. **Round-3 calls:**
     - With the body lock, the drone follows someone who walks away (up to 1.5 m/s) until it loses their body. Is that wanted, or should walking away end the session?
-    - Keep the head-yaw sideways term off by default? Sideways flight is blind, because the camera only looks forward.
+    - Keep the head-yaw sideways term off by default? Sideways flight is blind, because the camera only looks forward. (Round-4 SITL supports keeping it off until it handles sharp turns.)
     - At 3 m altitude, use a 5 m target distance with the body lock on (the sim agent's recommendation).
     - With the re-lock distance limit, losing the face beyond about 5.5 m means a landing.
 14. **Round-4 calls** (walk-away now exists as an option, off by default, which partly answers the first round-3 call):
