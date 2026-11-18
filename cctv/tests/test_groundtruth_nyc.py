@@ -143,3 +143,55 @@ def test_bad_status_rows_are_skipped_and_quality_flags_them():
     assert nl.link_speed_near(rows, "1", t0, t1, ok_status=None)["n_rows"] == 3
     q = nl.link_quality(rows)[0]
     assert q["rows"] == 5 and q["status_counts"] == {"0": 4, "-101": 1} and q["implausible_rows"] == 1
+
+
+def test_measure_lag_reports_newest_row_and_last_modified():
+    now = datetime(2026, 11, 18, 2, 22, 51, tzinfo=timezone.utc)          # 21:22 local
+    seen = {}
+
+    def fake_get(params):
+        seen.update(params)
+        return ([{"link_id": "4362251", "newest": "2026-11-17T19:32:06.000", "n": "91"}],
+                {"X-SODA2-Data-Out-Of-Date": "true", "Last-Modified": "Wed, 18 Nov 2026 00:37:38 GMT"})
+
+    lag = nl.measure_lag(["4362251", "4362249"], now=now, get=fake_get)
+    assert "4362251" in seen["$where"] and "max(data_as_of)" in seen["$select"]
+    link = lag["links"]["4362251"]
+    assert link["lag_min"] == pytest.approx(110.75, abs=0.1)              # 19:32:06 local = 00:32:06 UTC
+    assert lag["minutes_since_last_modified"] == pytest.approx(105.2, abs=0.1)
+    assert lag["out_of_date_header"] == "true"
+    assert lag["links"]["4362249"]["lag_min"] is None                      # no row: reported, not invented
+    with pytest.raises(ValueError):
+        nl.measure_lag(["1) OR (1=1"], now=now, get=fake_get)
+
+
+def test_load_link_rows_merges_cache_and_reference_without_duplicates(tmp_path):
+    a, b = tmp_path / "cache", tmp_path / "reference"
+    a.mkdir()
+    b.mkdir()
+    r1 = {"link_id": "1", "data_as_of": "2026-11-17T16:02:03.000", "speed": "33.5", "status": "0"}
+    r2 = {"link_id": "1", "data_as_of": "2026-11-17T16:07:04.000", "speed": "31.7", "status": "0"}
+    (a / "speeds_x.json").write_text(json.dumps({"rows": [r1]}))
+    (b / "link1.json").write_text(json.dumps({"rows": [r1, r2]}))
+    rows = nl.load_link_rows([a, b, tmp_path / "missing"])
+    assert [r["speed"] for r in rows] == ["33.5", "31.7"]
+
+
+def test_clips_in_window_and_reference_record(tmp_path):
+    def clip(name, cam, start, size=10):
+        (tmp_path / f"{name}.json").write_text(json.dumps({"camera_id": cam, "started_utc": start, "returncode": 0}))
+        (tmp_path / f"{name}.ts").write_bytes(b"x" * size)
+
+    clip("R10_008_a", "R10_008", "2026-11-17T21:27:41.000+00:00")
+    clip("R10_008_empty", "R10_008", "2026-11-17T21:30:00.000+00:00", size=0)     # failed recording
+    clip("R10_041_a", "R10_041", "2026-11-17T21:26:43.000+00:00")                 # not on the link
+    clip("R10_007_late", "R10_007", "2026-11-17T23:51:00.000+00:00")              # outside the window
+    t0 = datetime(2026, 11, 17, 21, 0, tzinfo=timezone.utc)
+    t1 = datetime(2026, 11, 17, 22, 0, tzinfo=timezone.utc)
+    clips = nl.clips_in_window(["R10_007", "R10_008"], t0, t1, clips_dir=tmp_path)
+    assert [c["clip"] for c in clips] == ["R10_008_a.ts"]
+    rows = [{"link_id": "1", "data_as_of": "2026-11-17T16:07:04.000", "speed": "31.7", "status": "0", "extra": 1},
+            {"link_id": "1", "data_as_of": "2026-11-17T16:02:03.000", "speed": "33.5", "status": "0"}]
+    rec = nl.reference_record("1", "LIE WB X", rows, "2026-11-17T16:00", "2026-11-17T17:00", clips, "now")
+    assert [r["speed"] for r in rec["rows"]] == ["33.5", "31.7"] and "extra" not in rec["rows"][0]
+    assert rec["dataset"] == nl.DATASET and rec["clips"][0]["camera_id"] == "R10_008"

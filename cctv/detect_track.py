@@ -49,6 +49,28 @@ def cpu_threads(requested: int | None = None) -> int | None:
     return None
 
 
+def apply_thread_cap(n: int | None) -> None:
+    """Cap both torch's and OpenCV's CPU thread pools to ``n`` (None: leave library defaults).
+
+    Torch alone was not enough: with torch at 2 threads the tracker still sampled at ~250% CPU
+    (2026-11-17), because OpenCV (decode, letterbox resize) runs its own pool sized to all cores.
+    """
+    if not n:
+        return
+    try:
+        import cv2
+
+        cv2.setNumThreads(n)
+    except ImportError:
+        pass
+    try:
+        import torch
+
+        torch.set_num_threads(n)
+    except ImportError:
+        pass
+
+
 @dataclass
 class TrackPoint:
     frame: int
@@ -95,6 +117,7 @@ def run_tracker(clip: Path | str, model_name: str = DEFAULT_MODEL, imgsz: int = 
                 threads: int | None = None) -> tuple[list[TrackPoint], dict]:
     model = load_model(model_name)
     n_threads = cpu_threads(threads)
+    apply_thread_cap(n_threads if device == "cpu" else None)
     points: list[TrackPoint] = []
     times = []
     t_start = time.time()
@@ -106,9 +129,7 @@ def run_tracker(clip: Path | str, model_name: str = DEFAULT_MODEL, imgsz: int = 
         times.append(time.perf_counter() - t0)
         n += 1
         if n == 1 and n_threads and device == "cpu":
-            import torch
-
-            torch.set_num_threads(n_threads)   # undo ultralytics' reset (see cpu_threads)
+            apply_thread_cap(n_threads)        # undo ultralytics' reset (see cpu_threads)
         boxes = res[0].boxes
         if boxes is not None and boxes.id is not None:
             for xyxy, tid, c, cf in zip(boxes.xyxy.tolist(), boxes.id.int().tolist(),

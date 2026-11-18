@@ -1,0 +1,147 @@
+{
+ "dataset": "i4gi-tjb9",
+ "source": "NYC Open Data, NYC DOT Traffic Speeds (public open data)",
+ "fetched_utc": "2026-11-18T02:30:18+00:00",
+ "window_local": [
+  "2026-11-17T16:00",
+  "2026-11-17T17:00"
+ ],
+ "data_tz": "America/New_York (assumed)",
+ "link_id": "4362251",
+ "link_name": "LIE WB LITTLE NECK PKWY - NB CVE",
+ "rows": [
+  {
+   "link_id": "4362251",
+   "link_name": "LIE WB LITTLE NECK PKWY - NB CVE",
+   "speed": "33.55",
+   "travel_time": "284",
+   "status": "0",
+   "data_as_of": "2026-11-17T16:02:03.000"
+  },
+  {
+   "link_id": "4362251",
+   "link_name": "LIE WB LITTLE NECK PKWY - NB CVE",
+   "speed": "31.68",
+   "travel_time": "299",
+   "status": "0",
+   "data_as_of": "2026-11-17T16:07:04.000"
+  },
+  {
+   "link_id": "4362251",
+   "link_name": "LIE WB LITTLE NECK PKWY - NB CVE",
+   "speed": "30.44",
+   "travel_time": "311",
+   "status": "0",
+   "data_as_of": "2026-11-17T16:12:03.000"
+  },
+  {
+   "link_id": "4362251",
+   "link_name": "LIE WB LITTLE NECK PKWY - NB CVE",
+   "speed": "28.58",
+   "travel_time": "332",
+   "status": "0",
+   "data_as_of": "2026-11-17T16:17:04.000"
+  },
+  {
+   "link_id": "4362251",
+   "link_name": "LIE WB LITTLE NECK PKWY - NB CVE",
+   "speed": "24.23",
+   "travel_time": "398",
+   "status": "0",
+   "data_as_of": "2026-11-17T16:22:05.000"
+  },
+  {
+   "link_id": "4362251",
+   "link_name": "LIE WB LITTLE NECK PKWY - NB CVE",
+   "speed": "21.74",
+   "travel_time": "443",
+   "status": "0",
+   "data_as_of": "2026-11-17T16:27:03.000"
+  },
+  {
+   "link_id": "4362251",
+   "link_name": "LIE WB LITTLE NECK PKWY - NB CVE",
+   "speed": "22.36",
+   "travel_time": "429",
+   "status": "0",
+   "data_as_of": "2026-11-17T16:32:03.000"
+  },
+  {
+   "link_id": "4362251",
+   "link_name": "LIE WB LITTLE NECK PKWY - NB CVE",
+   "speed": "24.85",
+   "travel_time": "386",
+   "status": "0",
+   "data_as_of": "2026-11-17T16:37:03.000"
+  },
+  {
+   "link_id": "4362251",
+   "link_name": "LIE WB LITTLE NECK PKWY - NB CVE",
+   "speed": "26.71",
+   "travel_time": "356",
+   "status": "0",
+   "data_as_of": "2026-11-17T16:42:03.000"
+  },
+  {
+   "link_id": "4362251",
+   "link_name": "LIE WB LITTLE NECK PKWY - NB CVE",
+   "speed": "27.34",
+   "travel_time": "346",
+   "status": "0",
+   "data_as_of": "2026-11-17T16:47:03.000"
+  },
+  {
+   "link_id": "4362251",
+   "link_name": "LIE WB LITTLE NECK PKWY - NB CVE",
+   "speed": "27.96",
+   "travel_time": "341",
+   "status": "0",
+   "data_as_of": "2026-11-17T16:52:04.000"
+  },
+  {
+   "link_id": "4362251",
+   "link_name": "LIE WB LITTLE NECK PKWY - NB CVE",
+   "speed": "29.2",
+   "travel_time": "326",
+   "status": "0",
+   "data_as_of": "2026-11-17T16:57:03.000"
+  }
+ ],
+ "clips": [
+  {
+   "camera_id": "R10_007",
+   "clip": "R10_007_20261117T212830Z.ts",
+   "started_utc": "2026-11-17T21:28:30+00:00",
+   "returncode": 0
+  },
+  {
+   "camera_id": "R10_008",
+   "clip": "R10_008_20261117T212741Z.ts",
+   "started_utc": "2026-11-17T21:27:41+00:00",
+   "returncode": 0
+  },
+  {
+   "camera_id": "R10_008",
+   "clip": "R10_008_20261117T212950Z.ts",
+   "started_utc": "2026-11-17T21:29:50+00:00",
+   "returncode": 0
+  },
+  {
+   "camera_id": "R10_008",
+   "clip": "R10_008_20261117T214735Z.ts",
+   "started_utc": "2026-11-17T21:47:35+00:00",
+   "returncode": 0
+  }
+ ],
+ "lag_at_fetch": {
+  "links": {
+   "4362251": {
+    "newest_as_of_utc": "2026-11-18T00:32:06+00:00",
+    "lag_min": 118.2,
+    "rows_last_12h": 121
+   }
+  },
+  "measured_utc": "2026-11-18T02:30:18+00:00"
+ },
+ "note": "Rush hour at sunset. Clips of R10_007/R10_008 in this window are git-ignored and uncalibrated (Stephen's task): calibrate, re-run cctv.pipeline on each clip, then run nyc_links compare. Rows are 5-min link averages; compare WB only."
+}

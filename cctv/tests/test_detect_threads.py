@@ -14,3 +14,21 @@ def test_cpu_threads_precedence(monkeypatch):
     assert cpu_threads(1) == 1
     monkeypatch.setenv("CCTV_THREADS", "")
     assert cpu_threads() == 2
+
+
+def test_apply_thread_cap_sets_opencv_and_torch(monkeypatch):
+    """OpenCV's own pool must be capped too: torch alone still sampled ~250% CPU (2026-11-17)."""
+    import sys
+    import types
+
+    from cctv.detect_track import apply_thread_cap
+
+    seen = {}
+    fake_cv2 = types.SimpleNamespace(setNumThreads=lambda n: seen.__setitem__("cv2", n))
+    fake_torch = types.SimpleNamespace(set_num_threads=lambda n: seen.__setitem__("torch", n))
+    monkeypatch.setitem(sys.modules, "cv2", fake_cv2)
+    monkeypatch.setitem(sys.modules, "torch", fake_torch)
+    apply_thread_cap(None)
+    assert seen == {}
+    apply_thread_cap(2)
+    assert seen == {"cv2": 2, "torch": 2}
