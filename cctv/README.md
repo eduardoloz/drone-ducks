@@ -53,7 +53,7 @@ uv pip install --python cctv/.venv/bin/python -r cctv/requirements.txt
 source cctv/.venv/bin/activate
 
 # 2. Run the tests
-python -m pytest cctv            # 99 collected (full run pending, see report)
+python -m pytest cctv            # 99 passed
 
 # 3. Start the site (it reads cctv/data/db/cctv.sqlite, which is empty on a fresh clone)
 python -m cctv.web.app           # http://127.0.0.1:8010
