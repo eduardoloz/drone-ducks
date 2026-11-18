@@ -114,7 +114,8 @@ def process(camera_id: str, clip: Path, db_path: Path, tracks_path: Path | None 
             model: str = "yolo11n.pt", imgsz: int = 640, max_frames: int | None = None,
             reuse_tracks: bool = True, k_sigma: float = 2.0, min_margin_mph: float = 3.0,
             limit_mph: float | None = None, store_points: bool = True,
-            calibration_file: Path | None = None, view_id: str | None = None) -> dict:
+            calibration_file: Path | None = None, view_id: str | None = None,
+            threads: int | None = None) -> dict:
     from cctv.detect_track import group_tracks, load_jsonl, run_tracker, save_jsonl
 
     cam = get_camera(camera_id)
@@ -139,7 +140,7 @@ def process(camera_id: str, clip: Path, db_path: Path, tracks_path: Path | None 
         print(f"reusing {len(points)} tracked boxes from {tracks_path}")
     else:
         print(f"tracking {clip.name} with {model} (CPU, this is the slow part) ...")
-        points, meta = run_tracker(clip, model, imgsz, max_frames=max_frames)
+        points, meta = run_tracker(clip, model, imgsz, max_frames=max_frames, threads=threads)
         meta["clip"] = str(clip)
         save_jsonl(points, tracks_path, meta)
     tracks = group_tracks(points)
@@ -148,6 +149,9 @@ def process(camera_id: str, clip: Path, db_path: Path, tracks_path: Path | None 
     start_dt = datetime.fromisoformat(start_iso) if start_iso else None
     light = camera_light(cam, start_dt) if start_dt else {"sun_elev_deg": None, "light": None}
     luma = (match.result or {}).get("luma_clip")
+    if luma is None and Path(clip).exists():       # no view check ran (camera has no views): still record brightness
+        f = clip_median_frame(clip)
+        luma = round(float(f.mean()), 1) if f is not None else None
     shift_px = float(match.result["shift_px"]) if match.compensated and match.result else None
     if match.compensated:
         print(f"view offset compensated: {shift_px:.1f}px")
@@ -246,11 +250,12 @@ def main(argv: list[str] | None = None) -> None:
     ap.add_argument("--view", help="only consider this view (PTZ preset); it is still checked against the clip")
     ap.add_argument("--calibration", type=Path, help="use this calibration JSON (and its sibling .ref.jpg) only")
     ap.add_argument("--no-points", action="store_true", help="don't store per-frame track points")
+    ap.add_argument("--threads", type=int, help="torch CPU threads (default: $CCTV_THREADS or $OMP_NUM_THREADS)")
     args = ap.parse_args(argv)
     summary = process(args.camera, args.clip, args.db, args.tracks, args.model, args.imgsz, args.max_frames,
                       reuse_tracks=not args.retrack, k_sigma=args.k_sigma, min_margin_mph=args.min_margin_mph,
                       limit_mph=args.limit_mph, store_points=not args.no_points,
-                      calibration_file=args.calibration, view_id=args.view)
+                      calibration_file=args.calibration, view_id=args.view, threads=args.threads)
     print(json.dumps(summary, indent=1, default=str))
     print(f"db: {args.db}")
 

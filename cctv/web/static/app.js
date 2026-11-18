@@ -49,7 +49,7 @@ function lightNote(run) {
   const sun = run.sun_elev_deg !== null && run.sun_elev_deg !== undefined ? ` (sun ${fmt(run.sun_elev_deg, 1)}°)` : "";
   const what = run.light === "night"
     ? "Recorded at night. Vehicles show mostly as headlights; detection and tracking are much weaker than in daylight, so counts are undercounts and speeds are less reliable."
-    : "Recorded at twilight. Contrast is falling and headlights are on; treat these numbers with extra care.";
+    : "Recorded at twilight. Headlights are on and contrast falls as it gets darker; compare with daylight runs before relying on these numbers.";
   return `<div class="callout small"><strong>${run.light === "night" ? "Night" : "Twilight"}${sun}.</strong> ${what}</div>`;
 }
 function offsetNote(run) {

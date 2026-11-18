@@ -34,6 +34,21 @@ MODELS_DIR = DATA_DIR / "models"
 DEFAULT_MODEL = "yolo11n.pt"
 
 
+def cpu_threads(requested: int | None = None) -> int | None:
+    """Torch CPU threads to use: ``requested``, else $CCTV_THREADS, else $OMP_NUM_THREADS, else None (library default).
+
+    Needed because ultralytics' ``select_device("cpu")`` calls ``torch.set_num_threads(min(8, cpus - 1))``
+    on the first predict, silently overriding OMP_NUM_THREADS (measured 2026-11-17: 613% CPU with
+    OMP_NUM_THREADS=2). On a shared laptop that matters.
+    """
+    for v in (requested, os.environ.get("CCTV_THREADS"), os.environ.get("OMP_NUM_THREADS")):
+        if v not in (None, ""):
+            n = int(v)
+            if n > 0:
+                return n
+    return None
+
+
 @dataclass
 class TrackPoint:
     frame: int
@@ -76,8 +91,10 @@ def load_model(name: str = DEFAULT_MODEL):
 
 def run_tracker(clip: Path | str, model_name: str = DEFAULT_MODEL, imgsz: int = 640,
                 conf: float = 0.25, tracker: str = "bytetrack.yaml", max_frames: int | None = None,
-                device: str = "cpu", progress_every: int = 100) -> tuple[list[TrackPoint], dict]:
+                device: str = "cpu", progress_every: int = 100,
+                threads: int | None = None) -> tuple[list[TrackPoint], dict]:
     model = load_model(model_name)
+    n_threads = cpu_threads(threads)
     points: list[TrackPoint] = []
     times = []
     t_start = time.time()
@@ -88,6 +105,10 @@ def run_tracker(clip: Path | str, model_name: str = DEFAULT_MODEL, imgsz: int = 
                           classes=list(VEHICLE_CLASSES), verbose=False, device=device)
         times.append(time.perf_counter() - t0)
         n += 1
+        if n == 1 and n_threads and device == "cpu":
+            import torch
+
+            torch.set_num_threads(n_threads)   # undo ultralytics' reset (see cpu_threads)
         boxes = res[0].boxes
         if boxes is not None and boxes.id is not None:
             for xyxy, tid, c, cf in zip(boxes.xyxy.tolist(), boxes.id.int().tolist(),
@@ -99,7 +120,7 @@ def run_tracker(clip: Path | str, model_name: str = DEFAULT_MODEL, imgsz: int = 
     stats = {"frames": n, "wall_s": round(time.time() - t_start, 1),
              "ms_per_frame_mean": round(1000 * float(np.mean(times)), 1) if times else None,
              "ms_per_frame_p90": round(1000 * float(np.percentile(times, 90)), 1) if times else None,
-             "model": model_name, "imgsz": imgsz, "conf": conf, "tracker": tracker,
+             "model": model_name, "imgsz": imgsz, "conf": conf, "tracker": tracker, "threads": n_threads,
              "n_points": len(points), "n_tracks": len({p.track_id for p in points})}
     return points, stats
 
@@ -157,9 +178,11 @@ def main(argv: list[str] | None = None) -> None:
     ap.add_argument("--imgsz", type=int, default=640)
     ap.add_argument("--conf", type=float, default=0.25)
     ap.add_argument("--max-frames", type=int)
+    ap.add_argument("--threads", type=int, help="torch CPU threads (default: $CCTV_THREADS or $OMP_NUM_THREADS)")
     args = ap.parse_args(argv)
     out = args.out or DATA_DIR / "runs" / f"{args.clip.stem}.{Path(args.model).stem}.tracks.jsonl"
-    points, stats = run_tracker(args.clip, args.model, args.imgsz, args.conf, max_frames=args.max_frames)
+    points, stats = run_tracker(args.clip, args.model, args.imgsz, args.conf, max_frames=args.max_frames,
+                                threads=args.threads)
     save_jsonl(points, out, meta={"clip": str(args.clip), **stats})
     print(json.dumps(stats, indent=1))
     print(f"wrote {out}")

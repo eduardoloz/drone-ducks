@@ -36,7 +36,8 @@ Status legend: **[built]** exists in this branch and was run; **[planned]** desi
 - Snapshot only (counts or density at most): 21 NYC DOT cameras.
 - Each good camera still needs a calibratable view, and PTZ moves invalidate it (seen for
   real on R10_041). Since round 2, a camera holds one calibration per PTZ preset, and
-  each clip is matched to the preset it shows (section 3.4).
+  each clip is matched to the preset it shows (section 3.4). Since round 3, a preset that
+  comes back a few pixels off is compensated instead of rejected.
 - **Proven end to end on 1 camera (R10_041):** 54 of 62 vehicles got speeds, median
   57 mph, σ about 1.7 mph.
 - **TODO** (round 2 status, 2026-11-13):
@@ -46,14 +47,26 @@ Status legend: **[built]** exists in this branch and was run; **[planned]** desi
     calibrated camera on a usable link (daylight), and the drive itself;
   - [built] several calibrations per camera, one per PTZ preset (section 3.4);
   - calibrate R10_041 preset v2 (seen only at night so far) and a camera on the
-    Little Neck Pkwy WB link (R10_007/R10_008, see 8.2);
+    Little Neck Pkwy WB link (R10_007/R10_008, see 8.2). Mentee task. Daylight clips of
+    R10_007/008 from 2026-11-17 16:27–16:47 exist locally. On 2026-11-17, R10_041 showed a
+    third, wide preset that matched neither v1 nor v2;
+  - run the 2026-11-17 night clip through the detector and compare with the sunset and
+    twilight numbers (README, round 3);
+  - test a larger detector (yolo11s / imgsz 960) on R10_008: about 50–58% of mid-field
+    vehicles were tracked at sunset/twilight (eye count, 4 frames);
   - calibrate 4+ more cameras (mentee M1 task);
   - daylight re-measurement (R10_355 was dark);
   - live ingest and the GPU worker (sections 3.2, 3.3), after 511NY access;
   - Postgres;
   - WebSocket overlays;
-  - small-shift compensation: apply the matched similarity transform instead of
-    rejecting views nudged by more than 4 px.
+  - [built, round 3] small-shift compensation: the matched similarity transform is
+    applied to the calibration for nudges up to 30 px / 3% zoom / 2° (section 3.4);
+  - [built, round 3] sun elevation and day/twilight/night label on every run
+    (`daylight.py`), and the site says when a run is not daylight;
+  - [built, round 3] committed regression fixture (real R10_041 tracks, boxes only) with
+    pinned outputs (8.2 item 4);
+  - [built, round 3] per-vehicle publication delay (`--publish-delay-min`, section 9);
+  - [built, round 3] one-command daylight recorder `scripts/record_daylight.sh`.
 
 ## 1. The product in one paragraph
 
@@ -184,6 +197,17 @@ NYSDOT HLS ---------------------^        \--> view check (PTZ) -----------------
     stills are independent checks.
   - CLI: `calibrate views | add-view | match | migrate`, `--view` on
     `fit`/`show`/`error_budget`/`pipeline`.
+  - **Small-offset compensation** (round 3). Presets don't always return to exactly the
+    same pixel, and the error budget (8.1) shows an undetected 8 px nudge costs about
+    −3 mph. When the only thing wrong with a match against a view's *calibration frame*
+    (`<VIEW>.ref.jpg`) is a shift up to 30 px, zoom within 3% or roll within 2°, and the
+    fit is well supported (≥ 40 matches, ≥ 40% RANSAC inliers), the pipeline uses the
+    calibration moved by the measured transform (H' = H·M⁻¹; ROI moved too) and stores
+    `view_shift_px` on the run. Extra references (`ref-night`) are never used for this,
+    because they need not be aligned with the frame the points were clicked on. Treating
+    a small pan/tilt as a 2-D similarity ignores the perspective change, which is small
+    at these angles; synthetic tests recover speed within 0.05 mph. Not yet seen on a
+    real nudged clip.
   - Limits: one daytime reference per view so far, so a night clip of v1 will probably
     read as "no match" until someone adds a `ref-night`. That is conservative but loses
     data. [planned] Per segment in live mode; a cheap global fingerprint to pre-select
@@ -386,6 +410,10 @@ vehicles. The ground-truth drive (8.2) is how we find out.
        114 mph. Non-"0" status rows are now skipped.
    - So the **first camera to calibrate for this comparison is R10_007 or R10_008 on
      the Little Neck WB link**, not R11_140. That is not verified in daylight.
+   - **Latency (2026-11-17):** at 16:40 local the newest Little Neck row was from 14:27,
+     with `X-SODA2-Data-Out-Of-Date: true`. Fetch link rows hours after a session,
+     not during it. A query with no time filter timed out after 60 s, so always filter
+     by time.
    - Caveats: link speed is a minutes-long, mile-long space-mean, while ours is a
      60 s spot sample. Disagreement in congestion doesn't prove either is wrong.
      `data_as_of` is assumed to be NY local time. The API flagged its copy as out of
@@ -397,7 +425,9 @@ vehicles. The ground-truth drive (8.2) is how we find out.
      free flow);
    - both carriageways when both are calibrated.
 4. **Regression tests:** synthetic tracks with known speed (`tests/test_speed.py`), plus a
-   committed sample tracks JSONL with expected outputs (planned).
+   committed sample of real tracks with expected outputs [built, round 3:
+   `tests/data/r10_041_v1_20261110T213935Z.tracks.jsonl.gz`, 66 KB, bounding boxes only,
+   pinned by `tests/test_regression_r10_041.py`].
 
 ## 9. Ethics, privacy and legal (required reading)
 
@@ -435,7 +465,8 @@ vehicles. The ground-truth drive (8.2) is how we find out.
 - **Publication policy for a public site:**
   - aggregates first;
   - per-vehicle rows only as anonymous estimates, delayed by at least 15 minutes, with no
-    imagery;
+    imagery [built: `python -m cctv.web.app --publish-delay-min 15` withholds events and
+    track replays younger than that; aggregates are not delayed];
   - a removal and contact route.
 - **Security:**
   - the calibration endpoint is stateless and writes nothing;
