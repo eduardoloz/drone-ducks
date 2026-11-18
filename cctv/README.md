@@ -26,7 +26,8 @@ outside it. Video: NYSDOT / 511NY.*
 | `geometry.py` | Pixel ↔ road-metre homography, calibration files |
 | `speed.py` | Track → speed ± σ, rejects bad tracks, conservative over-limit flag |
 | `camera_motion.py` | Detects that a pan-tilt-zoom camera was moved since calibration |
-| `views.py` | Several calibrations per camera (one per PTZ preset); picks the preset a clip shows |
+| `views.py` | Several calibrations per camera (one per PTZ preset); picks the preset a clip shows, and compensates a preset that came back a few pixels off |
+| `daylight.py` | Sun elevation at a camera (no network): sunrise/sunset, day / twilight / night label stored with every run |
 | `ingest.py` | Records short HLS clips; reads exact frame timestamps |
 | `detect_track.py` | YOLO + ByteTrack over a clip (Stephen's `ByteTrackFinal.py` idea, offline) |
 | `pipeline.py` | Clip → tracks → speeds → SQLite |
@@ -36,8 +37,9 @@ outside it. Video: NYSDOT / 511NY.*
 | `recon/` | `build_manifest.py` (offline) and `measure_feed.py` (records 20 s per camera) |
 | `groundtruth/nyc_links.py` | Compares our speeds with NYC DOT's published link speeds (open data `i4gi-tjb9`) |
 | `groundtruth/gps_drive.py` | Lines a phone GPS log up with our tracks and reports the speed error |
+| `scripts/record_daylight.sh` | **One command to record daylight footage** (R10_041, R10_007, R10_008 by default); recording only |
 | `scripts/groundtruth_session.sh` | Daylight session: a few 60 s clips from one camera, then pipeline and link comparison |
-| `tests/` | 81 pytest tests (no network, no YOLO needed) |
+| `tests/` | 99 pytest tests (no network, no YOLO needed), incl. a regression test on real R10_041 tracks (`tests/data/`, boxes only) |
 
 ## Quickstart
 
@@ -51,7 +53,7 @@ uv pip install --python cctv/.venv/bin/python -r cctv/requirements.txt
 source cctv/.venv/bin/activate
 
 # 2. Run the tests
-python -m pytest cctv            # 81 passed
+python -m pytest cctv            # 99 passed
 
 # 3. Start the site (it reads cctv/data/db/cctv.sqlite, which is empty on a fresh clone)
 python -m cctv.web.app           # http://127.0.0.1:8010
@@ -66,10 +68,16 @@ uv pip install --python cctv/.venv/bin/python -r cctv/requirements-detect.txt
 # record 60 s from a camera (one stream, short clip: be a polite viewer)
 python -m cctv.ingest --camera R10_041 --seconds 60
 
+# or: capture daylight footage from the three cameras we work on, in one command
+# (2 rounds x 3 cameras x 60 s, ~11 MB, ~15 min; refuses to run after dark unless --force)
+cctv/scripts/record_daylight.sh
+python -m cctv.daylight --camera R10_008        # sunrise / sunset / is it daylight there now?
+
 # detect + track + speeds -> SQLite (YOLO11n on CPU: ~2 min per minute of video here)
 python -m cctv.pipeline --camera R10_041 --clip cctv/data/clips/R10_041_<timestamp>.ts
 
 python -m cctv.web.app           # refresh the page
+python -m cctv.web.app --publish-delay-min 15   # how a public deployment should run (per-vehicle data delayed)
 ```
 
 The pipeline first works out which view the camera is showing. LIE cameras are
@@ -161,12 +169,55 @@ which cross the road at right angles), as in `R10_041.points.json`.
   median at 3 am EB; WB mostly status −101). The Little Neck Pkwy WB link looks sane
   (54.7 mph) and has Region 10 cameras R10_005–R10_008 on it.
 
+**Round 3 (2026-11-17, footage at sunset; clips are git-ignored in `cctv/data/clips/`):**
+- Recorded (60 s each, 640×480, ~1.8 MB each): R10_041 at 16:26 and 16:31, R10_008 at 16:27
+  and 16:29, R10_007 at 16:28 (sun +1° to −0.5°, clear light, heavy rush-hour traffic);
+  R10_008 at 16:47 (sun −3°, twilight); R10_008 at 18:51 (night, only 35 s because the
+  laptop slept). R10_041 at 18:52 failed (stream I/O error).
+- **No speeds from this footage, so no estimate-vs-link table yet.** R10_041 sat at a preset
+  that matches neither v1 nor v2 (a wide view looking along the westbound carriageway).
+  R10_007 and R10_008 have no calibration yet (mentee task). The pipeline ran end to end
+  on R10_008 and stored counts only.
+- NYC DOT link 4362251 (WB Little Neck Pkwy → CVE, R10_007/008): at 16:40 the newest row in
+  the open-data API was from 14:27, so the API was running about 2 h behind. The rows for the
+  clip window still need fetching:
+  `python -m cctv.groundtruth.nyc_links fetch --start 2026-11-17T16:00 --end 2026-11-17T17:00 --link 4362251`.
+- Detector at sunset vs twilight on R10_008 (yolo11n, the first 30 s of each clip, measured):
+
+  | Clip | Sun | Boxes/frame | Tracks | Tracks ≥ 15 frames | Median track length |
+  |---|---|---|---|---|---|
+  | 16:27 | +0.4° | 16.0 | 253 | 119 | 10 frames |
+  | 16:47 | −3.0° | 15.5 | 256 | 103 | 8.5 frames |
+
+  Eye count, by one person, of vehicles below the dense far queue on 2 frames per clip:
+  about 30 of 52 had a tracked box at sunset (~58%) and 28 of 56 at twilight (~50%). Misses
+  are mostly near-field vehicles on the left (eastbound) carriageway, which faces the low
+  sun, and small far vehicles. Recall on this camera is much lower than on R10_041 v1.
+  A bigger model or imgsz is worth testing before speeds here mean much.
+  The night clip has not been run through the detector yet (the laptop was on battery).
+- ultralytics resets torch to `min(8, cpus − 1)` threads on its first CPU predict, which
+  overrides `OMP_NUM_THREADS` (measured: 613% CPU with `OMP_NUM_THREADS=2`). The tracker now
+  puts the cap back (`--threads`, `$CCTV_THREADS` or `$OMP_NUM_THREADS`).
+- The R10_041 reference clip of 2026-11-10 (54 of 62 vehicles with speeds) was itself
+  recorded at sun −0.9°. The site labels it "twilight", so twilight alone doesn't mean
+  the run is bad.
+
+### Night
+
+Each run stores the sun elevation at the camera and a label: day (≥ 0°), twilight, or night
+(< −6°), from `daylight.py`. The site shows a note on twilight and night runs. YOLO11n is
+trained on daylight photos. At night the LIE cameras show headlights and tail-light streaks
+(see `data/calibration/R10_041/v2.ref-night.jpg`), so expect undercounts and weaker tracks.
+That hasn't been measured yet: a 35 s night clip of R10_008 from 18:51 on 2026-11-17 is
+waiting to be run (`python -m cctv.pipeline --camera R10_008 --clip cctv/data/clips/R10_008_20261117T235157Z.ts --max-frames 450`).
+
 **Not verified yet:**
 - no ground truth: no Queens/Little Neck camera is calibrated, so no estimate-vs-link
   table exists yet, and no drive has been done (tools and protocol are ready);
 - the far half of each track reads ~4% slower than the near half (braking or a bias? to be
   investigated);
-- night-time accuracy;
+- night-time accuracy (clip recorded, not processed);
+- small-offset compensation on a real nudged clip (synthetic tests only);
 - the 55 mph limit in Nassau/Suffolk comes from secondary sources.
 
 ## Good first tasks

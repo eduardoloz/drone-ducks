@@ -42,6 +42,21 @@ function localTime(iso) {
 }
 const fmt = (x, d = 0) => (x === null || x === undefined ? "–" : Number(x).toFixed(d));
 
+// Light at the camera when the clip was recorded (sun elevation, cctv/daylight.py). The detector is
+// trained on daylight photos; at night it sees headlights, so we say so next to the numbers.
+function lightNote(run) {
+  if (!run || !run.light || run.light === "day") return "";
+  const sun = run.sun_elev_deg !== null && run.sun_elev_deg !== undefined ? ` (sun ${fmt(run.sun_elev_deg, 1)}°)` : "";
+  const what = run.light === "night"
+    ? "Recorded at night. Vehicles show mostly as headlights; detection and tracking are much weaker than in daylight, so counts are undercounts and speeds are less reliable."
+    : "Recorded at twilight. Headlights are on and contrast falls as it gets darker; compare with daylight runs before relying on these numbers.";
+  return `<div class="callout small"><strong>${run.light === "night" ? "Night" : "Twilight"}${sun}.</strong> ${what}</div>`;
+}
+function offsetNote(run) {
+  if (!run || run.view_shift_px === null || run.view_shift_px === undefined) return "";
+  return `<p class="muted small">The camera sat ${fmt(run.view_shift_px, 1)} px off its calibrated preset; the calibration was shifted to match.</p>`;
+}
+
 // -------------------------------------------------------------------- map
 function initMap() {
   map = L.map("map", { zoomSnap: 0.5 }).setView([40.79, -73.35], 10);
@@ -130,13 +145,16 @@ async function selectCamera(id) {
                                  : "matches none of the known views";
     html += `<div class="callout"><strong>The camera has been re-aimed.</strong> The newest clip
       (${localTime(newest.clip_start_utc)}) ${where}, so its ${newest.vehicles} tracks got no
-      speeds. ${latest ? "Below: the newest clip that matched the calibration." : "Recalibrate this view to get speeds."}</div>`;
+      speeds${newest.flow_veh_per_hour ? ` (counts only: about ${newest.flow_veh_per_hour.toLocaleString("en-US")} vehicles/hour tracked)` : ""}.
+      ${latest ? "Below: the newest clip that matched the calibration." : "Recalibrate this view to get speeds."}</div>
+      ${lightNote(newest)}`;
   }
   if (latest) {
     const pct = latest.with_speed ? fmt(latest.pct_over_limit) : "–";
     html += `
       <h3>Latest clip with speeds</h3>
       <p class="muted small">${localTime(latest.clip_start_utc)}, ${fmt(latest.duration_s)} s of video</p>
+      ${lightNote(latest)}${offsetNote(latest)}
       <div class="stats">
         <div class="stat"><strong>${fmt(latest.median_mph)}</strong><span>median mph</span></div>
         <div class="stat"><strong>${fmt(latest.p85_mph)}</strong><span>85th percentile</span></div>
@@ -161,7 +179,11 @@ async function selectCamera(id) {
   if (latest) {
     const s = await api(`/api/stats?camera_id=${encodeURIComponent(id)}`);
     renderHistogram(document.getElementById("hist"), s.histogram, cam.posted_limit_mph);
-    renderOverlay(document.getElementById("overlay"), await api(`/api/runs/${latest.run_id}/overlay`));
+    try {
+      renderOverlay(document.getElementById("overlay"), await api(`/api/runs/${latest.run_id}/overlay`));
+    } catch (e) {  // 403 on a public site while the clip is younger than the publication delay
+      document.getElementById("overlay").innerHTML = `<p class="muted">Track replay is published with a delay; check back later.</p>`;
+    }
     const ev = await api(`/api/events?camera_id=${encodeURIComponent(id)}&limit=40`);
     document.getElementById("cam-events").innerHTML = eventsTable(ev.events, false);
   }
