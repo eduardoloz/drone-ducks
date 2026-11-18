@@ -1,0 +1,74 @@
+{
+  "frames": 141,
+  "duration_s": 44.236,
+  "follow_s": 41.461,
+  "pct_frames_tracking_while_following": 90.15151515151516,
+  "lost_events": 2,
+  "reacquired": 1,
+  "lost_durations_s": [
+    0.33
+  ],
+  "final_mode": "TIMEOUT",
+  "pct_centred_5deg": 59.84848484848485,
+  "pct_centred_10deg": 80.3030303030303,
+  "pct_in_fov": 100.0,
+  "mean_abs_bearing_deg": 4.7716590909090915,
+  "true_dist_mean_m": 3.6856439393939393,
+  "true_dist_median_m": 3.2055,
+  "true_dist_minmax_m": [
+    2.607,
+    5.805
+  ],
+  "target_distance_m": 4.0,
+  "est_minus_true_dist_mean_m": -0.19963865546218484,
+  "est_minus_true_dist_mae_m": 0.28829411764705887,
+  "pct_walker_facing_within_60deg": 50.0,
+  "body_frames": 43,
+  "pct_following_by_body": 32.57575757575758,
+  "finish_reason": "target lost for 5.3 s -> land -> LAND",
+  "walker_end_phase_s": 37.45600000000002,
+  "ended_early": true,
+  "stay_in_front": {
+    "facing_window_s": 36.81,
+    "in_front_30deg_s": 10.16,
+    "pct_in_front_30deg": 27.6,
+    "leg_A25": {
+      "mean_abs_facing_deg": 79.7,
+      "max_abs_facing_deg": 137.8,
+      "end_facing_deg": 137.8,
+      "end_phase_s": 34.0,
+      "pct_tracking": 96.6
+    },
+    "leg_B40": {
+      "mean_abs_facing_deg": 78.3,
+      "max_abs_facing_deg": 82.9,
+      "end_facing_deg": 82.9,
+      "end_phase_s": 37.5,
+      "pct_tracking": 0.0
+    }
+  },
+  "back_of_head": {
+    "relocks_facing_away": 0,
+    "relocks_facing_away_at": [],
+    "tracking_facing_away_s": 0.0
+  },
+  "config": {
+    "alt_m": 2.0,
+    "person": "yolox",
+    "person_every": 1,
+    "walker": "quack_people_angled",
+    "target_distance_m": 4.0,
+    "lost_timeout_s": 5.0,
+    "score": 0.5,
+    "source": "sim",
+    "cam_pitch_deg": 8.0,
+    "camera_preset": "sim",
+    "hfov_deg": 68.75,
+    "face_width_m": 0.13,
+    "head_lateral": 0.0,
+    "max_lateral_m_s": 0.5,
+    "relock_hits": 3,
+    "relock_score": 0.9,
+    "relock_max_distance_m": null
+  }
+}

@@ -112,6 +112,11 @@ detector accuracy. The walking actor: see "Follow-person" below.
 | `test_follow_walker_then_land_when_lost`, before the skip-loops fix | fresh world: **failed** (no face in 30 s), then passed (75 s) on the same world |
 | same, after the fix, twice in a row from a fresh `start_sim.sh` | **2/2 passed**: 72.8 s / 74.6 s followed, 100 % within 10 deg, 6 / 4 lost events; then the full `tests/sitl` suite on the same world: 10 passed, 1 skipped (body test needs the turnaway world) |
 | `pytest tests/unit` (round 3) | 85 passed |
+| `pytest tests/unit` (round 5, 2026-11-17) | 95 passed |
+| `test_soft_fence_stops_sideways_velocity` (round 5, angled world) | **passed** once: 2 m/s right asked, clamped to 0.8 (`max_speed_xy`), then by the fence; ended 3.19 m from home (bar 3.3 m, small margin) |
+| Round 5 angled-walker A/B (`--head-lateral` 0 vs 0.02, body lock on, 2 runs each) | see `sim/README.md` "Round 5"; logs `docs/runs/r5-angled-*` |
+| `test_body_lock_follows_through_long_turn_away` x2 (round 5) | run 1 **passed** (74.6 s followed, not early, 334 body frames). Run 2 **failed** `ended_early` (landed at walker phase 42.7 s). The Mac lost AC power and slept mid-flight: no camera frame for 86 s, then `link_lost`, PX4 landed, `finish_reason` "quackdrone lost control". Not a code verdict; needs a re-run. Logs `docs/runs/r5-turnaway-body-test{1,2-slept}.*` |
+| Full `tests/sitl` suite (round 5) | **not run**: battery at 9-12 % after the sleep, so SITL was stopped per the battery rule |
 
 ## Follow-person: Jetson pipeline + quackdrone
 
@@ -144,7 +149,7 @@ _2026-11-13, round 2. Live in Gazebo SITL on Eddie's Intel Mac (same stack as ab
 | Soft fence (`--fence`, 25 m) / altitude band / 1.5 m/s cap | velocity clamped by quackdrone `Limits` | unit |
 | PX4 leaves Offboard (geofence, battery, pilot, link) | quackdrone stops commanding; session ends; never re-engages | unit (fake) |
 | Ctrl-C / exception / script ends | sink `stop()` lands; `with Drone` lands as a backstop | unit |
-| Sideways command (`--head-lateral`, jetson `k_head_lateral`) | same clamps as forward: `max_speed_xy` caps \|forward, right\|, the soft fence removes the outward part of a sideways velocity, PX4 GF_* geofence on top | unit (`test_safety.py`, fake-backend sink), SITL test `test_soft_fence_stops_sideways_velocity` written, **not yet run** (round 4: Mac at 4 % battery) |
+| Sideways command (`--head-lateral`, jetson `k_head_lateral`) | same clamps as forward: `max_speed_xy` caps \|forward, right\|, the soft fence removes the outward part of a sideways velocity, PX4 GF_* geofence on top | unit (`test_safety.py`, fake-backend sink), SITL `test_soft_fence_stops_sideways_velocity` passed (round 5, ended 3.19 m from home with a 3 m fence). In follow runs with `--max-lateral 0.5`, the measured sideways speed peaked at 0.49 m/s |
 
 **Sideways flight is blind.** The drone has one forward-looking camera; when `--head-lateral` moves it
 right/left to stay in front of a person, nothing sees what it moves into (walls, trees, other people).

@@ -70,6 +70,37 @@ round-2 run 2 has 1 back-of-head re-lock (68.8 s, walker 180 deg away at 7 m); t
 re-locks, but `r3-turnaway-body` steered by a back-of-head "face" for 2.1 s while body-locked.
 Relock flags: `--relock-hits 1 --relock-score 0 --relock-max-distance 0` restores round-2 behaviour.
 
+**Round 5 (2026-11-17), angled walker A/B, measured in SITL.** Both arms use `--person yolox`, alt 2 m,
+target 4 m, `--max-lateral 0.5`, everything else default. B adds `--head-lateral 0.02`. Two runs each,
+alternating A/B/A/B. The Mac was heavily loaded the whole time (load average 14-39 on 16 threads:
+Roblox ~270 % CPU, another agent's `cctv.pipeline` ~325 %, Chrome ~250 %), so perception ran at
+3-8 fps instead of round 3's 11-13. Logs: `docs/runs/r5-angled-body-{nolat,lat002}-{1,2}.*`.
+
+| Run | fps | Followed | Lost events | Landed early? (walker phase at end; final turn at 60 s) | In front (within 30 deg) | Leg A25 facing mean / max | Leg B40 facing mean / max (% tracking) | Back of head: re-locks / s | Sideways cmd max / measured max (p95) / clamp |
+|---|---|---|---|---|---|---|---|---|---|
+| A1 no lateral | 3.2 | 41.5 s | 2 | **yes** (37.5 s) | 10.2 s = 28 % | 80 / 138 deg | 78 / 83 deg (0 %) | 0 / 0.0 | 0 / 0.07 (0.04) / 0.5 m/s |
+| A2 no lateral | 8.1 | 40.7 s | 1 | **yes** (39.7 s) | 10.7 s = 27 % | 82 / 137 deg | 83 / 94 deg (5 %) | 0 / 0.0 | 0 / 0.07 (0.04) / 0.5 m/s |
+| B1 `--head-lateral 0.02` | 3.3 | 48.1 s | 4 | **yes** (45.1 s) | 32.3 s = 73 % | **10 / 18 deg** | 104 / 129 deg (42 %) | 0 / 0.0 | 0.50 / 0.49 (0.32) / 0.5 m/s |
+| B2 `--head-lateral 0.02` | 3.6 | 57.4 s | 4 | **yes** (50.1 s) | 32.4 s = 65 % | **15 / 32 deg** | 129 / 150 deg (68 %) | 0 / 0.0 | 0.50 / 0.43 (0.35) / 0.5 m/s |
+
+"Measured" sideways speed is the body-frame right velocity derived from logged PX4 position and yaw
+(0.5 s finite difference). It never exceeded the 0.5 m/s clamp.
+
+* **The head-yaw term keeps the drone in front on the 25 deg leg.** Without it the walker's facing
+  creeps to ~137 deg by the end of leg A (the drone ends up behind him), and both runs land ~5 s after
+  the leg B turn. With it, facing stays within 10-15 deg on leg A in both runs. Time in front roughly
+  triples (10 s to 32 s), and the follow lasts 7-17 s longer.
+* **It does not survive the 65 deg turn into leg B.** At the turn the face disappears within about a
+  second. Head yaw is only measured while a face is detected, so the sideways command drops to 0. The
+  body lock carries on with no sideways correction until facing passes about 120 deg and the body is
+  lost. A bigger clamp would not help: the term has no input once the face is gone. Head-yaw
+  estimates were also noisy (sign flips from frame to frame at 3 fps) and saturate near 35 deg.
+* No run re-locked on the back of the head. In A1 the walker turned back towards the drone on leg B
+  at 5.6-5.8 m (a face was detected) but no re-lock happened. That fits the re-lock distance limit
+  (about 5.5 m), but this is inferred from the trace, not logged.
+* All four runs landed before the final turn, so `quack_people_angled` is not followable yet with
+  either setting.
+
 `quack_people`: the walker walks straight towards the drone for ~62 s (with one 4.5 s look-back), then
 turns away; the face-only follower hovers and lands 5 s after losing the face. Per-frame CSV.gz
 (estimate vs Gazebo ground truth) and a JSON summary land in `.run/follow/`; re-derive a summary with
