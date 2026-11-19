@@ -39,7 +39,7 @@ outside it. Video: NYSDOT / 511NY.*
 | `groundtruth/gps_drive.py` | Lines a phone GPS log up with our tracks and reports the speed error |
 | `scripts/record_daylight.sh` | **One command to record daylight footage** (R10_041, R10_007, R10_008 by default); recording only |
 | `scripts/groundtruth_session.sh` | Daylight session: a few 60 s clips from one camera, then pipeline and link comparison |
-| `tests/` | 99 pytest tests (no network, no YOLO needed), incl. a regression test on real R10_041 tracks (`tests/data/`, boxes only) |
+| `tests/` | 103 pytest tests (no network, no YOLO needed), incl. a regression test on real R10_041 tracks (`tests/data/`, boxes only) |
 
 ## Quickstart
 
@@ -53,7 +53,7 @@ uv pip install --python cctv/.venv/bin/python -r cctv/requirements.txt
 source cctv/.venv/bin/activate
 
 # 2. Run the tests
-python -m pytest cctv            # 99 passed
+python -m pytest cctv            # 103 passed
 
 # 3. Start the site (it reads cctv/data/db/cctv.sqlite, which is empty on a fresh clone)
 python -m cctv.web.app           # http://127.0.0.1:8010
