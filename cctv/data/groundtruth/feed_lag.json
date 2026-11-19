@@ -1,0 +1,19 @@
+{
+ "dataset": "i4gi-tjb9",
+ "note": "Measured publication lag of the open-data API: newest data_as_of vs the time of the request (data_as_of assumed NY local). Written by `nyc_links lag --record`.",
+ "measurements": [
+  {
+   "measured_utc": "2026-11-18T02:30:19+00:00",
+   "links": {
+    "4362251": {
+     "newest_as_of_utc": "2026-11-18T00:32:06+00:00",
+     "lag_min": 118.2,
+     "rows_last_12h": 121
+    }
+   },
+   "out_of_date_header": "true",
+   "dataset_last_modified_utc": "2026-11-18T00:37:38+00:00",
+   "minutes_since_last_modified": 112.7
+  }
+ ]
+}

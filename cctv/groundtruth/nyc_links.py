@@ -60,13 +60,16 @@ USER_AGENT = "ProjectQuack-cctv-research/0.2 (open-data client)"   # generic on 
 GT_DIR = DATA_DIR / "groundtruth"
 LINKS_SNAPSHOT = GT_DIR / "nyc_lie_links.json"        # small, committed: link ids, names, geometry
 CACHE_DIR = GT_DIR / "cache"                          # fetched speed rows (gitignored)
+REFERENCE_DIR = GT_DIR / "reference"                  # small, committed: link rows for windows we have clips of
+LAG_LOG = GT_DIR / "feed_lag.json"                    # small, committed: measured publication lag of the API
 LIE_NAME_PATTERNS = ("LIE ",)                         # link names look like "LIE E 84TH ST - 108TH ST"
 NY_TZ = ZoneInfo("America/New_York")
 
 
 # ---------------------------------------------------------------- Socrata client
-def soql_get(params: dict[str, str], timeout: float = 60.0) -> list[dict[str, Any]]:
-    """One GET against the dataset. Optional app token from $SOCRATA_APP_TOKEN (raises rate limits)."""
+def soql_get_with_headers(params: dict[str, str], timeout: float = 60.0
+                          ) -> tuple[list[dict[str, Any]], dict[str, str]]:
+    """One GET against the dataset -> (rows, response headers). Optional app token from $SOCRATA_APP_TOKEN."""
     url = ENDPOINT + "?" + urllib.parse.urlencode(params)
     headers = {"User-Agent": USER_AGENT, "Accept": "application/json"}
     token = os.environ.get("SOCRATA_APP_TOKEN")
@@ -74,11 +77,16 @@ def soql_get(params: dict[str, str], timeout: float = 60.0) -> list[dict[str, An
         headers["X-App-Token"] = token
     req = urllib.request.Request(url, headers=headers)
     with urllib.request.urlopen(req, timeout=timeout) as resp:
-        stale = resp.headers.get("X-SODA2-Data-Out-Of-Date")
+        resp_headers = {k: v for k, v in dict(resp.headers).items()}
         rows = json.loads(resp.read().decode())
-    if stale == "true":
+    if resp_headers.get("X-SODA2-Data-Out-Of-Date") == "true":
         print("note: API says its copy is out of date (X-SODA2-Data-Out-Of-Date: true)")
-    return rows
+    return rows, resp_headers
+
+
+def soql_get(params: dict[str, str], timeout: float = 60.0) -> list[dict[str, Any]]:
+    """One GET against the dataset. Optional app token from $SOCRATA_APP_TOKEN (raises rate limits)."""
+    return soql_get_with_headers(params, timeout)[0]
 
 
 def _floating(dt: datetime, data_tz: ZoneInfo) -> str:
@@ -105,6 +113,82 @@ def fetch_lie_links(since: datetime, data_tz: ZoneInfo = NY_TZ) -> list[dict[str
                      "$where": f"data_as_of >= '{_floating(since, data_tz)}' AND ({name_cond})",
                      "$group": "link_id,link_name,borough,link_points", "$limit": "500"})
     return rows
+
+
+def measure_lag(link_ids: Iterable[str], now: datetime | None = None, lookback_h: float = 12.0,
+                data_tz: ZoneInfo = NY_TZ, get=soql_get_with_headers) -> dict[str, Any]:
+    """How far behind real time the open-data API is: newest row per link vs now.
+
+    Measured 2026-11-17: the newest Little Neck row was ~1 h 50 min old, and the dataset's
+    ``Last-Modified`` header showed it is refreshed in batches (rows up to ~5 min before the batch).
+    """
+    now = (now or datetime.now(timezone.utc)).astimezone(timezone.utc)
+    ids = ",".join(f"'{int(i)}'" for i in link_ids)
+    since = _floating(now - timedelta(hours=lookback_h), data_tz)
+    rows, headers = get({"$select": "link_id,max(data_as_of) as newest,count(*) as n",
+                         "$where": f"link_id in ({ids}) AND data_as_of >= '{since}'", "$group": "link_id"})
+    out: dict[str, Any] = {"measured_utc": now.isoformat(timespec="seconds"), "links": {},
+                           "out_of_date_header": headers.get("X-SODA2-Data-Out-Of-Date")}
+    lm = headers.get("Last-Modified") or headers.get("X-SODA2-Truth-Last-Modified")
+    if lm:
+        from email.utils import parsedate_to_datetime
+
+        lm_dt = parsedate_to_datetime(lm).astimezone(timezone.utc)
+        out["dataset_last_modified_utc"] = lm_dt.isoformat(timespec="seconds")
+        out["minutes_since_last_modified"] = round((now - lm_dt).total_seconds() / 60, 1)
+    for r in rows:
+        newest = parse_data_as_of(r["newest"], data_tz)
+        out["links"][str(r["link_id"])] = {"newest_as_of_utc": newest.isoformat(timespec="seconds"),
+                                           "lag_min": round((now - newest).total_seconds() / 60, 1),
+                                           f"rows_last_{lookback_h:g}h": int(r.get("n") or 0)}
+    for i in link_ids:
+        out["links"].setdefault(str(int(i)), {"newest_as_of_utc": None, "lag_min": None,
+                                              "note": f"no row in the last {lookback_h:g} h"})
+    return out
+
+
+def load_link_rows(dirs: Iterable[Path] = (CACHE_DIR, REFERENCE_DIR)) -> list[dict[str, Any]]:
+    """All cached + committed reference link rows, de-duplicated by (link_id, data_as_of)."""
+    seen, out = set(), []
+    for d in dirs:
+        for f in sorted(Path(d).glob("*.json")) if Path(d).exists() else []:
+            for r in json.loads(f.read_text()).get("rows", []):
+                k = (str(r.get("link_id")), r.get("data_as_of"))
+                if k not in seen:
+                    seen.add(k)
+                    out.append(r)
+    return out
+
+
+def clips_in_window(camera_ids: Iterable[str], start_utc: datetime, end_utc: datetime,
+                    clips_dir: Path = DATA_DIR / "clips") -> list[dict[str, Any]]:
+    """Recorded clips (sidecar JSON with ``started_utc`` and a non-empty .ts) of these cameras in a window."""
+    cams, out = set(camera_ids), []
+    for side in sorted(clips_dir.glob("*.json")) if clips_dir.exists() else []:
+        try:
+            d = json.loads(side.read_text())
+        except (OSError, ValueError):
+            continue
+        ts = side.with_suffix(".ts")
+        if d.get("camera_id") not in cams or not d.get("started_utc") or not ts.exists() or ts.stat().st_size == 0:
+            continue
+        t = datetime.fromisoformat(d["started_utc"]).astimezone(timezone.utc)
+        if start_utc <= t <= end_utc:
+            out.append({"camera_id": d["camera_id"], "clip": ts.name,
+                        "started_utc": t.isoformat(timespec="seconds"), "returncode": d.get("returncode")})
+    return out
+
+
+def reference_record(link_id: str, link_name: str | None, rows: list[dict[str, Any]], start: str, end: str,
+                     clips: list[dict[str, Any]], fetched_utc: str, lag: dict[str, Any] | None = None,
+                     note: str = "") -> dict[str, Any]:
+    """The committed reference file: link rows for a window we have (git-ignored) clips of, plus those clips."""
+    keep = ("link_id", "link_name", "speed", "travel_time", "status", "data_as_of")
+    return {"dataset": DATASET, "source": "NYC Open Data, NYC DOT Traffic Speeds (public open data)",
+            "fetched_utc": fetched_utc, "window_local": [start, end], "data_tz": "America/New_York (assumed)",
+            "link_id": str(link_id), "link_name": link_name,
+            "rows": [{k: r.get(k) for k in keep} for r in sorted(rows, key=lambda r: r["data_as_of"])],
+            "clips": clips, "lag_at_fetch": lag, "note": note}
 
 
 # ------------------------------------------------------------------ geometry
@@ -376,9 +460,51 @@ def cmd_fetch(args) -> None:
     rows = fetch_link_rows(ids, start, end)
     CACHE_DIR.mkdir(parents=True, exist_ok=True)
     out = CACHE_DIR / f"speeds_{start:%Y%m%dT%H%M}_{end:%Y%m%dT%H%M}.json"
-    out.write_text(json.dumps({"fetched_utc": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+    fetched = datetime.now(timezone.utc).isoformat(timespec="seconds")
+    out.write_text(json.dumps({"fetched_utc": fetched,
                                "start": args.start, "end": args.end, "links": ids, "rows": rows}, indent=1))
     print(f"{len(rows)} rows for links {ids} -> {out}")
+    if args.keep:   # small committed copy + the clips it is for, so `compare` works on a fresh clone
+        cams_by_link: dict[str, list[str]] = {}
+        names: dict[str, str] = {}
+        for c in (snap or {}).get("camera_links", []):
+            cams_by_link.setdefault(str(c["link_id"]), []).append(c["camera_id"])
+            names[str(c["link_id"])] = c["link_name"]
+        s_utc = start.replace(tzinfo=start.tzinfo or NY_TZ).astimezone(timezone.utc)
+        e_utc = end.replace(tzinfo=end.tzinfo or NY_TZ).astimezone(timezone.utc)
+        lag = measure_lag(ids)
+        REFERENCE_DIR.mkdir(parents=True, exist_ok=True)
+        for lid in ids:
+            lrows = [r for r in rows if str(r.get("link_id")) == str(lid)]
+            clips = clips_in_window(cams_by_link.get(str(lid), []), s_utc, e_utc)
+            rec = reference_record(str(lid), names.get(str(lid)) or (lrows[0].get("link_name") if lrows else None),
+                                   lrows, args.start, args.end, clips, fetched,
+                                   {"links": {str(lid): lag["links"].get(str(lid))},
+                                    "measured_utc": lag["measured_utc"]}, args.note or "")
+            ref = REFERENCE_DIR / f"link{lid}_{start:%Y%m%dT%H%M}_{end:%H%M}.json"
+            ref.write_text(json.dumps(rec, indent=1) + "\n")
+            print(f"kept {len(lrows)} rows + {len(clips)} clip(s) in window -> {ref}")
+
+
+def cmd_lag(args) -> None:
+    snap = json.loads(LINKS_SNAPSHOT.read_text()) if LINKS_SNAPSHOT.exists() else None
+    ids = args.link or sorted({c["link_id"] for c in (snap or {}).get("camera_links", [])})
+    lag = measure_lag(ids)
+    for lid, v in lag["links"].items():
+        local = (datetime.fromisoformat(v["newest_as_of_utc"]).astimezone(NY_TZ).strftime("%H:%M")
+                 if v.get("newest_as_of_utc") else "none")
+        print(f"link {lid}: newest row {local} local, {v.get('lag_min')} min behind")
+    if "minutes_since_last_modified" in lag:
+        print(f"dataset Last-Modified {lag['dataset_last_modified_utc']} ({lag['minutes_since_last_modified']} min ago); "
+              f"out-of-date header: {lag['out_of_date_header']}")
+    if args.record:
+        log = json.loads(LAG_LOG.read_text()) if LAG_LOG.exists() else {
+            "dataset": DATASET, "note": "Measured publication lag of the open-data API: newest data_as_of vs the "
+            "time of the request (data_as_of assumed NY local). Written by `nyc_links lag --record`.",
+            "measurements": []}
+        log["measurements"].append(lag)
+        LAG_LOG.write_text(json.dumps(log, indent=1) + "\n")
+        print(f"appended to {LAG_LOG}")
 
 
 def cmd_compare(args) -> None:
@@ -392,9 +518,7 @@ def cmd_compare(args) -> None:
     runs = our_runs(con, sorted({c.camera_id for c in cam_links}))
     if not runs:
         raise SystemExit("no runs with speeds for cameras on NYC DOT links yet (record + calibrate one first)")
-    rows: list[dict[str, Any]] = []
-    for f in sorted(CACHE_DIR.glob("speeds_*.json")):
-        rows += json.loads(f.read_text())["rows"]
+    rows = load_link_rows()
     if args.fetch_missing:
         for item in runs:
             t0 = datetime.fromisoformat(item["run"]["clip_start_utc"])
@@ -410,18 +534,11 @@ def cmd_compare(args) -> None:
 
 
 def cmd_quality(args) -> None:
-    rows: list[dict[str, Any]] = []
-    for f in sorted(CACHE_DIR.glob("speeds_*.json")):
-        d = json.loads(f.read_text())
-        if args.window and args.window not in f.name:
-            continue
-        rows += d["rows"]
-    seen, uniq = set(), []
-    for r in rows:   # overlapping fetches
-        k = (r["link_id"], r["data_as_of"])
-        if k not in seen:
-            seen.add(k)
-            uniq.append(r)
+    uniq = load_link_rows()      # de-duplicated across overlapping fetches and committed references
+    if args.window:              # e.g. 20261112T0200 -> rows from 2026-11-12 02:00 onwards (local), for 3 h
+        w0 = datetime.strptime(args.window, "%Y%m%dT%H%M")
+        w1 = w0 + timedelta(hours=args.window_hours)
+        uniq = [r for r in uniq if w0 <= datetime.fromisoformat(r["data_as_of"].replace("Z", "")) <= w1]
     for q in link_quality(uniq):
         print(f"{q['link']:44s} rows {q['rows']:4d}  median {q['median_mph']} mph (p10 {q['p10_mph']}, "
               f"p90 {q['p90_mph']})  status {q['status_counts']}  implausible {q['implausible_rows']}")
@@ -439,15 +556,23 @@ def main(argv: list[str] | None = None) -> None:
     f.add_argument("--start", required=True)
     f.add_argument("--end", required=True)
     f.add_argument("--link", action="append", help="link id (repeatable); default: links with cameras on them")
+    f.add_argument("--keep", action="store_true",
+                   help="also write a small committed copy to data/groundtruth/reference/ with the clips in the window")
+    f.add_argument("--note", help="free-text note stored in the --keep file")
+    g = sub.add_parser("lag", help="how far behind real time is the API? (newest row per link vs now)")
+    g.add_argument("--link", action="append", help="link id (repeatable); default: links with cameras on them")
+    g.add_argument("--record", action="store_true", help=f"append the measurement to {LAG_LOG.name}")
     q = sub.add_parser("quality", help="sanity summary of cached link rows (is a link usable as ground truth?)")
-    q.add_argument("--window", help="only cache files whose name contains this, e.g. 20261112T0200")
+    q.add_argument("--window", help="local start time, e.g. 20261112T0200 (with --window-hours)")
+    q.add_argument("--window-hours", type=float, default=3.0)
     c = sub.add_parser("compare", help="our runs vs link speeds")
     c.add_argument("--db", type=Path, default=store.DEFAULT_DB)
     c.add_argument("--max-gap-min", type=float, default=10.0)
     c.add_argument("--fetch-missing", action="store_true", help="also fetch +-30 min of link rows around each run")
     c.add_argument("--json", help="also write the table as JSON")
     args = ap.parse_args(argv)
-    {"links": cmd_links, "fetch": cmd_fetch, "quality": cmd_quality, "compare": cmd_compare}[args.cmd](args)
+    {"links": cmd_links, "fetch": cmd_fetch, "lag": cmd_lag, "quality": cmd_quality,
+     "compare": cmd_compare}[args.cmd](args)
 
 
 if __name__ == "__main__":
