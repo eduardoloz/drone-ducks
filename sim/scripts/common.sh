@@ -54,7 +54,9 @@ need_px4() {
 }
 
 need_venv() {
-  [ -x "$SIM_PYTHON" ] || die "no venv at $SIM_DIR/.venv. Run sim/scripts/setup.sh first."
+  [ -x "$SIM_PYTHON" ] || die "no Python venv at $SIM_PYTHON.
+  Create it once:  cd $SIM_DIR && uv venv --python 3.12 .venv && uv pip install --python .venv/bin/python -e \".[dev,vision]\"
+  Or point to one: export SIM_PYTHON=/path/to/venv/bin/python"
 }
 
 # wait_for <seconds> <description> <command...>: retry a command once per second

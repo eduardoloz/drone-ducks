@@ -199,7 +199,7 @@ Folder `jetson/`, branch `eduardo-jetson-face`. Research: `jetson/docs/WHAT_WE_N
 8. **Detector licences:** YuNet is MIT, SCRFD is research-only and YOLO-face is AGPL. Are the last two OK for internal experiments only?
 9. **LLM budget** for TypeFly demos: an API key with a hard spending cap.
 10. **GPU for CCTV at scale:** one T4 handles about 85 cameras at 7.5 fps, roughly $250/month if it only runs in daylight. Lab servers need their owners' OK.
-11. **When `eduardo` gets pushed** and later merged into `main`.
+11. **When `eduardo` gets merged into `main`** (it was pushed to GitHub on 2026-11-19).
 12. **Round-2 calls:**
     - Face score threshold 0.5 (brief false locks on the back of the head) or 0.6 (misses the walker beyond ~3.5 m)?
     - Should `--person yolox` be the default, and should face-only mode also wait for the lost-target timeout before taking a new face?
