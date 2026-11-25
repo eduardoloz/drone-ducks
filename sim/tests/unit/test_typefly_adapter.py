@@ -113,3 +113,40 @@ def test_old_config_keys_still_work():
     d = Drone.from_dict(s, log=None)
     assert d.config.takeoff_alt_m == 2.5 and d.limits.min_alt_m == 0.8 and d.config.move_timeout_s == 9
     d.backend.shutdown()
+
+
+def _goto_with(robot, monkeypatch, boxes):
+    """Run goto() against a scripted list of detections (one per approach step); return the steps taken."""
+    seq = iter(boxes)
+    steps = []
+    monkeypatch.setattr(robot, "get_obj_info", lambda name: next(seq, None))
+    monkeypatch.setattr(robot, "orienting", lambda name: True)
+    monkeypatch.setattr(robot, "move_forward", lambda d: steps.append(d))
+    monkeypatch.setattr("time.sleep", lambda s: None)
+    assert robot.goto("chair") is True
+    return steps
+
+
+def test_goto_creeps_when_base_is_cut_off(robot, monkeypatch):
+    # chair demo, 2026-11-24: base hit the frame bottom ~3.4 m out and the old goto() stopped there.
+    cut_off = types.SimpleNamespace(x=0.5, y=0.8, w=0.2, h=0.4)        # bottom = 1.0 -> no distance
+    close = types.SimpleNamespace(x=0.5, y=0.7, w=0.65, h=0.6)         # fills the view
+    steps = _goto_with(robot, monkeypatch, [cut_off, cut_off, cut_off, close])
+    assert steps == [robot.goto_creep_step] * 3
+
+
+def test_goto_steps_to_stop_dist_then_stops(robot, monkeypatch):
+    far = types.SimpleNamespace(x=0.5, y=0.55, w=0.1, h=0.1)           # base visible, a few metres out
+    d = robot.ground_distance(far)
+    assert d is not None and d > robot.goto_stop_dist + 0.3
+    near_enough = types.SimpleNamespace(x=0.5, y=0.5, w=0.3, h=0.1)
+    monkeypatch.setattr(robot, "ground_distance",
+                        lambda info: d if info is far else robot.goto_stop_dist - 0.1)
+    steps = _goto_with(robot, monkeypatch, [far, near_enough])
+    assert steps == [round(max(0.3, min(3.0, d - robot.goto_stop_dist)), 2)]
+
+
+def test_goto_stops_when_object_lost(robot, monkeypatch):
+    cut_off = types.SimpleNamespace(x=0.5, y=0.8, w=0.2, h=0.4)
+    steps = _goto_with(robot, monkeypatch, [cut_off, None])
+    assert steps == [robot.goto_creep_step]

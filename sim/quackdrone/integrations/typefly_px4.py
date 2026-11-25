@@ -19,7 +19,8 @@ robot_info.json "extra" keys (all optional):
   pos_tolerance, settle_speed, yaw_tolerance, move_timeout     quackdrone DroneConfig
   yolo_conf (0.35), yolo_tracking (false)
   camera_hfov_deg / camera_pitch_deg / camera_aspect / camera_z_offset   quack_cam geometry
-  goto_stop_dist (2.5 m), goto_stop_width (0.6)       when goto() stops approaching
+  goto_stop_dist (0.8 m), goto_stop_width (0.6)       when goto() stops approaching
+  goto_creep_step (0.4 m)   step size once the object's base is cut off by the frame bottom
 """
 from __future__ import annotations
 
@@ -131,8 +132,10 @@ class PX4Wrapper(RobotWrapper):
         self.cam_pitch_deg = float(extra.get("camera_pitch_deg", 8.0))  # down-tilt of quack_cam
         self.cam_aspect = float(extra.get("camera_aspect", 4 / 3))
         self.cam_z_offset = float(extra.get("camera_z_offset", 0.24))   # camera above body origin
-        self.goto_stop_dist = float(extra.get("goto_stop_dist", 2.5))
+        # Stop ~0.8 m from the object (was 2.5 m, which left the chair demo 2.8-3.4 m short).
+        self.goto_stop_dist = float(extra.get("goto_stop_dist", 0.8))
         self.goto_stop_width = float(extra.get("goto_stop_width", 0.6))
+        self.goto_creep_step = float(extra.get("goto_creep_step", 0.4))
         if obs is None:
             obs = PX4Observation(robot_info, extra.get("camera_url", "http://127.0.0.1:5601"),
                                  tracking=bool(extra.get("yolo_tracking", False)),
@@ -239,7 +242,9 @@ class PX4Wrapper(RobotWrapper):
     @overrides
     def goto(self, object_name: str) -> bool:
         """Fly toward a visible object: re-centre, step forward (bigger steps while it looks far),
-        stop when it is close (wide in the image / base near the bottom edge) or lost."""
+        stop when it is close (estimated within goto_stop_dist, or wide in the image) or lost.
+        Once the base drops below the frame there is no distance estimate, so it creeps forward
+        goto_creep_step at a time until the object is goto_stop_width wide."""
         print_t(f"-> Go to {object_name}")
         if not self.orienting(object_name):
             return False
@@ -251,9 +256,18 @@ class PX4Wrapper(RobotWrapper):
             dist = self.ground_distance(info)
             print_t(f"[PX4] goto: {object_name} x={info.x:.2f} w={info.w:.2f} bottom={info.y + info.h / 2:.2f} "
                     f"est_dist={dist if dist is None else round(dist, 1)}")
-            if dist is None or dist <= self.goto_stop_dist or info.w >= self.goto_stop_width:
+            if info.w >= self.goto_stop_width:
+                break  # fills enough of the view: close
+            if dist is None:
+                # Base cut off by the bottom of the frame (or above the horizon): no ground distance.
+                # This happens ~2-3.5 m out with the 8 deg camera, so it does NOT mean "arrived".
+                # Creep forward in small steps until the object is wide enough in the image.
+                step = self.goto_creep_step
+            elif dist <= self.goto_stop_dist:
                 break
-            self.move_forward(round(max(0.3, min(3.0, dist - self.goto_stop_dist)), 2))
+            else:
+                step = round(max(0.3, min(3.0, dist - self.goto_stop_dist)), 2)
+            self.move_forward(step)
             time.sleep(0.4)  # let a fresh detection arrive after the move
             self.orienting(object_name)
         print_t(f"[PX4] goto: arrived near {object_name}")
